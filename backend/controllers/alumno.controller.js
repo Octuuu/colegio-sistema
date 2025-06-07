@@ -4,6 +4,7 @@ import {
   createAlumno,
   updateAlumno,
   deleteAlumno,
+  getCursoYMateriasDeAlumno,
 } from '../models/alumno.model.js';
 
 // Obtener todos los alumnos
@@ -52,6 +53,20 @@ export const deleteAlumnoHandler = async (req, res) => {
   try {
     await deleteAlumno(req.params.id);
     res.json({ message: 'Alumno eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// obtener curso y materia de alumno
+export const getCursoConMaterias = async (req, res) => {
+  try {
+    const alumnoId = req.params.id;
+    const curso = await getCursoYMateriasDeAlumno(alumnoId);
+
+    if (!curso) return res.status(404).json({ error: 'Alumno o curso no encontrado' });
+
+    res.json(curso);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
