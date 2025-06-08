@@ -71,3 +71,18 @@ export const getCursoConMaterias = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getCursoConMateriasAlumno = async (req, res) => {
+  try {
+    const alumnoId = req.user.id;
+    const curso = await getCursoYMateriasDeAlumno(alumnoId);
+
+    if (!curso) {
+      return res.status(404).json({ error: 'No se encontraron curso ni materias' });
+    }
+
+    res.json(curso);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

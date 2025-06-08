@@ -33,7 +33,7 @@ export const createAlumno = async ({ nombre, apellido, cedula, fecha_nacimiento,
 };
 
 // Actualizar alumno
-export const updateAlumno = async (id, { nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, curso_id }) => {
+export const updateAlumno = async (id, { nombre, apellido, cedula, fecha_nacimiento, telefono, direccion,email, curso_id }) => {
   await pool.query(
     'UPDATE alumnos SET nombre = ?, apellido = ?, cedula = ?, fecha_nacimiento = ?, telefono = ?, direccion = ?, email = ?, curso_id = ? WHERE id = ?',
     [nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email, curso_id, id]
