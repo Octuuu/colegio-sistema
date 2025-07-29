@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import authRoutes from './routes/auth.routes.js';
 import rolRoutes from './routes/rol.routes.js';
 import { errorHandler } from './middlewares/error.middleware.js';
@@ -6,8 +7,17 @@ import alumnoRoutes from './routes/alumno.routes.js'
 import profeRoutes from './routes/profesor.routes.js';
 import materiaRoutes from './routes/materia.routes.js';
 import cursoRoutes from './routes/curso.routes.js'
+import asistenciaRoutes from './routes/asistencia.routes.js';
+import calificacionRoutes from './routes/calificacion.routes.js';
+import perfilRoutes from "./routes/perfil.routes.js";
+import asignacionesRoutes from './routes/asignaciones.routes.js';
 
 const app = express();
+
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
 
 app.use(express.json());
 
@@ -20,8 +30,12 @@ app.use('/api/alumnos', alumnoRoutes);
 app.use('/api/profesor', profeRoutes);
 app.use('/api/materias', materiaRoutes);
 app.use('/api/cursos', cursoRoutes)
+app.use('/api/asistencias', asistenciaRoutes);
+app.use('/api/calificacion', calificacionRoutes);
+app.use('/api/perfil', perfilRoutes);
+app.use('/api/asignaciones', asignacionesRoutes);
 
-// Manejo de errores
+// manejo de errores
 app.use(errorHandler);
 
 export default app;

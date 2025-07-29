@@ -4,6 +4,7 @@ import {
   createCurso,
   updateCurso,
   deleteCurso,
+  getAlumnosPorCurso,
 } from '../models/curso.model.js';
 
 // Obtener todos los cursos
@@ -54,5 +55,17 @@ export const deleteCursoHandler = async (req, res) => {
     res.json({ message: 'curso eliminado correctamente' });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+// obtener alumnos por cursos 
+export const obtenerAlumnosPorCurso = async (req, res) => {
+  try {
+    const cursoId = req.params.cursoId;
+    const alumnos = await getAlumnosPorCurso(cursoId);
+    res.json(alumnos);
+  } catch (error) {
+    console.error('Error al obtener alumnos por curso:', error);
+    res.status(500).json({ message: 'Error del servidor' });
   }
 };

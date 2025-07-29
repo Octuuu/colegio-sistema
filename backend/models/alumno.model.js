@@ -27,7 +27,7 @@ export const createAlumno = async ({ nombre, apellido, cedula, fecha_nacimiento,
   const alumnoId = result.insertId;
 
   // 2. Crear usuario vinculado
-  await createUser({ gmail: emailUsuario, password, rol_id: 3 });
+  await createUser({ gmail: emailUsuario, password, rol_id: 3,  alumno_id: alumnoId });
 
   return alumnoId;
 };

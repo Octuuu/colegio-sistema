@@ -33,3 +33,14 @@ export const updateCurso = async (id, { anio, bachillerato }) => {
 export const deleteCurso = async (id) => {
   await pool.query('DELETE FROM cursos WHERE id = ?', [id]);
 };
+
+// obtener los alumnos del curso 
+export const getAlumnosPorCurso = async (cursoId) => {
+  const [rows] = await pool.query(
+    `SELECT a.id, a.nombre, a.apellido, a.email
+     FROM alumnos a
+     WHERE a.curso_id = ?`,
+     [cursoId]
+  );
+  return rows;
+};

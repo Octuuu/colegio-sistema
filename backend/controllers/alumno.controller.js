@@ -74,7 +74,10 @@ export const getCursoConMaterias = async (req, res) => {
 
 export const getCursoConMateriasAlumno = async (req, res) => {
   try {
-    const alumnoId = req.user.id;
+    const alumnoId = req.user.alumno_id;
+    if (!alumnoId) {
+      return res.status(403).json({ error: 'Este usuario no está asociado a un alumno' });
+    }
     const curso = await getCursoYMateriasDeAlumno(alumnoId);
 
     if (!curso) {

@@ -48,11 +48,14 @@ export const updateProfeHandler = async (req, res) => {
 };
 
 // Eliminar profe
+// Eliminar profe
 export const deleteProfeHandler = async (req, res) => {
   try {
     await deleteProfe(req.params.id);
-    res.json({ message: 'profesor eliminado correctamente' });
+    res.json({ message: 'Profesor eliminado correctamente' });
   } catch (error) {
+    console.error('❌ Error al eliminar profesor:', error); 
     res.status(500).json({ error: error.message });
   }
 };
+

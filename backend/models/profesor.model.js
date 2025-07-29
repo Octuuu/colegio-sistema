@@ -27,7 +27,7 @@ export const createProfe = async ({ nombre, apellido, telefono, correo, cedula, 
   const profeId = result.insertId;
 
   // 2. Crear usuario vinculado
-  await createUser({ gmail: emailUsuario, password, rol_id: 2 });
+  await createUser({ gmail: emailUsuario, password, rol_id: 2, profesor_id: profeId });
 
   return profeId;
 };
