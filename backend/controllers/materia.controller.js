@@ -4,6 +4,7 @@ import {
   createMateria,
   updateMateria,
   deleteMateria,
+  getMateriasByProfesor,
 } from '../models/materia.model.js';
 
 // Obtener todos las materias
@@ -53,6 +54,21 @@ export const deleteMateriaHandler = async (req, res) => {
     await deleteMateria(req.params.id);
     res.json({ message: 'materia eliminado correctamente' });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// obtener materias de un profesor
+export const getMateriasProfesor = async (req, res) => {
+  try {
+    const profesorId = req.user.profesor_id; 
+    if (!profesorId) {
+      return res.status(400).json({ error: "El usuario no está asociado a un profesor" });
+    }
+    const materias = await getMateriasByProfesor(profesorId);
+    res.json(materias);
+  } catch (error) {
+    console.error("Error en getMateriasProfesor:", error);
     res.status(500).json({ error: error.message });
   }
 };

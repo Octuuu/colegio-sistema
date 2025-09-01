@@ -33,3 +33,21 @@ export const updateMateria = async (id, { nombre, descripcion }) => {
 export const deleteMateria = async (id) => {
   await pool.query('DELETE FROM materias WHERE id = ?', [id]);
 };
+
+
+// obtener materias de un profesor
+export const getMateriasByProfesor = async (profesorId) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT m.id, m.nombre, m.descripcion
+       FROM materias_curso mc
+       JOIN materias m ON mc.materia_id = m.id
+       WHERE mc.profesor_id = ?`,
+      [profesorId]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error en getMateriasByProfesor:", error);
+    throw error;
+  }
+};

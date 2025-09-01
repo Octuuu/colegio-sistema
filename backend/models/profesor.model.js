@@ -44,3 +44,21 @@ export const updateProfe = async (id, { nombre, apellido, telefono, correo, cedu
 export const deleteProfe = async (id) => {
   await pool.query('DELETE FROM profesores WHERE id = ?', [id]);
 };
+
+// obtener alumnos de la materia que dicta el profe
+export const getAlumnosByMateriaProfesor = async (materiaId, profesorId) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT a.id AS alumno_id, a.nombre, a.apellido, c.anio, c.bachillerato AS curso
+       FROM materias_curso mc
+       JOIN alumnos a ON mc.curso_id = a.curso_id
+       JOIN cursos c ON a.curso_id = c.id
+       WHERE mc.materia_id = ? AND mc.profesor_id = ?`,
+      [materiaId, profesorId]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error en getAlumnosByMateriaProfesor:", error);
+    throw error;
+  }
+};

@@ -3,7 +3,8 @@ import {
     getProfeById,
     createProfe,
     updateProfe,
-    deleteProfe
+    deleteProfe,
+    getAlumnosByMateriaProfesor,
 } from '../models/profesor.model.js';
 
 // Obtener todos los profes
@@ -55,6 +56,23 @@ export const deleteProfeHandler = async (req, res) => {
     res.json({ message: 'Profesor eliminado correctamente' });
   } catch (error) {
     console.error('❌ Error al eliminar profesor:', error); 
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// obtenr alumnos de la materia que dicta el profe
+export const getAlumnosMateria = async (req, res) => {
+  try {
+    const profesorId = req.user.profesor_id; 
+    const { materiaId } = req.params;
+
+    if (!profesorId) {
+      return res.status(403).json({ error: "No tienes permisos de profesor" });
+    }
+
+    const alumnos = await getAlumnosByMateriaProfesor(materiaId, profesorId);
+    res.json(alumnos);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };

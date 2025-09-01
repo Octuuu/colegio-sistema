@@ -34,7 +34,6 @@ app.use('/api/asistencias', asistenciaRoutes);
 app.use('/api/calificacion', calificacionRoutes);
 app.use('/api/perfil', perfilRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
-
 // manejo de errores
 app.use(errorHandler);
 

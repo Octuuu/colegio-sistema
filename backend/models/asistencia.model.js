@@ -44,5 +44,9 @@ export const profesorDictaMateria = async (profesor_id, materia_id) => {
     LIMIT 1
   `, [profesor_id, materia_id]);
 
+  console.log("Filas encontradas para dictar materia:", rows);
+
   return rows.length > 0;
 };
+
+

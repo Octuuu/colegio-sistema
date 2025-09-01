@@ -5,6 +5,35 @@ import {
   profesorDictaMateria
 } from '../models/asistencia.model.js';
 
+export const registrarAsistenciaMasiva = async (req, res) => {
+  try {
+    const { materia_id, asistencias } = req.body;
+    console.log('--- REGISTRAR ASISTENCIA MASIVA ---');
+    console.log('Usuario:', req.user); // id, rol_id, profesor_id
+    console.log('MateriaId recibido:', materia_id);
+    console.log('Asistencias recibidas:', asistencias);
+
+    // Validar si el profesor dicta esa materia
+    if (req.user.rol_id === 2) { // profesor
+      // Asegúrate de que sean números
+      const dicta = await profesorDictaMateria(Number(req.user.profesor_id), Number(materia_id));
+
+      console.log('Dicta materia?:', dicta);
+
+      if (!dicta) {
+        return res.status(403).json({ error: 'No puedes registrar asistencia para esta materia' });
+      }
+    }
+
+    // Aquí iría la inserción masiva...
+    res.json({ message: 'Depuración exitosa, todo ok hasta aquí' });
+  } catch (error) {
+    console.error('Error registrarAsistenciaMasiva:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 // registrar una asistencia
 export const registrarAsistenciaHandler = async (req, res) => {
   try {
