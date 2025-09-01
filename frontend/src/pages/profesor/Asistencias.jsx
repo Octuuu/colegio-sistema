@@ -1,115 +1,53 @@
-import { useEffect, useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
-import {
-  crearAsignacion,
-  obtenerMaterias,
-  obtenerCursos,
-  obtenerProfesores
-} from '../../services/asignacionesService';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useContext, useCallback } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { obtenerMaterias } from "../../services/asistenciaService";
+import { Link } from "react-router-dom";
 
-const CreateAsignacion = () => {
+const MateriasList = () => {
   const { token } = useContext(AuthContext);
-  const navigate = useNavigate();
-
   const [materias, setMaterias] = useState([]);
-  const [cursos, setCursos] = useState([]);
-  const [profesores, setProfesores] = useState([]);
-  const [formData, setFormData] = useState({
-    materia_id: '',
-    curso_id: '',
-    profesor_id: '',
-  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [mats, curs, profs] = await Promise.all([
-          obtenerMaterias(token),
-          obtenerCursos(token),
-          obtenerProfesores(token)
-        ]);
-
-        setMaterias(mats);
-        setCursos(curs);
-        setProfesores(profs);
-      } catch (error) {
-        console.error('Error al cargar datos:', error);
-      }
-    };
-
-    fetchData();
+  const cargarMaterias = useCallback(async () => {
+    try {
+      const data = await obtenerMaterias(token);
+      setMaterias(data);
+    } catch (err) {
+      console.error("Error al obtener materias", err);
+    }
   }, [token]);
 
-  const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await crearAsignacion(formData, token);
-      alert('Asignación creada exitosamente');
-      navigate('/admin/asignarMateria');
-    } catch (error) {
-      console.error(error);
-      alert('Error al crear la asignación');
-    }
-  };
+  useEffect(() => {
+    cargarMaterias();
+  }, [cargarMaterias]);
 
   return (
-    <div className="max-w-xl mx-auto mt-8 bg-white dark:bg-gray-800 p-6 rounded shadow">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">Asignar materia a profesor</h2>
-      <form onSubmit={handleSubmit} className="grid gap-4">
-
-        <select
-          name="materia_id"
-          value={formData.materia_id}
-          onChange={handleChange}
-          required
-          className="border border-gray-400 rounded px-3 py-2"
-        >
-          <option value="">Selecciona una materia</option>
-          {materias.map(m => (
-            <option key={m.id} value={m.id}>{m.nombre}</option>
+    <div className="relative p-6">
+      <h2 className="text-2xl font-bold mb-4">Tus materias</h2>
+      <table className="w-full border">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="p-2">Materia</th>
+            <th className="p-2">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {materias.map((m, index) => (
+            <tr className="text-center" key={`${m.id}-${index}`}>
+              <td className="p-2">{m.nombre}</td>
+              <td className="p-2">
+                <Link
+                  to={`/profesor/${m.id}/alumnos`}
+                  className="text-blue-600 hover:underline " 
+                >
+                  Ver alumnos
+                </Link>
+              </td>
+            </tr>
           ))}
-        </select>
-
-        <select
-          name="curso_id"
-          value={formData.curso_id}
-          onChange={handleChange}
-          required
-          className="border border-gray-400 rounded px-3 py-2"
-        >
-          <option value="">Selecciona un curso</option>
-          {cursos.map(c => (
-            <option key={c.id} value={c.id}>{c.bachillerato}</option>
-          ))}
-        </select>
-
-        <select
-          name="profesor_id"
-          value={formData.profesor_id}
-          onChange={handleChange}
-          required
-          className="border border-gray-400 rounded px-3 py-2"
-        >
-          <option value="">Selecciona un profesor</option>
-          {profesores.map(p => (
-            <option key={p.id} value={p.id}>{p.nombre}</option>
-          ))}
-        </select>
-
-        <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-bold">
-          Asignar materia
-        </button>
-      </form>
+        </tbody>
+      </table>
     </div>
   );
 };
 
-export default CreateAsignacion;
+export default MateriasList;

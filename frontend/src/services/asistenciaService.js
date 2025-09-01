@@ -15,8 +15,27 @@ export const crearAsistencia = async (datos, token) => {
   return res.data;
 }
 
-// traer la materia
+// obtener alumnos
+export const obtenerAlumnos = async (token) => {
+  const res = await axios.get(`${API_URL}/alumnos`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
 
+  return res.data;
+};
+
+// traer la materia
+export const obtenerMaterias = async (token) => {
+  const res = await axios.get(`${API_URL}/materias/profesor/mis-materias`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+}
 
 // traer el curso
 

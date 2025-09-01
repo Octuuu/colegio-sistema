@@ -22,6 +22,7 @@ import EditarCurso from '../pages/admin/EditCurso';
 import CursosList from '../pages/admin/CursosList';
 import EditarProfesor from '../pages/admin/EditProfesor';
 import ProfesorList from '../pages/admin/ProfesoresList';
+import AlumnosAistencia from '../pages/profesor/AlumnosAsistencia';
 
 export default function AppRoutes() {
   return (
@@ -48,7 +49,7 @@ export default function AppRoutes() {
         <Route path="/admin/editarAlumnos/:id" element={<EditarAlumno />} />
       </Route>
 
-      {/* Rutas protegidas para profesor */}
+      {/* rutas protegidas para profesor */}
       <Route element={<ProtectedRoute allowedRoles={[2]} />}>
         <Route path="/profesor" element={<Navigate to="/profesor/dashboard" replace />} />
         <Route path="/profesor/dashboard" element={<ProfesorDashboard />} />
@@ -57,6 +58,7 @@ export default function AppRoutes() {
         <Route path="/profesor/cursos" element={<Cursos />} />
         <Route path="/profesor/materias" element={<Materias />} />
         <Route path="/profesor/alumnos" element={<Alumnos />} />
+        <Route path="/profesor/:materiaId/alumnos" element={<AlumnosAistencia />} />
       </Route>
 
       {/* Rutas protegidas para alumno */}

@@ -52,3 +52,23 @@ export const obtenerProfesor = async (token) => {
 
     return res.data;
 };
+
+// alumnos de la materia del profe
+export const obtenerAlumnos = async (token, materiaId) => {
+    const res = await axios.get(`http://localhost:3000/api/profesor/materia/${materiaId}/alumnos`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    return res.data;
+}
+
+// guardar asistencia masiva
+export const guardarAsistencia = async (token, materiaId, asistencias) => {
+  const { data } = await axios.post(`${API_URL}/asistencias/masiva`, {
+    materia_id: materiaId,
+    asistencias
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  return data;
+};

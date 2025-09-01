@@ -69,13 +69,13 @@ const ProfesorDashboard = () => {
   return (
     <div className="min-h-screen p-8 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       <div className="max-w-6xl mx-auto rounded-md p-6">
-        {/* Botón para cambiar tema */}
+
         <div className="flex justify-end mb-4">
           <ThemeToggle />
         </div>
 
         <h1 className="text-3xl font-bold text-blue-700 dark:text-blue-300 mb-6">
-          Sistema de alumnos
+          Sistema de alumnos 
         </h1>
         <p className="text-gray-700 dark:text-gray-300 mb-8">
           Acciones disponibles
