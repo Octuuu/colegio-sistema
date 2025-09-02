@@ -77,3 +77,4 @@ export const getAlumnosMateria = async (req, res) => {
   }
 };
 
+// traer el historial del asistencias

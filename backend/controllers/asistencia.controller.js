@@ -2,37 +2,38 @@ import {
   registrarAsistencia,
   obtenerAsistenciasPorAlumno,
   profesorDictaAlumno,
-  profesorDictaMateria
+  profesorDictaMateria,
+  getHistorialAsistencias
 } from '../models/asistencia.model.js';
 
 export const registrarAsistenciaMasiva = async (req, res) => {
   try {
     const { materia_id, asistencias } = req.body;
-    console.log('--- REGISTRAR ASISTENCIA MASIVA ---');
-    console.log('Usuario:', req.user); // id, rol_id, profesor_id
-    console.log('MateriaId recibido:', materia_id);
-    console.log('Asistencias recibidas:', asistencias);
 
-    // Validar si el profesor dicta esa materia
-    if (req.user.rol_id === 2) { // profesor
-      // Asegúrate de que sean números
+    if (req.user.rol_id === 2) { 
       const dicta = await profesorDictaMateria(Number(req.user.profesor_id), Number(materia_id));
-
-      console.log('Dicta materia?:', dicta);
-
       if (!dicta) {
         return res.status(403).json({ error: 'No puedes registrar asistencia para esta materia' });
       }
     }
+    // Insertar cada asistencia
+    const resultados = [];
+    for (const a of asistencias) {
+      const { alumno_id, fecha, presente } = a;
+      const id = await registrarAsistencia({ alumno_id, materia_id, fecha, presente });
+      resultados.push({ alumno_id, id });
+    }
 
-    // Aquí iría la inserción masiva...
-    res.json({ message: 'Depuración exitosa, todo ok hasta aquí' });
+    res.status(201).json({
+      message: 'Asistencias registradas correctamente',
+      registros: resultados
+    });
+
   } catch (error) {
     console.error('Error registrarAsistenciaMasiva:', error);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 // registrar una asistencia
 export const registrarAsistenciaHandler = async (req, res) => {
@@ -80,3 +81,25 @@ export const verAsistenciasAlumno = async (req, res) => {
   }
 };
 
+// traer el historial del asistencias
+export const getHistorialAsistenciasHandler = async (req, res) => {
+  try {
+    const profesorId = req.user.profesor_id; 
+    const { materiaId } = req.params;
+
+    if (!profesorId) {
+      return res.status(403).json({ error: "No tienes permisos de profesor" });
+    }
+
+    const historial = await getHistorialAsistencias(profesorId, materiaId);
+
+    if (historial.length === 0) {
+      return res.status(404).json({ message: "No hay asistencias registradas aún" });
+    }
+
+    res.json(historial);
+  } catch (error) {
+    console.error("❌ Error al obtener historial:", error);
+    res.status(500).json({ error: error.message });
+  }
+};

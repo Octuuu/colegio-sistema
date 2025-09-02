@@ -62,3 +62,26 @@ export const getAlumnosByMateriaProfesor = async (materiaId, profesorId) => {
     throw error;
   }
 };
+
+// obtener los alumnos del profe y la asistencia de cada uno
+export const getAlumnosMateriaConAsistencia = async (profesorId, materiaId, fecha) => {
+  const [rows] = await pool.query(
+    `SELECT a.id AS alumno_id, a.nombre, a.apellido,
+            c.id AS curso_id, c.anio, c.bachillerato,
+            m.id AS materia_id, m.nombre AS materia,
+            IFNULL(asist.presente, NULL) AS presente
+     FROM materias_curso mc
+     JOIN cursos c ON mc.curso_id = c.id
+     JOIN alumnos a ON a.curso_id = c.id
+     JOIN materias m ON mc.materia_id = m.id
+     LEFT JOIN asistencias asist
+        ON asist.alumno_id = a.id
+       AND asist.materia_id = m.id
+       AND asist.fecha = ?
+     WHERE mc.profesor_id = ?
+       AND mc.materia_id = ?`,
+    [fecha, profesorId, materiaId]
+  );
+
+  return rows;
+};

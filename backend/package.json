@@ -18,7 +18,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.1",
-    "pdfkit": "^0.17.1",
+    "pdfkit": "^0.17.2",
     "sequelize": "^6.37.7"
   },
   "devDependencies": {

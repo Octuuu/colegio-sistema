@@ -19,4 +19,8 @@ router.post('/', authenticate, authorize(rolesPermitidos), createProfeHandler);
 router.put('/:id', authenticate, authorize(rolesPermitidos), updateProfeHandler);
 router.delete('/:id', authenticate, authorize(rolesPermitidos), deleteProfeHandler);
 router.get('/materia/:materiaId/alumnos', authenticate, authorize(['profesor']), getAlumnosMateria);
+router.get('/mis-alumnos/:materiaId', authenticate, authorize(['profesor']), getAlumnosMateria);
+
+
+
 export default router;
