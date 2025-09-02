@@ -58,6 +58,7 @@ export const obtenerAlumnos = async (token, materiaId) => {
     const res = await axios.get(`http://localhost:3000/api/profesor/materia/${materiaId}/alumnos`, {
         headers: { Authorization: `Bearer ${token}` }
     });
+
     return res.data;
 }
 
@@ -72,3 +73,7 @@ export const guardarAsistencia = async (token, materiaId, asistencias) => {
 
   return data;
 };
+
+
+// obtener asistencias de cada alumno
+

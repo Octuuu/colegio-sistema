@@ -23,6 +23,8 @@ import CursosList from '../pages/admin/CursosList';
 import EditarProfesor from '../pages/admin/EditProfesor';
 import ProfesorList from '../pages/admin/ProfesoresList';
 import AlumnosAistencia from '../pages/profesor/AlumnosAsistencia';
+import ListaMaterias from '../pages/profesor/ListaMaterias';
+import ListaAsistencia from '../pages/profesor/ListaAsistencia';
 
 export default function AppRoutes() {
   return (
@@ -59,6 +61,8 @@ export default function AppRoutes() {
         <Route path="/profesor/materias" element={<Materias />} />
         <Route path="/profesor/alumnos" element={<Alumnos />} />
         <Route path="/profesor/:materiaId/alumnos" element={<AlumnosAistencia />} />
+        <Route path="/profesor/listaMaterias" element={<ListaMaterias />} />
+        <Route path="/profesor/materias/:materiaId/historial" element={<ListaAsistencia />} />
       </Route>
 
       {/* Rutas protegidas para alumno */}

@@ -37,5 +37,31 @@ export const obtenerMaterias = async (token) => {
   return res.data;
 }
 
-// traer el curso
+// historial de asistencias por materia
+export const obtenerHistorialMateria = async (token, materiaId, params = {}) => {
+  const res = await axios.get(
+    `${API_URL}/asistencias/materia/${materiaId}/historial`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+      params,
+    }
+  );
+  return res.data;
+};
 
+// descargar reporte PDF
+export const descargarPDFHistorial = async (token, materiaId) => {
+  const response = await axios.get(`${API_URL}/asistencias/materia/${materiaId}/historial/pdf`, {
+    headers: { Authorization: `Bearer ${token}` },
+    responseType: "blob", 
+  });
+
+  // crear un enlace para descargar
+  const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `Historial_Materia_${materiaId}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode.removeChild(link);
+};

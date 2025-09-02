@@ -18,7 +18,7 @@ const ProfesorDashboard = () => {
     {
       title: 'Ver asistencias de mis alumnos',
       description: 'Registrar asistencias de tus alumnos',
-      path: '/profesor/asistencias',
+      path: '/profesor/listaMaterias',
       color: 'bg-yellow-100',
       textColor: 'text-yellow-700',
     },
