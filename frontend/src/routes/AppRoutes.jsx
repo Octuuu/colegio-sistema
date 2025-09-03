@@ -25,6 +25,8 @@ import ProfesorList from '../pages/admin/ProfesoresList';
 import AlumnosAistencia from '../pages/profesor/AlumnosAsistencia';
 import ListaMaterias from '../pages/profesor/ListaMaterias';
 import ListaAsistencia from '../pages/profesor/ListaAsistencia';
+import MateriasListCalif from '../pages/profesor/MateriasListCalif';
+import RegistrarCalificacion from '../pages/profesor/RegistrarCalificacion';
 
 export default function AppRoutes() {
   return (
@@ -56,13 +58,14 @@ export default function AppRoutes() {
         <Route path="/profesor" element={<Navigate to="/profesor/dashboard" replace />} />
         <Route path="/profesor/dashboard" element={<ProfesorDashboard />} />
         <Route path="/profesor/asistencias" element={<Asistencias />} />
-        <Route path="/profesor/calificaciones" element={<Calificaciones />} />
         <Route path="/profesor/cursos" element={<Cursos />} />
         <Route path="/profesor/materias" element={<Materias />} />
         <Route path="/profesor/alumnos" element={<Alumnos />} />
         <Route path="/profesor/:materiaId/alumnos" element={<AlumnosAistencia />} />
         <Route path="/profesor/listaMaterias" element={<ListaMaterias />} />
         <Route path="/profesor/materias/:materiaId/historial" element={<ListaAsistencia />} />
+        <Route path="/profesor/calificaciones" element={<MateriasListCalif />} />
+        <Route path="/profesor/calificaciones/registrar" element={<RegistrarCalificacion />} />
       </Route>
 
       {/* Rutas protegidas para alumno */}
