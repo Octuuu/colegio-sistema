@@ -2,7 +2,6 @@ import pool from "../config/db.js";
 
 /**
  * Registrar una calificación final de un alumno en una materia
- * Se asegura de que el profesor dicte la materia para ese alumno
  */
 export const registrarCalificacion = async ({ profesor_id, alumno_id, materia_id, nota }) => {
   // Validar que el profesor dicta esa materia
