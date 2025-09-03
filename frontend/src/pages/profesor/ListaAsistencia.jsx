@@ -3,16 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { obtenerHistorialMateria, descargarPDFHistorial } from "../../services/asistenciaService";
 
+// 👉 Usamos directamente el string "YYYY-MM-DD" (sin new Date)
 const formateaFechaLindo = (fecha) => {
-  try {
-    const d = new Date(fecha);
-    const dd = String(d.getDate()).padStart(2, "0");
-    const mm = String(d.getMonth() + 1).padStart(2, "0"); 
-    const yy = d.getFullYear();
-    return `${dd}/${mm}/${yy}`;
-  } catch {
-    return fecha;
-  }
+  if (!fecha) return "";
+  const [yy, mm, dd] = fecha.split("-");
+  return `${dd}/${mm}/${yy}`;
 };
 
 const HistorialAsistenciaMateria = () => {
@@ -49,17 +44,23 @@ const HistorialAsistenciaMateria = () => {
   const alumnosMap = useMemo(() => {
     const map = new Map();
     historial.forEach((r) => {
+      const fechaStr = r.fecha?.split("T")[0] || r.fecha; // "YYYY-MM-DD"
       if (!map.has(r.alumno_id)) {
-        map.set(r.alumno_id, { nombre: r.nombre, apellido: r.apellido, asistencias: {} });
+        map.set(r.alumno_id, {
+          nombre: r.nombre,
+          apellido: r.apellido,
+          asistencias: {}
+        });
       }
-      map.get(r.alumno_id).asistencias[r.fecha] = Number(r.presente) === 1 ? "Presente" : "Ausente";
+      map.get(r.alumno_id).asistencias[fechaStr] =
+        Number(r.presente) === 1 ? "Presente" : "Ausente";
     });
     return map;
   }, [historial]);
 
-  // Obtener todas las fechas únicas ordenadas
+  // Todas las fechas únicas en orden
   const fechas = useMemo(() => {
-    const set = new Set(historial.map((r) => r.fecha));
+    const set = new Set(historial.map((r) => r.fecha?.split("T")[0] || r.fecha));
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [historial]);
 
@@ -84,7 +85,7 @@ const HistorialAsistenciaMateria = () => {
         </Link>
       </div>
 
-      {/* Filtros opcionales */}
+      {/* Filtros */}
       <div className="flex flex-wrap gap-3 items-end">
         <div>
           <label className="block text-sm mb-1">Desde</label>
@@ -111,7 +112,7 @@ const HistorialAsistenciaMateria = () => {
           Filtrar
         </button>
 
-        {/* Botón de descargar PDF */}
+        {/* Botón PDF */}
         <button
           onClick={handleDescargarPDF}
           className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
@@ -128,12 +129,14 @@ const HistorialAsistenciaMateria = () => {
       )}
 
       {!loading && historial.length > 0 && (
-        <table className="w-full border-collapse border">
+        <table className="w-full border-collapse border text-sm">
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2 border">Alumno</th>
               {fechas.map((fecha) => (
-                <th key={fecha} className="p-2 border">{formateaFechaLindo(fecha)}</th>
+                <th key={fecha} className="p-2 border text-center">
+                  {formateaFechaLindo(fecha)}
+                </th>
               ))}
             </tr>
           </thead>
@@ -142,10 +145,12 @@ const HistorialAsistenciaMateria = () => {
               .sort((a, b) => a.apellido.localeCompare(b.apellido))
               .map((alumno, idx) => (
                 <tr key={idx} className="border-t">
-                  <td className="p-2 border">{alumno.apellido}, {alumno.nombre}</td>
+                  <td className="p-2 border font-medium">
+                    {alumno.apellido}, {alumno.nombre}
+                  </td>
                   {fechas.map((fecha) => (
                     <td key={fecha} className="p-2 border text-center">
-                      {alumno.asistencias[fecha] || "-"}
+                      {alumno.asistencias[fecha] || "—"}
                     </td>
                   ))}
                 </tr>
