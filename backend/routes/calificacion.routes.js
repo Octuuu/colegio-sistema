@@ -1,17 +1,36 @@
 import express from 'express';
-import { registrarCalificacionHandler, verCalificacionAlumno } from '../controllers/calificacion.controller.js';
+import { registrarCalificacionHandler, verCalificacionesAlumnoHandler } from '../controllers/calificaciones.controller.js';
 import { authenticate, authorize } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
-const rolesPermitidos = ['admin', 'profesor'];
-const todosLosRoles = ['admin', 'profesor', 'alumno'];
+// Roles
+const rolesProfesorAdmin = ['admin', 'profesor'];
+const rolesAlumno = ['alumno'];
 
-// solo profesor o admin puede registrar calificacion
-router.post('/', authenticate, authorize(rolesPermitidos), registrarCalificacionHandler);
+// 📌 Registrar calificación (solo profesor o admin)
+router.post(
+  '/',
+  authenticate,
+  authorize(rolesProfesorAdmin),
+  registrarCalificacionHandler
+);
 
-// alumno puede ver sus calificacion | admin y profesor puede ver de cualquier alumno
-router.get('/', authenticate, authorize(['alumno']), verCalificacionAlumno);
-router.get('/:id', authenticate, authorize(rolesPermitidos), verCalificacionAlumno);
+// 📌 Ver calificaciones
+// Alumno ve sus propias calificaciones
+router.get(
+  '/mi-calificaciones',
+  authenticate,
+  authorize(rolesAlumno),
+  verCalificacionesAlumnoHandler
+);
+
+// Profesor o admin puede ver calificaciones de cualquier alumno por ID
+router.get(
+  '/:alumnoId',
+  authenticate,
+  authorize(rolesProfesorAdmin),
+  verCalificacionesAlumnoHandler
+);
 
 export default router;

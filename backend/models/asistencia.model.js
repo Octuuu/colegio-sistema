@@ -57,16 +57,16 @@ export const getHistorialAsistencias = async (profesorId, materiaId) => {
       a.nombre,
       a.apellido,
       IFNULL(asist.presente, false) AS presente,
-      asist.fecha
+      DATE(asist.fecha) AS fecha
     FROM alumnos a
     JOIN materias_curso mc 
-      ON a.curso_id = mc.curso_id AND mc.materia_id = ?
+      ON a.curso_id = mc.curso_id 
+      AND mc.materia_id = ?
     LEFT JOIN asistencias asist
       ON asist.alumno_id = a.id
       AND asist.materia_id = mc.materia_id
-      AND DATE(asist.fecha) = CURDATE()
     WHERE mc.profesor_id = ?
-    ORDER BY a.apellido ASC
+    ORDER BY asist.fecha ASC, a.apellido ASC
   `, [materiaId, profesorId]);
 
   return rows;

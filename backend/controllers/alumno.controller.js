@@ -34,9 +34,11 @@ export const createAlumnoHandler = async (req, res) => {
     const id = await createAlumno(req.body);
     res.status(201).json({ id, message: 'Alumno y usuario creados correctamente' });
   } catch (error) {
+    console.error('Error en createAlumnoHandler:', error); 
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Actualizar alumno
 export const updateAlumnoHandler = async (req, res) => {
