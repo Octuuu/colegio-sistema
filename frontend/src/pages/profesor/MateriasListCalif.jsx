@@ -3,7 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { obtenerMaterias } from "../../services/asistenciaService";
 import { Link } from "react-router-dom";
 
-const MateriasList = () => {
+const MateriasListCalif = () => {
   const { token } = useContext(AuthContext);
   const [materias, setMaterias] = useState([]);
 
@@ -36,10 +36,10 @@ const MateriasList = () => {
               <td className="p-2">{m.nombre}</td>
               <td className="p-2">
                 <Link
-                  to={`/profesor/calificaciones/registrar`}
-                  className="text-blue-600 hover:underline " 
+                  to={`/profesor/materias/${m.id}/calificaciones/registrar`}
+                  className="text-blue-600 hover:underline"
                 >
-                  Ver alumnos
+                  Registrar calificaciones
                 </Link>
               </td>
             </tr>
@@ -50,4 +50,5 @@ const MateriasList = () => {
   );
 };
 
-export default MateriasList;
+export default MateriasListCalif;
+

@@ -1,111 +1,98 @@
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { registrarCalificacion } from "../../services/calificacionService";
-import axios from "axios";
+import { obtenerAlumnosPorMateria, registrarCalificacion } from "../../services/calificacionService";
 
 const RegistrarCalificacion = () => {
   const { token } = useContext(AuthContext);
+  const { materiaId } = useParams();
 
   const [alumnos, setAlumnos] = useState([]);
-  const [materias, setMaterias] = useState([]);
-  const [form, setForm] = useState({
-    alumno_id: "",
-    materia_id: "",
-    nota: "",
-  });
+  const [notas, setNotas] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [mensaje, setMensaje] = useState(null);
 
-  // Obtener alumnos y materias
+  const fetchAlumnos = async () => {
+    try {
+      const data = await obtenerAlumnosPorMateria(materiaId, token);
+      setAlumnos(data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error al cargar alumnos:", err);
+      setError("No se pudieron cargar los alumnos");
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchAlumnos = async () => {
-      try {
-        const res = await axios.get("http://localhost:3000/api/alumnos", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setAlumnos(res.data);
-      } catch (error) {
-        console.error("Error al obtener alumnos:", error.response?.data || error.message);
-      }
-    };
-
-    const fetchMaterias = async () => {
-      try {
-        const res = await axios.get("http://localhost:3000/api/materias", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setMaterias(res.data);
-      } catch (error) {
-        console.error("Error al obtener materias:", error.response?.data || error.message);
-      }
-    };
-
     fetchAlumnos();
-    fetchMaterias();
-  }, [token]);
+  }, [materiaId]);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (alumnoId, value) => {
+    setNotas((prev) => ({ ...prev, [alumnoId]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMensaje(null);
+
     try {
-      await registrarCalificacion(form, token);
-      alert("Calificación registrada con éxito");
-      setForm({ alumno_id: "", materia_id: "", nota: "" });
-    } catch (error) {
-      console.error(error);
-      alert(error.response?.data?.error || "Error al registrar calificación");
+      for (const alumno of alumnos) {
+        const nota = notas[alumno.alumno_id];
+        if (!nota) continue;
+        await registrarCalificacion({ alumno_id: alumno.alumno_id, materia_id: Number(materiaId), nota: Number(nota), token });
+      }
+      setMensaje("Calificaciones registradas correctamente");
+      setNotas({});
+    } catch (err) {
+      console.error("Error al registrar calificaciones:", err);
+      setError("No se pudieron registrar las calificaciones");
     }
   };
 
+  if (loading) return <p>Cargando alumnos...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
   return (
-    <div className="max-w-xl mx-auto mt-8 bg-white dark:bg-gray-800 p-6 rounded shadow">
-      <h2 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">Registrar Calificación</h2>
-      <form onSubmit={handleSubmit} className="grid gap-4">
-        <select
-          name="alumno_id"
-          value={form.alumno_id}
-          onChange={handleChange}
-          required
-          className="border border-gray-400 p-2 rounded"
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Registrar Calificaciones</h2>
+      {mensaje && <p className="text-green-500 mb-4">{mensaje}</p>}
+
+      <form onSubmit={handleSubmit}>
+        <table className="w-full border">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="p-2">Alumno</th>
+              <th className="p-2">Curso</th>
+              <th className="p-2">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            {alumnos.map((alumno) => (
+              <tr key={alumno.alumno_id} className="text-center">
+                <td className="p-2">{alumno.nombre} {alumno.apellido}</td>
+                <td className="p-2">{alumno.curso} {alumno.anio}</td>
+                <td className="p-2">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={notas[alumno.alumno_id] || ""}
+                    onChange={(e) => handleChange(alumno.alumno_id, e.target.value)}
+                    className="border p-1 w-20 text-center"
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <button
+          type="submit"
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          <option value="">Seleccione un alumno</option>
-          {alumnos.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.nombre} {a.apellido}
-            </option>
-          ))}
-        </select>
-
-        <select
-          name="materia_id"
-          value={form.materia_id}
-          onChange={handleChange}
-          required
-          className="border border-gray-400 p-2 rounded"
-        >
-          <option value="">Seleccione una materia</option>
-          {materias.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.nombre}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="number"
-          name="nota"
-          value={form.nota}
-          onChange={handleChange}
-          placeholder="Nota"
-          min="0"
-          max="100"
-          required
-          className="border border-gray-400 p-2 rounded"
-        />
-
-        <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold">
-          Registrar
+          Guardar calificaciones
         </button>
       </form>
     </div>

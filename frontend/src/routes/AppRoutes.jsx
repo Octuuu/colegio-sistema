@@ -65,7 +65,7 @@ export default function AppRoutes() {
         <Route path="/profesor/listaMaterias" element={<ListaMaterias />} />
         <Route path="/profesor/materias/:materiaId/historial" element={<ListaAsistencia />} />
         <Route path="/profesor/calificaciones" element={<MateriasListCalif />} />
-        <Route path="/profesor/calificaciones/registrar" element={<RegistrarCalificacion />} />
+        <Route path="/profesor/materias/:materiaId/calificaciones/registrar" element={<RegistrarCalificacion />} />
       </Route>
 
       {/* Rutas protegidas para alumno */}
