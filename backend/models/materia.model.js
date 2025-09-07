@@ -51,3 +51,21 @@ export const getMateriasByProfesor = async (profesorId) => {
     throw error;
   }
 };
+
+// obtener alumnos de una materia
+export const getAlumnosPorMateria = async (materiaId) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT a.id, a.nombre, a.apellido
+       FROM alumnos a
+       JOIN materias_curso mc ON a.curso_id = mc.curso_id
+       WHERE mc.materia_id = ?`,
+      [materiaId]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error en getAlumnosPorMateria:", error);
+    throw error;
+  }
+};
+

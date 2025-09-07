@@ -72,3 +72,17 @@ export const getMateriasProfesor = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+import { getAlumnosPorMateria } from "../models/materia.model.js";
+
+// Obtener alumnos de una materia
+export const getAlumnosPorMateriaHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const alumnos = await getAlumnosPorMateria(id);
+    res.json(alumnos);
+  } catch (error) {
+    console.error("Error en getAlumnosPorMateriaHandler:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
