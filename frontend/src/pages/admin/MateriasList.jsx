@@ -3,6 +3,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { obtenerMaterias, eliminarMateria } from '../../services/crearMateria.js';
 import Modal from '../../components/Modal';
 import EditarMateria from './EditMateria';
+import CreateSubject from './CreateSubject.jsx';
 
 const MateriasList = () => {
   const { token } = useContext(AuthContext);
@@ -33,7 +34,16 @@ const MateriasList = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Materias registradas</h2>
+
+      <div className='flex justify-between'>
+        <h2 className="text-2xl font-bold mb-4">Materias registradas</h2>
+
+        <div className='flex gap-10'>
+          <h1 >Crear materia</h1>
+          <h1>volver al tablero</h1>
+        </div>
+      </div>
+    
       <table className="w-full border">
         <thead>
           <tr className="bg-gray-200">
@@ -68,13 +78,14 @@ const MateriasList = () => {
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {materiaSeleccionada && (
-          <EditarMateria
+            <EditarMateria
             materia={materiaSeleccionada}
             onClose={() => {
               setIsModalOpen(false);
               cargarMaterias(); 
             }}
           />
+          
         )}
       </Modal>
     </div>

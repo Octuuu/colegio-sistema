@@ -29,6 +29,7 @@ import ListaAsistencia from '../pages/profesor/ListaAsistencia';
 import MateriasListCalif from '../pages/profesor/MateriasListCalif';
 import RegistrarCalificacion from '../pages/profesor/RegistrarCalificacion';
 import AdminLayout from '../pages/admin/AdminLayout';
+import ProfesorLayout from '../pages/profesor/ProfesorLayout';
 
 export default function AppRoutes() {
   return (
@@ -36,7 +37,7 @@ export default function AppRoutes() {
       <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<Login />} />
 
-      {/* 🔹 Rutas protegidas para admin con layout */}
+      {/* rutas protegidas para admin */}
       <Route element={<ProtectedRoute allowedRoles={[1]} />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
@@ -59,18 +60,21 @@ export default function AppRoutes() {
       </Route>
 
       {/* rutas protegidas para profesor */}
-      <Route element={<ProtectedRoute allowedRoles={[2]} />}>
-        <Route path="/profesor" element={<Navigate to="/profesor/dashboard" replace />} />
-        <Route path="/profesor/dashboard" element={<ProfesorDashboard />} />
-        <Route path="/profesor/asistencias" element={<Asistencias />} />
-        <Route path="/profesor/cursos" element={<Cursos />} />
-        <Route path="/profesor/materias" element={<Materias />} />
-        <Route path="/profesor/alumnos" element={<Alumnos />} />
-        <Route path="/profesor/:materiaId/alumnos" element={<AlumnosAistencia />} />
-        <Route path="/profesor/listaMaterias" element={<ListaMaterias />} />
-        <Route path="/profesor/materias/:materiaId/historial" element={<ListaAsistencia />} />
-        <Route path="/profesor/calificaciones" element={<MateriasListCalif />} />
-        <Route path="/profesor/materias/:materiaId/calificaciones/registrar" element={<RegistrarCalificacion />} />
+      <Route element=
+      {<ProtectedRoute allowedRoles={[2]} />}>
+        <Route path="/profesor" element={<ProfesorLayout />}>
+          <Route path="/profesor" element={<Navigate to="/profesor/dashboard" replace />} />
+          <Route path="/profesor/dashboard" element={<ProfesorDashboard />} />
+          <Route path="/profesor/asistencias" element={<Asistencias />} />
+          <Route path="/profesor/cursos" element={<Cursos />} />
+          <Route path="/profesor/materias" element={<Materias />} />
+          <Route path="/profesor/alumnos" element={<Alumnos />} />
+          <Route path="/profesor/:materiaId/alumnos" element={<AlumnosAistencia />} />
+          <Route path="/profesor/listaMaterias" element={<ListaMaterias />} />
+          <Route path="/profesor/materias/:materiaId/historial" element={<ListaAsistencia />} />
+          <Route path="/profesor/calificaciones" element={<MateriasListCalif />} />
+          <Route path="/profesor/materias/:materiaId/calificaciones/registrar" element={<RegistrarCalificacion />} />
+        </Route>
       </Route>
 
       {/* Rutas protegidas para alumno */}

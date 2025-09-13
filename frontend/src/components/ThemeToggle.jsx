@@ -9,7 +9,7 @@ const ThemeToggle = () => {
       onClick={toggleTheme}
       className="py-1 px-3 rounded bg-gray-200 dark:bg-gray-700 text-sm"
     >
-      {theme === 'dark' ? '☀️ Claro' : '🌙 Oscuro'}
+      {theme === 'dark' ? ' Claro' : 'Oscuro'}
     </button>
   );
 };
