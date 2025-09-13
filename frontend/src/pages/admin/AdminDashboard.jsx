@@ -7,10 +7,10 @@ const AdminDashboard = () => {
   }, []);
 
   const cards = [
-    { title: 'Cursos', path: '/admin/cursos', color: 'bg-green-100', textColor: 'text-green-700' },
-    { title: 'Inscribir alumnos', path: '/admin/alumnos', color: 'bg-pink-100', textColor: 'text-pink-700' },
-    { title: 'Crear profesor', path: '/admin/profesor', color: 'bg-yellow-100', textColor: 'text-yellow-700' },
-    { title: 'Asignaciones', path: '/admin/asignarMateria', color: 'bg-purple-100', textColor: 'text-purple-700' },
+    { title: 'Cursos', path: '/admin/cursos', color: '', textColor: 'text-green-700' },
+    { title: 'Matricular alumno', path: '/admin/alumnos', color: '', textColor: 'text-pink-700' },
+    { title: 'Crear profesor', path: '/admin/profesor', color: '', textColor: 'text-yellow-700' },
+    { title: 'Asignaciones', path: '/admin/asignarMateria', color: '', textColor: 'text-purple-700' },
   ];
 
   return (
@@ -25,14 +25,11 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {cards.map((card, index) => (
           <div key={index} className={`${card.color} p-4 rounded shadow`}>
-            <h2 className={`text-xl font-bold ${card.textColor} mb-2`}>
-              {card.title}
-            </h2>
             <Link
               to={card.path}
-              className={`inline-block mt-2 text-sm font-bold ${card.textColor} hover:underline`}
+              className={`inline-block mb-2 text-sm ${card.textColor}  text-xl font-bold`}
             >
-              Ir →
+              {card.title} →
             </Link>
           </div>
         ))}

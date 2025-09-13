@@ -9,7 +9,28 @@ function EditarCurso() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  /*
+  const [nombre, setNombre] = useState(materia.nombre);
+  const [descripcion, setDescripcion] = useState(materia.descripcion);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No hay token');
+
+      await actualizarMateria(materia.id, { nombre, descripcion }, token);
+      alert('✅ Materia actualizada correctamente');
+      onClose();
+    } catch (error) {
+      console.error('❌ Error al actualizar la materia:', error);
+      alert('❌ No se pudo actualizar la materia');
+    }
+  };
+
+  */
   useEffect(() => {
+    
     const fetchMateria = async () => {
       try {
         const token = localStorage.getItem('token');

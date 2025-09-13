@@ -9,6 +9,7 @@ import Calificaciones from '../pages/profesor/Calificaciones';
 import Cursos from '../pages/profesor/Cursos';
 import Materias from '../pages/profesor/Materias';
 import Alumnos from '../pages/admin/Alumnos';
+import AlumnosCursos from '../pages/admin/AlumnosCursos'
 import HomeRedirect from '../components/HomeRedirect';
 import CreateCourse from '../pages/admin/CreateCourse';
 import CreateSubject from '../pages/admin/CreateSubject';
@@ -50,6 +51,7 @@ export default function AppRoutes() {
           <Route path="materiasList" element={<MateriasList />} />
           <Route path="editarMaterias/:id" element={<EditarMateria />} />
           <Route path="cursosList" element={<CursosList />} />
+          <Route path='alumnosCursos' element={<AlumnosCursos />} />
           <Route path="editarCursos/:id" element={<EditarCurso />} />
           <Route path=":id/alumnos" element={<AlumnosList />} />
           <Route path="editarAlumnos/:id" element={<EditarAlumno />} />

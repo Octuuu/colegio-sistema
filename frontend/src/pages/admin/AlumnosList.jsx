@@ -59,7 +59,6 @@ const AlumnosPorCurso = () => {
         </div>
       )}
 
-      {/* Contenido principal */}
       <div className={`${error ? 'blur-sm pointer-events-none select-none' : ''} p-6`}>
         <h2 className="text-2xl font-bold mb-4">Alumnos del curso {cursoId}</h2>
 

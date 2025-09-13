@@ -1,9 +1,9 @@
 import { useEffect, useState, useContext, useCallback } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { obtenerCurso, eliminarCurso } from '../../services/cursoService.js';
+import { obtenerCurso } from '../../services/cursoService.js';
 import { Link } from 'react-router-dom';
 
-const CursosList = () => {
+const AlumnosCursos = () => {
   const { token } = useContext(AuthContext);
   const [cursos, setCursos] = useState([]);
   const [error, setError] = useState(null);
@@ -16,18 +16,6 @@ const CursosList = () => {
       console.error('Error al obtener cursos:', err);
     }
   }, [token]);
-
-  const handleDelete = async (id) => {
-    if (confirm('¿Estás seguro de eliminar este curso?')) {
-      try {
-        await eliminarCurso(id, token);
-        await cargarCursos();
-      } catch (error) {
-        error
-        setError('❌ No se puede eliminar el curso porque tiene alumnos asignados. Edita o elimina los alumnos primero.');
-      }
-    }
-  };
 
   const cerrarError = () => {
     setError(null);
@@ -56,13 +44,13 @@ const CursosList = () => {
 
       <div className={`${error ? 'blur-sm pointer-events-none select-none' : ''} p-6`}>
         <div className='flex justify-between mb-5'>
-          <h1 className='font-medium text-2xl'>Cursos Registrados</h1>
+          <h1 className='font-medium text-2xl'>Ver alumnos de cada curso</h1>
           <div className=''>
                 <Link
                     to={``}
                     className="text-blue-600  m-10"
                   >
-                    Crear curso
+                    Inscribir alumno
                 </Link> 
                 <Link
                     to={``}
@@ -86,18 +74,6 @@ const CursosList = () => {
                 <td className="p-2">{c.anio}°</td>
                 <td className="p-2">{c.bachillerato}</td>
                 <td className="p-3 space-x-16 font-medium">
-                  <Link
-                    to={`/admin/editarCursos/${c.id}`}
-                    className="text-blue-700 bg-blue-100 px-2 py-1 rounded hover:bg-blue-200"
-                  >
-                    Editar
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(c.id)}
-                    className="text-red-700 font-medium bg-red-100 px-2 py-1 rounded hover:bg-red-200"
-                  >
-                    Eliminar
-                  </button>
 
                   <Link
                     to={`/admin/${c.id}/alumnos`}
@@ -115,4 +91,4 @@ const CursosList = () => {
   );
 };
 
-export default CursosList;
+export default AlumnosCursos;

@@ -2,8 +2,12 @@ import { useEffect, useState, useContext, useCallback } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { obtenerProfesor, eliminarProfesor } from '../../services/profesorService';
 import { Link } from 'react-router-dom';
+import Modal from '../../components/Modal'
+import EditarProfesor from './EditProfesor';
 
 const ProfesorList = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
   const { token } = useContext(AuthContext);
   const [profesor, setProfesor] = useState([]);
 
@@ -15,8 +19,12 @@ const ProfesorList = () => {
   const handleDelete = async (id) => {
     if (confirm('¿Estás seguro de eliminar este profesor?')) {
       await eliminarProfesor(id, token);
-      await cargarProfesor(); // Recargar lista
+      await cargarProfesor(); 
     }
+  };
+  const handleEdit = (curso) => {
+    setCursoSeleccionado(curso);
+    setIsModalOpen(true);
   };
 
   useEffect(() => {
@@ -25,7 +33,16 @@ const ProfesorList = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Materias registradas</h2>
+
+      <div className='flex justify-between'>
+        <h2 className="text-2xl font-bold mb-4">Materias registradas</h2>
+        <div>
+          <Link to={`/admin/editarProfesor/`} className="text-blue-600 mr-10">Crear profesor</Link>
+          <Link to={`/admin/editarProfesor/`} className="text-blue-600">Asignaciones</Link>
+        </div>
+      
+      </div>
+      
       <table className="w-full border">
         <thead>
           <tr className="bg-gray-200">
@@ -48,13 +65,30 @@ const ProfesorList = () => {
               <td className="p-2">{p.cedula}</td>
               <td className="p-2">{p.direccion}</td>
               <td className="p-2 space-x-2">
-                <Link to={`/admin/editarProfesor/${p.id}`} className="text-blue-600">Editar</Link>
+                <button
+                  onClick={() => handleEdit(p)}
+                  className="font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded hover:bg-blue-200"
+                >
+                  Editar
+                </button>
                 <button onClick={() => handleDelete(p.id)} className="text-red-600">Eliminar</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        {cursoSeleccionado && (
+          <EditarProfesor
+            materia={cursoSeleccionado}
+            onClose={() => {
+              setIsModalOpen(false);
+              cargarProfesor(); 
+            }}
+          />
+        )}
+      </Modal>
     </div>
   );
 };

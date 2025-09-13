@@ -44,19 +44,19 @@ const MateriasList = () => {
         </thead>
         <tbody>
           {materias.map((m) => (
-            <tr key={m.id}>
+            <tr key={m.id} className='text-center'>
               <td className="p-2">{m.nombre}</td>
               <td className="p-2">{m.descripcion}</td>
               <td className="p-2 space-x-2">
                 <button
                   onClick={() => handleEdit(m)}
-                  className="text-blue-600"
+                  className="font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded hover:bg-blue-200"
                 >
                   Editar
                 </button>
                 <button
                   onClick={() => handleDelete(m.id)}
-                  className="text-red-600"
+                  className="font-medium text-red-700 bg-red-100 px-2 py-1 rounded hover:bg-red-200"
                 >
                   Eliminar
                 </button>
@@ -66,14 +66,13 @@ const MateriasList = () => {
         </tbody>
       </table>
 
-      {/* Modal con el formulario */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {materiaSeleccionada && (
           <EditarMateria
             materia={materiaSeleccionada}
             onClose={() => {
               setIsModalOpen(false);
-              cargarMaterias(); // recargar después de editar
+              cargarMaterias(); 
             }}
           />
         )}
