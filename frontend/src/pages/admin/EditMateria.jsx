@@ -47,7 +47,7 @@ function EditarMateria({ materia, onClose }) {
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
-          Guardar Cambioss
+          Guardar Cambiosssss
         </button>
       </form>
     </div>
