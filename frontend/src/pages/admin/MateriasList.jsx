@@ -1,11 +1,14 @@
 import { useEffect, useState, useContext, useCallback } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { obtenerMaterias, eliminarMateria } from '../../services/crearMateria.js';
-import { Link } from 'react-router-dom';
+import Modal from '../../components/Modal';
+import EditarMateria from './EditMateria';
 
 const MateriasList = () => {
   const { token } = useContext(AuthContext);
   const [materias, setMaterias] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [materiaSeleccionada, setMateriaSeleccionada] = useState(null);
 
   const cargarMaterias = useCallback(async () => {
     const data = await obtenerMaterias(token);
@@ -17,6 +20,11 @@ const MateriasList = () => {
       await eliminarMateria(id, token);
       await cargarMaterias(); // Recargar lista
     }
+  };
+
+  const handleEdit = (materia) => {
+    setMateriaSeleccionada(materia);
+    setIsModalOpen(true);
   };
 
   useEffect(() => {
@@ -40,13 +48,36 @@ const MateriasList = () => {
               <td className="p-2">{m.nombre}</td>
               <td className="p-2">{m.descripcion}</td>
               <td className="p-2 space-x-2">
-                <Link to={`/admin/editarMaterias/${m.id}`} className="text-blue-600">Editar</Link>
-                <button onClick={() => handleDelete(m.id)} className="text-red-600">Eliminar</button>
+                <button
+                  onClick={() => handleEdit(m)}
+                  className="text-blue-600"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => handleDelete(m.id)}
+                  className="text-red-600"
+                >
+                  Eliminar
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Modal con el formulario */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        {materiaSeleccionada && (
+          <EditarMateria
+            materia={materiaSeleccionada}
+            onClose={() => {
+              setIsModalOpen(false);
+              cargarMaterias(); // recargar después de editar
+            }}
+          />
+        )}
+      </Modal>
     </div>
   );
 };

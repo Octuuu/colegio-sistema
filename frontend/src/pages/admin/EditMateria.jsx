@@ -1,33 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { obtenerMateriaPorId, actualizarMateria } from '../../services/crearMateria.js';
+import { useState } from 'react';
+import { actualizarMateria } from '../../services/crearMateria.js';
 
-function EditarMateria() {
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
-  const [cargando, setCargando] = useState(true);
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchMateria = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('No hay token');
-
-        const materia = await obtenerMateriaPorId(id, token);
-        setNombre(materia.nombre);
-        setDescripcion(materia.descripcion);
-        setCargando(false);
-      } catch (error) {
-        console.error('❌ Error al obtener la materia:', error);
-        alert('⚠️ No autorizado. Iniciá sesión.');
-        navigate('/login'); // o la ruta correspondiente
-      }
-    };
-
-    fetchMateria();
-  }, [id, navigate]);
+function EditarMateria({ materia, onClose }) {
+  const [nombre, setNombre] = useState(materia.nombre);
+  const [descripcion, setDescripcion] = useState(materia.descripcion);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,19 +11,17 @@ function EditarMateria() {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No hay token');
 
-      await actualizarMateria(id, { nombre, descripcion }, token);
+      await actualizarMateria(materia.id, { nombre, descripcion }, token);
       alert('✅ Materia actualizada correctamente');
-      navigate('/admin/materiasList');
+      onClose();
     } catch (error) {
       console.error('❌ Error al actualizar la materia:', error);
       alert('❌ No se pudo actualizar la materia');
     }
   };
 
-  if (cargando) return <p className="text-center mt-10">Cargando...</p>;
-
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
+    <div>
       <h2 className="text-xl font-bold mb-4">Editar Materia</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

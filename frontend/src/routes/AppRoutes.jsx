@@ -27,6 +27,7 @@ import ListaMaterias from '../pages/profesor/ListaMaterias';
 import ListaAsistencia from '../pages/profesor/ListaAsistencia';
 import MateriasListCalif from '../pages/profesor/MateriasListCalif';
 import RegistrarCalificacion from '../pages/profesor/RegistrarCalificacion';
+import AdminLayout from '../pages/admin/AdminLayout';
 
 export default function AppRoutes() {
   return (
@@ -34,23 +35,25 @@ export default function AppRoutes() {
       <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<Login />} />
 
-      {/* Rutas protegidas para admin */}
+      {/* 🔹 Rutas protegidas para admin con layout */}
       <Route element={<ProtectedRoute allowedRoles={[1]} />}>
-        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/alumnos" element={<Alumnos />} />
-        <Route path="/admin/materias" element={<CreateSubject />} />
-        <Route path="/admin/cursos" element={<CreateCourse />} />
-        <Route path="/admin/asignarMateria" element={<AsignedSubject />} />
-        <Route path="/admin/profesor" element={<CreateTeacher />} />
-        <Route path='/admin/editarProfesor/:id' element={< EditarProfesor />} />
-        <Route path="/admin/profesorList" element={<ProfesorList />} />
-        <Route path="/admin/materiasList" element={<MateriasList />} />
-        <Route path="/admin/editarMaterias/:id" element={<EditarMateria />} />
-        <Route path="/admin/cursosList" element={<CursosList />} />
-        <Route path="/admin/editarCursos/:id" element={<EditarCurso />} />
-        <Route path="/admin/:id/alumnos" element={<AlumnosList />} />
-        <Route path="/admin/editarAlumnos/:id" element={<EditarAlumno />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="alumnos" element={<Alumnos />} />
+          <Route path="materias" element={<CreateSubject />} />
+          <Route path="cursos" element={<CreateCourse />} />
+          <Route path="asignarMateria" element={<AsignedSubject />} />
+          <Route path="profesor" element={<CreateTeacher />} />
+          <Route path="editarProfesor/:id" element={<EditarProfesor />} />
+          <Route path="profesorList" element={<ProfesorList />} />
+          <Route path="materiasList" element={<MateriasList />} />
+          <Route path="editarMaterias/:id" element={<EditarMateria />} />
+          <Route path="cursosList" element={<CursosList />} />
+          <Route path="editarCursos/:id" element={<EditarCurso />} />
+          <Route path=":id/alumnos" element={<AlumnosList />} />
+          <Route path="editarAlumnos/:id" element={<EditarAlumno />} />
+        </Route>
       </Route>
 
       {/* rutas protegidas para profesor */}
