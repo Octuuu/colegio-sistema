@@ -44,7 +44,7 @@ const AlumnosPorCurso = () => {
 
   return (
     <div className="relative">
-      {/* Modal de error */}
+     
       {error && (
         <div className="min-h-[100vh] absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-10 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-md text-center max-w-md w-full">
@@ -99,7 +99,11 @@ const AlumnosPorCurso = () => {
             </tbody>
           </table>
         )}
+
+        
       </div>
+
+
     </div>
   );
 };
