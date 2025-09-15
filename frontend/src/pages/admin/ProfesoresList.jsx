@@ -1,62 +1,53 @@
 import { useEffect, useState, useContext, useCallback } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { obtenerProfesor, eliminarProfesor } from '../../services/profesorService';
-import { Link } from 'react-router-dom';
-import Modal from '../../components/Modal'
+import Modal from '../../components/Modal';
 import EditarProfesor from './EditProfesor';
 
 const ProfesorList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
+  const [profesorSeleccionado, setProfesorSeleccionado] = useState(null);
   const { token } = useContext(AuthContext);
-  const [profesor, setProfesor] = useState([]);
+  const [profesores, setProfesores] = useState([]);
 
-  const cargarProfesor = useCallback(async () => {
+  const cargarProfesores = useCallback(async () => {
     const data = await obtenerProfesor(token);
-    setProfesor(data);
+    setProfesores(data);
   }, [token]);
 
   const handleDelete = async (id) => {
     if (confirm('¿Estás seguro de eliminar este profesor?')) {
       await eliminarProfesor(id, token);
-      await cargarProfesor(); 
+      await cargarProfesores();
     }
   };
-  const handleEdit = (curso) => {
-    setCursoSeleccionado(curso);
+
+  const handleEdit = (profesor) => {
+    setProfesorSeleccionado(profesor);
     setIsModalOpen(true);
   };
 
   useEffect(() => {
-    cargarProfesor();
-  }, [cargarProfesor]);
+    cargarProfesores();
+  }, [cargarProfesores]);
 
   return (
     <div className="p-6">
-
-      <div className='flex justify-between'>
-        <h2 className="text-2xl font-bold mb-4">Materias registradas</h2>
-        <div>
-          <Link to={`/admin/editarProfesor/`} className="text-blue-600 mr-10">Crear profesor</Link>
-          <Link to={`/admin/editarProfesor/`} className="text-blue-600">Asignaciones</Link>
-        </div>
-      
-      </div>
-      
+      <h2 className="text-2xl font-bold mb-4">Profesores registrados</h2>
       <table className="w-full border">
         <thead>
           <tr className="bg-gray-200">
             <th className="p-2">Nombre</th>
             <th className="p-2">Apellido</th>
-            <th className="p-2">Telefono</th>
+            <th className="p-2">Teléfono</th>
             <th className="p-2">Correo</th>
-            <th className="p-2">Cedula</th>
-            <th className="p-2">Direccion</th>
+            <th className="p-2">Cédula</th>
+            <th className="p-2">Dirección</th>
             <th className="p-2">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {profesor.map((p) => (
+          {profesores.map((p) => (
             <tr key={p.id}>
               <td className="p-2">{p.nombre}</td>
               <td className="p-2">{p.apellido}</td>
@@ -71,7 +62,12 @@ const ProfesorList = () => {
                 >
                   Editar
                 </button>
-                <button onClick={() => handleDelete(p.id)} className="text-red-600">Eliminar</button>
+                <button
+                  onClick={() => handleDelete(p.id)}
+                  className="text-red-600"
+                >
+                  Eliminar
+                </button>
               </td>
             </tr>
           ))}
@@ -79,12 +75,12 @@ const ProfesorList = () => {
       </table>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        {cursoSeleccionado && (
+        {profesorSeleccionado && (
           <EditarProfesor
-            materia={cursoSeleccionado}
+            profesor={profesorSeleccionado}
             onClose={() => {
               setIsModalOpen(false);
-              cargarProfesor(); 
+              cargarProfesores();
             }}
           />
         )}

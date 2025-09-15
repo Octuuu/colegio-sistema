@@ -17,7 +17,7 @@ export const getMaterias = async (req, res) => {
   }
 };
 
-// Obtener un materia por ID
+// obtener un materia por ID
 export const getMateria = async (req, res) => {
   try {
     const materia = await getMateriaById(req.params.id);

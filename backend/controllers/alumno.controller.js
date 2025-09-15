@@ -40,7 +40,7 @@ export const createAlumnoHandler = async (req, res) => {
 };
 
 
-// Actualizar alumno
+// actualizar alumno
 export const updateAlumnoHandler = async (req, res) => {
   try {
     await updateAlumno(req.params.id, req.body);

@@ -1,53 +1,32 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { obtenerMateriaPorId, actualizarMateria } from '../../services/crearMateria.js';
+import { obtenerCursoPorId, actualizarCurso } from '../../services/cursoService.js';
 
 function EditarCurso() {
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
+  const [anio, setAnio] = useState('');
+  const [bachillerato, setBachillerato] = useState('');
   const [cargando, setCargando] = useState(true);
   const { id } = useParams();
   const navigate = useNavigate();
 
-  /*
-  const [nombre, setNombre] = useState(materia.nombre);
-  const [descripcion, setDescripcion] = useState(materia.descripcion);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No hay token');
-
-      await actualizarMateria(materia.id, { nombre, descripcion }, token);
-      alert('✅ Materia actualizada correctamente');
-      onClose();
-    } catch (error) {
-      console.error('❌ Error al actualizar la materia:', error);
-      alert('❌ No se pudo actualizar la materia');
-    }
-  };
-
-  */
   useEffect(() => {
-    
-    const fetchMateria = async () => {
+    const fetchCurso = async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No hay token');
 
-        const materia = await obtenerMateriaPorId(id, token);
-        setNombre(materia.nombre);
-        setDescripcion(materia.descripcion);
+        const curso = await obtenerCursoPorId(id, token);
+        setAnio(curso.anio);
+        setBachillerato(curso.bachillerato);
         setCargando(false);
       } catch (error) {
-        console.error('❌ Error al obtener la materia:', error);
-        alert('⚠️ No autorizado. Iniciá sesión.');
+        console.error('❌ Error al obtener el curso:', error);
+        alert('⚠️ No autorizado o curso no encontrado.');
         navigate('/login'); // o la ruta correspondiente
       }
     };
 
-    fetchMateria();
+    fetchCurso();
   }, [id, navigate]);
 
   const handleSubmit = async (e) => {
@@ -56,12 +35,12 @@ function EditarCurso() {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No hay token');
 
-      await actualizarMateria(id, { nombre, descripcion }, token);
-      alert('✅ Materia actualizada correctamente');
-      navigate('/admin/materiasList');
+      await actualizarCurso(id, { anio, bachillerato }, token);
+      alert('✅ Curso actualizado correctamente');
+      navigate('/admin/cursosList'); // cambiá la ruta según tu lista de cursos
     } catch (error) {
-      console.error('❌ Error al actualizar la materia:', error);
-      alert('❌ No se pudo actualizar la materia');
+      console.error('❌ Error al actualizar el curso:', error);
+      alert('❌ No se pudo actualizar el curso');
     }
   };
 
@@ -69,23 +48,23 @@ function EditarCurso() {
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Editar Materia</h2>
+      <h2 className="text-xl font-bold mb-4">Editar Curso</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block font-semibold">Nombre</label>
+          <label className="block font-semibold">Año</label>
           <input
             type="text"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            value={anio}
+            onChange={(e) => setAnio(e.target.value)}
             className="w-full border border-gray-300 p-2 rounded"
             required
           />
         </div>
         <div>
-          <label className="block font-semibold">Descripción</label>
+          <label className="block font-semibold">Bachillerato</label>
           <textarea
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
+            value={bachillerato}
+            onChange={(e) => setBachillerato(e.target.value)}
             className="w-full border border-gray-300 p-2 rounded"
             required
           ></textarea>

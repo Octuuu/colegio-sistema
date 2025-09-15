@@ -23,7 +23,9 @@ const AdminDashboard = () => {
         {cards.map((card, index) => (
           <div key={index} className={`p-5 rounded-2xl shadow-sm border `}>
             <div className='flex items-center'>
-              <h1 className={`mr-4 p-2 rounded-lg ${card.color} `}>👤</h1>
+              <div className={`mr-4 p-2 rounded-lg ${card.color} `}>
+                <img src="../../../public/info.svg" alt="" className='h-4' />
+              </div>
               <Link
                 to={card.path}
                 className={`inline-block mb-2 text-sm ${card.textColor}  text-xl font-medium`}
