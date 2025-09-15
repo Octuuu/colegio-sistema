@@ -3,5 +3,28 @@
     "axios": "^1.10.0",
     "jwt-decode": "^4.0.0",
     "react-router-dom": "^7.6.3"
-  }
+  },
+  "name": "sistema-escolar",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "start": "concurrently \"npm start --prefix backend\" \"npm start --prefix frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Octuuu/colegio-sistema.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Octuuu/colegio-sistema/issues"
+  },
+  "homepage": "https://github.com/Octuuu/colegio-sistema#readme",
+  "description": ""
 }

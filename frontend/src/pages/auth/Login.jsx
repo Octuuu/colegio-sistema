@@ -54,9 +54,10 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h1>
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 ">
+      <form onSubmit={handleSubmit} className="bg-white p-7 rounded-xl shadow-md w-[29rem] h-96 flex flex-col justify-center items-center">
+        <img className='h-16 w-16 rounded-full mb-4' src="../../../public/javascript.svg" alt="" />
+        <h1 className="text-3xl font-bold mb-8 text-center">Sistema escolar</h1>
 
         {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
@@ -67,7 +68,7 @@ const Login = () => {
           value={form.email}
           onChange={handleChange}
           required
-          className="w-full p-2 border rounded mb-4"
+          className="w-full p-2 border rounded mb-8 focus:outline-none focus:border-blue-600"
         />
         <input
           type="password"
@@ -76,14 +77,14 @@ const Login = () => {
           value={form.password}
           onChange={handleChange}
           required
-          className="w-full p-2 border rounded mb-4"
+          className="w-full p-2 border rounded mb-8 focus:outline-none focus:border-blue-600"
         />
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700 font-medium"
         >
-          Entrar
+          Login
         </button>
       </form>
     </div>

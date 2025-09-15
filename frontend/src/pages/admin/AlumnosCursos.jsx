@@ -44,28 +44,28 @@ const AlumnosCursos = () => {
 
       <div className={`${error ? 'blur-sm pointer-events-none select-none' : ''} p-6`}>
         <div className='flex justify-between mb-5'>
-          <h1 className='font-medium text-2xl'>Ver alumnos de cada curso</h1>
+          <h1 className='text-2xl'>Alumnos de cada curso</h1>
           <div className=''>
                 <Link
                     to={``}
-                    className="text-blue-600  m-10"
+                    className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg m-10 shadow-sm"
                   >
                     Inscribir alumno
                 </Link> 
-                <Link
-                    to={``}
-                    className="text-blue-600"
-                  >
-                    Volver
-                </Link> 
+                <select className='bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm' name="Ordenar" id="">
+                  <option value="">Ordenar</option>
+                  <option value="">A-Z</option>
+                  <option value="">Z-A</option>
+                </select>
+        
           </div>
         </div>
-        <table className="w-full ">
-          <thead>
+        <table className="w-full">
+          <thead className='bg-gray-50'>
             <tr className="">
-              <th className="p-2">Año</th>
-              <th className="p-2">Nombre del curso</th>
-              <th className="p-2">Acciones</th>
+              <th className="font-normal p-2">Año</th>
+              <th className="font-normal p-2">Nombre del curso</th>
+              <th className="font-normal p-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -77,7 +77,7 @@ const AlumnosCursos = () => {
 
                   <Link
                     to={`/admin/${c.id}/alumnos`}
-                    className="text-green-700 bg-green-100 px-2 py-1 rounded hover:bg-green-200"
+                    className="text-green-700 bg-green-100 px-2 py-1 rounded-xl hover:bg-green-200 border-green-300 border font-normal"
                   >
                     Ver alumnos
                   </Link>

@@ -24,8 +24,8 @@ const MenuAdmin = () => {
   ];
 
   return (
-    <div className="h-screen w-64 bg-gray-200 dark:bg-gray-800 p-2 flex flex-col">
-      <h1 className="text-2xl font-bold dark:text-blue-200 mb-6 mt-6 text-center border-b-2">
+    <div className="h-[96vh] ml-4 mt-4 w-64 bg-gray-50 dark:bg-gray-800 p-2 flex flex-col rounded-2xl border border-gray-300 ">
+      <h1 className="text-2xl font-bold dark:text-blue-200 mb-6 mt-6 text-center border-b">
         Administrador
       </h1>
 
@@ -34,10 +34,10 @@ const MenuAdmin = () => {
           <Link
             key={i}
             to={link.path}
-            className={`px-3 font-medium py-2 transition 
+            className={`px-3 text-sm font-medium py-2 transition 
               ${location.pathname === link.path 
-                ? 'bg-blue-200 text-blue-800' 
-                : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
+                ? 'bg-violet-200 text-violet-800 rounded-md' 
+                : 'text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
               }`}
           >
             {link.title}
