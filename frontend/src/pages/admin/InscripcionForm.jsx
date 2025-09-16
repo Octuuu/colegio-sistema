@@ -11,30 +11,33 @@ const InscripcionForm = () => {
     alumno_id: '',
     curso_id: '',
     anio_lectivo: '',
-    fecha_inscripcion: '',
   });
 
-  // Obtener alumnos y cursos
+  const [error, setError] = useState(null);
+
+  // Obtener alumnos y cursos al cargar el componente
   useEffect(() => {
     const fetchAlumnos = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/alumnos`, {
-          headers: { Authorization: `Bearer ${token}` }
+        const res = await axios.get('http://localhost:3000/api/alumnos', {
+          headers: { Authorization: `Bearer ${token}` },
         });
         setAlumnos(res.data);
       } catch (err) {
-        console.error('Error al obtener alumnos:', err.response?.data || err.message);
+        console.error(err);
+        setError('Error al obtener alumnos');
       }
     };
 
     const fetchCursos = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/cursos`, {
-          headers: { Authorization: `Bearer ${token}` }
+        const res = await axios.get('http://localhost:3000/api/cursos', {
+          headers: { Authorization: `Bearer ${token}` },
         });
         setCursos(res.data);
       } catch (err) {
-        console.error('Error al obtener cursos:', err.response?.data || err.message);
+        console.error(err);
+        setError('Error al obtener cursos');
       }
     };
 
@@ -48,6 +51,13 @@ const InscripcionForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validación rápida
+    if (!formData.alumno_id || !formData.curso_id || !formData.anio_lectivo) {
+      alert('Todos los campos son requeridos');
+      return;
+    }
+
     try {
       await crearInscripcion(formData, token);
       alert('Alumno inscrito con éxito');
@@ -55,11 +65,10 @@ const InscripcionForm = () => {
         alumno_id: '',
         curso_id: '',
         anio_lectivo: '',
-        fecha_inscripcion: '',
       });
     } catch (err) {
       console.error(err);
-      alert('Error al inscribir alumno');
+      alert(err.response?.data?.message || 'Error al inscribir alumno');
     }
   };
 
@@ -68,6 +77,11 @@ const InscripcionForm = () => {
       <h2 className="text-4xl font-extrabold mb-6 text-center text-gray-800 dark:text-white">
         Inscribir Alumno
       </h2>
+
+      {error && (
+        <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">{error}</div>
+      )}
+
       <form onSubmit={handleSubmit} className="grid gap-4">
         <select
           name="alumno_id"
@@ -104,16 +118,6 @@ const InscripcionForm = () => {
           name="anio_lectivo"
           placeholder="Año lectivo"
           value={formData.anio_lectivo}
-          onChange={handleChange}
-          required
-          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
-        />
-
-        <input
-          type="date"
-          name="fecha_inscripcion"
-          placeholder="Fecha de inscripción"
-          value={formData.fecha_inscripcion}
           onChange={handleChange}
           required
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"

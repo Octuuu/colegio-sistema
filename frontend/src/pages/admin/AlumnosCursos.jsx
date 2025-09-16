@@ -47,10 +47,10 @@ const AlumnosCursos = () => {
           <h1 className='text-2xl'>Alumnos de cada curso</h1>
           <div className=''>
                 <Link
-                    to={``}
+                    to={`../alumnos`}
                     className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg m-10 shadow-sm"
                   >
-                    Inscribir alumno
+                    Crear alumno
                 </Link> 
                 <select className='bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm' name="Ordenar" id="">
                   <option value="">Ordenar</option>

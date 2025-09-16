@@ -1,14 +1,12 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { crearAlumno } from '../../services/alumnoService';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const AlumnoForm = () => {
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [cursos, setCursos] = useState([]);
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -17,24 +15,7 @@ const AlumnoForm = () => {
     telefono: '',
     direccion: '',
     email: '',
-    curso_id: '',
   });
-
-  // obtener cursos del backend cuando carga el componente
-  useEffect(() => {
-    const fetchCursos = async () => {
-      try {
-        const res = await axios.get(`http://localhost:3000/api/cursos`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setCursos(res.data);
-      } catch (error) {
-        console.error('Error al obtener cursos:', error.response?.data || error.message);
-      }
-    };
-
-    fetchCursos();
-  }, [token]);
 
   // Manejar cambios en inputs
   const handleChange = (e) => {
@@ -124,22 +105,6 @@ const AlumnoForm = () => {
           className="input"
           class='border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500'
         />
-        <select
-          name="curso_id"
-          value={formData.curso_id}
-          onChange={handleChange}
-          required
-          className="input"
-          class='border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-1 focus:ring-blue-500 hover:border-blue-500'
-        >
-          <option value="">Seleccione un curso</option>
-          {Array.isArray(cursos) &&
-            cursos.map((curso) => (
-              <option key={curso.id} value={curso.id}>
-                {curso.anio}° - {curso.bachillerato}
-              </option>
-            ))}
-        </select>
 
         <button
           type="submit"

@@ -7,13 +7,14 @@ import {
 
 export const nuevaInscripcion = async (req, res) => {
   try {
-    const { alumnoId, cursoId, anioLectivo } = req.body;
+    const { alumno_id, curso_id, anio_lectivo } = req.body;
 
-    if (!alumnoId || !cursoId || !anioLectivo) {
-      return res.status(400).json({ message: 'Faltan datos requeridos' });
+    if (!alumno_id || !curso_id || !anio_lectivo) {
+    return res.status(400).json({ message: 'Faltan datos requeridos' });
     }
 
-    const id = await crearInscripcion(alumnoId, cursoId, anioLectivo);
+    const id = await crearInscripcion(alumno_id, curso_id, anio_lectivo);
+
     res.status(201).json({ message: 'Inscripción creada', id });
   } catch (error) {
     console.error(error);

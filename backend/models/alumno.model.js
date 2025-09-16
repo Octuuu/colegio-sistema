@@ -14,14 +14,14 @@ export const getAlumnoById = async (id) => {
 };
 
 // Crear alumno y su cuenta de usuario
-export const createAlumno = async ({ nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email, curso_id }) => {
+export const createAlumno = async ({ nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email }) => {
   const emailUsuario = `${cedula}@correo.com`;
   const password = cedula.split('').reverse().join('') + '.';
 
   // 1. Insertar alumno
   const [result] = await pool.query(
-    'INSERT INTO alumnos (nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email, curso_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email, curso_id]
+    'INSERT INTO alumnos (nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email]
   );
 
   const alumnoId = result.insertId;
@@ -33,10 +33,10 @@ export const createAlumno = async ({ nombre, apellido, cedula, fecha_nacimiento,
 };
 
 // Actualizar alumno
-export const updateAlumno = async (id, { nombre, apellido, cedula, fecha_nacimiento, telefono, direccion,email, curso_id }) => {
+export const updateAlumno = async (id, { nombre, apellido, cedula, fecha_nacimiento, telefono, direccion,email }) => {
   await pool.query(
-    'UPDATE alumnos SET nombre = ?, apellido = ?, cedula = ?, fecha_nacimiento = ?, telefono = ?, direccion = ?, email = ?, curso_id = ? WHERE id = ?',
-    [nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email, curso_id, id]
+    'UPDATE alumnos SET nombre = ?, apellido = ?, cedula = ?, fecha_nacimiento = ?, telefono = ?, direccion = ?, email = ? WHERE id = ?',
+    [nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email, id]
   );
 };
 
@@ -55,11 +55,12 @@ export const getCursoYMateriasDeAlumno = async (alumnoId) => {
       m.id AS materia_id,
       m.nombre AS materia_nombre,
       m.descripcion AS materia_descripcion
-    FROM alumnos a
-    JOIN cursos c ON a.curso_id = c.id
+    FROM inscripciones i
+    JOIN cursos c ON i.curso_id = c.id
     JOIN materias_curso mc ON c.id = mc.curso_id
     JOIN materias m ON mc.materia_id = m.id
-    WHERE a.id = ?
+    WHERE i.alumno_id = ?
+    ORDER BY i.fecha_inscripcion DESC
   `, [alumnoId]);
 
   if (rows.length === 0) return null;
@@ -70,11 +71,13 @@ export const getCursoYMateriasDeAlumno = async (alumnoId) => {
     bachillerato: rows[0].bachillerato,
     materias: rows.map(row => ({
       id: row.materia_id,
-      nombre: row.materia_nombre
+      nombre: row.materia_nombre,
+      descripcion: row.materia_descripcion
     }))
   };
 
   return curso;
 };
+
 
 //

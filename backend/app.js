@@ -12,6 +12,7 @@ import calificacionRoutes from './routes/calificacion.routes.js';
 import perfilRoutes from "./routes/perfil.routes.js";
 import asignacionesRoutes from './routes/asignaciones.routes.js';
 import inscripcionesRoutes from './routes/inscripciones.routes.js';
+import matriculaRoutes from './routes/matricula.routes.js';
 
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api/asistencias', asistenciaRoutes);
 app.use('/api/calificacion', calificacionRoutes);
 app.use('/api/perfil', perfilRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
+app.use('/api/matriculas', matriculaRoutes);
 // manejo de errores
 app.use(errorHandler);
 
