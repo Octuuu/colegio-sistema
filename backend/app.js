@@ -11,6 +11,8 @@ import asistenciaRoutes from './routes/asistencia.routes.js';
 import calificacionRoutes from './routes/calificacion.routes.js';
 import perfilRoutes from "./routes/perfil.routes.js";
 import asignacionesRoutes from './routes/asignaciones.routes.js';
+import inscripcionesRoutes from './routes/inscripciones.routes.js';
+
 
 const app = express();
 
@@ -27,6 +29,7 @@ app.use('/api/auth', authRoutes);
 // rutas protegidas
 app.use('/api/roles', rolRoutes);
 app.use('/api/alumnos', alumnoRoutes);
+app.use('/api/inscripciones', inscripcionesRoutes);
 app.use('/api/profesor', profeRoutes);
 app.use('/api/materias', materiaRoutes);
 app.use('/api/cursos', cursoRoutes)

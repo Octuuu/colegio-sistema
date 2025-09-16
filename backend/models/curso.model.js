@@ -37,10 +37,11 @@ export const deleteCurso = async (id) => {
 // obtener los alumnos del curso 
 export const getAlumnosPorCurso = async (cursoId) => {
   const [rows] = await pool.query(
-    `SELECT a.id, a.nombre, a.apellido, a.email
-     FROM alumnos a
-     WHERE a.curso_id = ?`,
-     [cursoId]
+    `SELECT a.id, a.nombre, a.apellido, a.email, i.anio_lectivo, i.fecha_inscripcion
+     FROM inscripciones i
+     JOIN alumnos a ON i.alumno_id = a.id
+     WHERE i.curso_id = ?`,
+    [cursoId]
   );
   return rows;
 };
