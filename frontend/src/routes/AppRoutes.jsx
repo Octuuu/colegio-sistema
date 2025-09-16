@@ -30,6 +30,8 @@ import MateriasListCalif from '../pages/profesor/MateriasListCalif';
 import RegistrarCalificacion from '../pages/profesor/RegistrarCalificacion';
 import AdminLayout from '../pages/admin/AdminLayout';
 import ProfesorLayout from '../pages/profesor/ProfesorLayout';
+import InscripcionForm from '../pages/admin/InscripcionForm';
+import InscripcionesList from '../pages/admin/InscripcionesList';
 
 export default function AppRoutes() {
   return (
@@ -56,6 +58,8 @@ export default function AppRoutes() {
           <Route path="editarCursos/:id" element={<EditarCurso />} />
           <Route path=":id/alumnos" element={<AlumnosList />} />
           <Route path="editarAlumnos/:id" element={<EditarAlumno />} />
+          <Route path="inscribirAlumno/:alumnoId" element={<InscripcionForm />} />
+          <Route path="inscripcionesList" element={<InscripcionesList />} />
         </Route>
       </Route>
 
