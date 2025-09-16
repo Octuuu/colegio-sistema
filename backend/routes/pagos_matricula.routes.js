@@ -3,8 +3,9 @@ import {
     nuevaMatricula,
     getMatriculasPorInscripcion,
     getTodosLosPagos,
-    borrarMatricula
-} from '../controllers/matricula.controller.js';
+    borrarMatricula,
+    getTodasMatriculas
+} from '../controllers/pagos_matricula.controller.js';
 
 const router = Router();
 

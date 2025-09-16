@@ -1,9 +1,9 @@
 import pool from '../config/db.js';
 
 // Crear pago de matrícula
-export const crearMatricula = async (inscripcionId, fechaPago, monto, metodoPago, recibidoPor) => {
+export const crearPagoMatricula = async (inscripcionId, fechaPago, monto, metodoPago, recibidoPor) => {
     const [result] = await pool.query(
-        `INSERT INTO matriculas (matricula_id, fecha_pago, monto, metodo_pago, recibido_por)
+        `INSERT INTO pagos_matricula (inscripcion_id, fecha_pago, monto, metodo_pago, recibido_por)
          VALUES (?, ?, ?, ?, ?)`,
         [inscripcionId, fechaPago, monto, metodoPago, recibidoPor]
     );
@@ -39,4 +39,11 @@ export const eliminarMatricula = async (pagoId) => {
         [pagoId]
     );
     return result.affectedRows;
+};
+
+export const obtenerTodasMatriculas = async () => {
+  const [rows] = await pool.query(
+    `SELECT * FROM matriculas`
+  );
+  return rows;
 };

@@ -32,6 +32,9 @@ import AdminLayout from '../pages/admin/AdminLayout';
 import ProfesorLayout from '../pages/profesor/ProfesorLayout';
 import InscripcionForm from '../pages/admin/InscripcionForm';
 import InscripcionesList from '../pages/admin/InscripcionesList';
+import MatriculaForm from '../pages/admin/MatriuclaForm';
+import ProveedorForm from '../pages/admin/ProveedorForm';
+import Proveedores from '../pages/admin/Proveedores';
 
 export default function AppRoutes() {
   return (
@@ -60,6 +63,9 @@ export default function AppRoutes() {
           <Route path="editarAlumnos/:id" element={<EditarAlumno />} />
           <Route path="inscribirAlumno/:alumnoId" element={<InscripcionForm />} />
           <Route path="inscripcionesList" element={<InscripcionesList />} />
+          <Route path="matriculaForm" element={<MatriculaForm />} />
+          <Route path="proveedorForm" element={<ProveedorForm />} />
+          <Route path="proveedoresList" element={<Proveedores />} />
         </Route>
       </Route>
 

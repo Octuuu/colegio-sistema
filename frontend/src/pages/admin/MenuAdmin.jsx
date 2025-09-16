@@ -17,10 +17,10 @@ const MenuAdmin = () => {
     { title: 'Ver profesores', path: '/admin/profesorList' },
     { title: 'Crear Materias', path: '/admin/materias' },
     { title: 'Inscribir alumno', path: 'inscribirAlumno/:alumnoId' },
-    { title: '', path: '/admin/cursosList' },
-    { title: 'Pago de matrícula', path: '/admin/matricula' },
+    { title: 'Pago de matrícula', path: '/admin/matriculaForm' },
     { title: 'Pago de mensualidad', path: '/admin/mensualidad' },
     { title: 'Inventario', path: '/admin/mensualidad' },
+    { title: 'Proveedores', path: '/admin/proveedorForm' },
   ];
 
   return (

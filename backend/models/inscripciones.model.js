@@ -54,3 +54,16 @@ export const eliminarInscripcion = async (inscripcionId) => {
     );
     return result.affectedRows;
 };
+
+// Obtener todas las inscripciones
+export const obtenerTodasInscripciones = async () => {
+  const [rows] = await pool.query(
+    `SELECT i.id, i.alumno_id, a.nombre, a.apellido, i.curso_id, c.anio, c.bachillerato,
+            i.anio_lectivo, i.fecha_inscripcion
+     FROM inscripciones i
+     JOIN alumnos a ON i.alumno_id = a.id
+     JOIN cursos c ON i.curso_id = c.id
+     ORDER BY i.fecha_inscripcion DESC`
+  );
+  return rows;
+};

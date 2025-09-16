@@ -1,9 +1,10 @@
 import {
-    crearMatricula,
+    crearPagoMatricula,
     obtenerMatriculasPorInscripcion,
     obtenerTodosLosPagos,
-    eliminarMatricula
-} from '../models/matricula.model.js';
+    eliminarMatricula,
+    obtenerTodasMatriculas
+} from '../models/pagos_matricula.model.js';
 
 // Crear pago de matrícula
 export const nuevaMatricula = async (req, res) => {
@@ -14,7 +15,7 @@ export const nuevaMatricula = async (req, res) => {
             return res.status(400).json({ message: 'Faltan datos requeridos' });
         }
 
-        const id = await crearMatricula(
+        const id = await crearPagoMatricula(
             inscripcionId,
             fechaPago || new Date(),
             monto,
@@ -67,4 +68,14 @@ export const borrarMatricula = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Error al eliminar pago' });
     }
+};
+
+export const getTodasMatriculas = async (req, res) => {
+  try {
+    const matriculas = await obtenerTodasMatriculas();
+    res.json(matriculas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener matrículas' });
+  }
 };

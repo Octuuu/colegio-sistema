@@ -2,7 +2,8 @@ import {
     crearInscripcion,
     obtenerInscripcionesPorAlumno,
     obtenerAlumnosPorCurso,
-    eliminarInscripcion
+    eliminarInscripcion,
+    obtenerTodasInscripciones
 } from "../models/inscripciones.model.js";
 
 export const nuevaInscripcion = async (req, res) => {
@@ -58,5 +59,15 @@ export const borrarInscripcion = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al eliminar inscripción' });
+  }
+};
+
+export const getTodasInscripciones = async (req, res) => {
+  try {
+    const inscripciones = await obtenerTodasInscripciones();
+    res.json(inscripciones);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener todas las inscripciones' });
   }
 };
