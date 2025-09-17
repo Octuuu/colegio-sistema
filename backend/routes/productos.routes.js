@@ -1,18 +1,24 @@
-import { Router } from "express";
-import { 
+import { Router } from 'express';
+import {
     crearProductoController,
     obtenerProductosController,
     obtenerProductoPorIdController,
     actualizarProductoController,
-    eliminarProductoController
-} from "../controllers/productos.controller.js";
+    eliminarProductoController,
+    actualizarStockController,
+    productosBajoStockController
+} from '../controllers/productos.controller.js';
 
 const router = Router();
 
-router.post("/", crearProductoController);
-router.get("/", obtenerProductosController);
-router.get("/:id", obtenerProductoPorIdController);
-router.put("/:id", actualizarProductoController)
-router.delete("/:id", eliminarProductoController);
+router.post('/', crearProductoController);
+router.get('/', obtenerProductosController);
+router.get('/:id', obtenerProductoPorIdController);
+router.put('/:id', actualizarProductoController);
+router.delete('/:id', eliminarProductoController);
+
+// Rutas adicionales
+router.patch('/stock/:id', actualizarStockController);
+router.get('/stock-bajo', productosBajoStockController);
 
 export default router;

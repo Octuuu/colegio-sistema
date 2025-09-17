@@ -21,6 +21,7 @@ const MenuAdmin = () => {
     { title: 'Pago de mensualidad', path: '/admin/mensualidad' },
     { title: 'Inventario', path: '/admin/mensualidad' },
     { title: 'Proveedores', path: '/admin/proveedorForm' },
+    { title: 'Lista proveedores', path: '/admin/proveedoresList' },
   ];
 
   return (

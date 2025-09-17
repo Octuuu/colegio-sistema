@@ -33,8 +33,8 @@ import ProfesorLayout from '../pages/profesor/ProfesorLayout';
 import InscripcionForm from '../pages/admin/InscripcionForm';
 import InscripcionesList from '../pages/admin/InscripcionesList';
 import MatriculaForm from '../pages/admin/MatriuclaForm';
-import ProveedorForm from '../pages/admin/ProveedorForm';
-import Proveedores from '../pages/admin/Proveedores';
+import ProveedorForm from '../pages/admin/proveedores/ProveedorForm';
+import Proveedores from '../pages/admin/proveedores/Proveedores';
 
 export default function AppRoutes() {
   return (

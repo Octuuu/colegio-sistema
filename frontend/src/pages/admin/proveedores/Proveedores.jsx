@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext';
 import {
   obtenerProveedores,
   crearProveedor,
   actualizarProveedor,
   eliminarProveedor
-} from '../../services/proveedorService';
+} from '../../../services/proveedorService';
 import ProveedorForm from './ProveedorForm';
 
 const Proveedores = () => {
