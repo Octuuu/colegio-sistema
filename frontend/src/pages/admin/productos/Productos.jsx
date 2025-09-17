@@ -1,13 +1,13 @@
 import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext';
 import {
   obtenerProductos,
   crearProducto,
   actualizarProducto,
   eliminarProducto,
   actualizarStock
-} from '../../services/productoService';
-import { obtenerProveedores } from '../../services/proveedorService';
+} from '../../../services/productoService';
+import { obtenerProveedores } from '../../../services/proveedorService';
 import ProductForm from './ProductForm';
 
 const Productos = () => {

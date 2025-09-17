@@ -8,11 +8,11 @@ import {
 
 export const crearServicioController = async (req, res) => {
   try {
-    const { nombre, tipo, descripcion, costo } = req.body;
-    if (!nombre || !tipo || !descripcion || !costo) {
+    const { nombre, tipo, descripcion, costo, proveedor_id } = req.body;
+    if (!nombre || !tipo || !descripcion || !costo || !proveedor_id) {
       return res.status(400).json({ message: "Todos los campos son requeridos" });
     }
-    const id = await crearServicio(nombre, tipo, descripcion, costo);
+    const id = await crearServicio(nombre, tipo, descripcion, costo, proveedor_id);
     res.status(201).json({ id, message: "Servicio creado con éxito" });
   } catch (error) {
     console.error("Error al crear servicio:", error);
@@ -47,8 +47,8 @@ export const obtenerServicioPorIdController = async (req, res) => {
 export const actualizarServicioController = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, tipo, descripcion, costo } = req.body;
-    const updated = await actualizarServicio(id, nombre, tipo, descripcion, costo);
+    const { nombre, tipo, descripcion, costo, proveedor_id } = req.body;
+    const updated = await actualizarServicio(id, nombre, tipo, descripcion, costo, proveedor_id);
     if (updated === 0) {
       return res.status(404).json({ message: "Servicio no encontrado" });
     }

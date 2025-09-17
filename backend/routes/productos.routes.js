@@ -18,7 +18,7 @@ router.put('/:id', actualizarProductoController);
 router.delete('/:id', eliminarProductoController);
 
 // Rutas adicionales
-router.patch('/stock/:id', actualizarStockController);
+router.patch('/:id/stock', actualizarStockController);
 router.get('/stock-bajo', productosBajoStockController);
 
 export default router;

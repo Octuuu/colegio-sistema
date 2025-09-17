@@ -35,6 +35,10 @@ import InscripcionesList from '../pages/admin/InscripcionesList';
 import MatriculaForm from '../pages/admin/MatriuclaForm';
 import ProveedorForm from '../pages/admin/proveedores/ProveedorForm';
 import Proveedores from '../pages/admin/proveedores/Proveedores';
+import ProductForm from '../pages/admin/productos/ProductForm';
+import Productos from '../pages/admin/productos/Productos';
+import ServicioForm from '../pages/admin/servicios/ServicioForm';
+import Servicios from '../pages/admin/servicios/Servicios';
 
 export default function AppRoutes() {
   return (
@@ -66,6 +70,12 @@ export default function AppRoutes() {
           <Route path="matriculaForm" element={<MatriculaForm />} />
           <Route path="proveedorForm" element={<ProveedorForm />} />
           <Route path="proveedoresList" element={<Proveedores />} />
+
+          <Route path="productoForm" element={<ProductForm />} />
+          <Route path="productos" element={<Productos />} />
+          
+          <Route path="servicioForm" element={<ServicioForm />} />
+          <Route path="servicios" element={<Servicios />} />
         </Route>
       </Route>
 
