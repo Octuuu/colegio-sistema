@@ -14,6 +14,8 @@ import asignacionesRoutes from './routes/asignaciones.routes.js';
 import inscripcionesRoutes from './routes/inscripciones.routes.js';
 import matriculaRoutes from './routes/pagos_matricula.routes.js';
 import ProveedoresRoutes from './routes/proveedores.routes.js';
+import productosRoutes from "./routes/productos.routes.js";
+import serviciosRoutes from "./routes/servicios.routes.js";
 
 const app = express();
 
@@ -40,6 +42,8 @@ app.use('/api/perfil', perfilRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
 app.use('/api/matriculas', matriculaRoutes);
 app.use('/api/proveedores', ProveedoresRoutes);
+app.use("/api/productos", productosRoutes);
+app.use("/api/servicios", serviciosRoutes);
 // manejo de errores
 app.use(errorHandler);
 
