@@ -36,3 +36,28 @@ export const obtenerMovimientos = async (insumo_id) => {
   );
   return rows;
 };
+
+// Obtener consumo por periodo (sumatoria de salidas por insumo entre fechas)
+export const obtenerConsumoPorPeriodo = async (desde, hasta) => {
+  const [rows] = await pool.query(
+    `SELECT i.id AS insumo_id, i.nombre AS insumo, SUM(m.cantidad) AS total_consumido
+     FROM insumos_movimientos m
+     JOIN insumos i ON m.insumo_id = i.id
+     WHERE m.tipo = 'salida' AND m.fecha BETWEEN ? AND ?
+     GROUP BY i.id, i.nombre`,
+    [desde, hasta]
+  );
+  return rows;
+};
+
+// Insumos con stock bajo
+export const obtenerInsumosStockBajo = async (limite = 5) => {
+  const [rows] = await pool.query(
+    `SELECT id, nombre, cantidad, unidad
+     FROM insumos
+     WHERE cantidad <= ?
+     ORDER BY cantidad ASC`,
+    [limite]
+  );
+  return rows;
+};

@@ -5,6 +5,14 @@ import {
   obtenerConsumoPorPeriodo,
 } from "../models/insumosMovimientos.model.js";
 
+console.log({
+  registrarMovimiento,
+  obtenerMovimientos,
+  obtenerInsumosStockBajo,
+  obtenerConsumoPorPeriodo,
+});
+
+
 // Registrar entrada o salida de insumo
 export const registrarMovimientoController = async (req, res) => {
   try {

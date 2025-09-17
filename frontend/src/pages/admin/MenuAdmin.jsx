@@ -22,9 +22,10 @@ const MenuAdmin = () => {
     { title: 'Inventario', path: '/admin/mensualidad' },
     { title: 'Proveedores', path: '/admin/proveedorForm' },
     { title: 'Lista proveedores', path: '/admin/proveedoresList' },
-    { title: 'Agregar producto', path: '/admin/productoForm' },
     { title: 'Productos', path: '/admin/productos' },
     { title: 'Servicios', path: '/admin/servicios' },
+    { title: 'Insumos', path: '/admin/insumos' },
+    { title: 'Movimientos de insumos', path: '/admin/insumosMovimientos' },
     
   ];
 

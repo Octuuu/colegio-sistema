@@ -21,3 +21,4 @@ router.get("/reportes/stock-bajo", stockBajoController);
 router.get("/reportes/consumo", consumoPeriodoController);
 
 export default router;
+

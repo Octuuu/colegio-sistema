@@ -17,6 +17,7 @@ import ProveedoresRoutes from './routes/proveedores.routes.js';
 import productosRoutes from "./routes/productos.routes.js";
 import serviciosRoutes from "./routes/servicios.routes.js";
 import insumosRoutes from "./routes/insumos.routes.js";
+import InsumosMovimientosRoutes from "./routes/insumosMovimientos.routes.js";
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use('/api/proveedores', ProveedoresRoutes);
 app.use("/api/productos", productosRoutes);
 app.use("/api/servicios", serviciosRoutes);
 app.use("/api/insumos", insumosRoutes);
+app.use("/api/insumos", InsumosMovimientosRoutes);
 
 // manejo de errores
 app.use(errorHandler);
