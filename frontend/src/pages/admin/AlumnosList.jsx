@@ -100,7 +100,7 @@ const AlumnosPorCurso = () => {
         nombre: "",
         apellido: "",
         telefono: "",
-        correo: "",
+        email: "",
         direccion: "",
       });
       await cargarAlumnos();
@@ -227,7 +227,7 @@ const AlumnosPorCurso = () => {
               />
               <input
                 type="email"
-                name="correo"
+                name="email"
                 placeholder="Correo"
                 value={formData.correo}
                 onChange={handleChange}
