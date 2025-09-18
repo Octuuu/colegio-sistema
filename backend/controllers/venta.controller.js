@@ -6,7 +6,7 @@ export const crearVentaController = async (req, res) => {
     const resultado = await ventaModel.crearVenta(req.body);
     res.json({ message: 'Venta registrada y factura generada', ...resultado });
   } catch (err) {
-    console.error(err);
+    console.error('Error en crearVentaController:', err);
     res.status(500).json({ error: 'Error al registrar la venta' });
   }
 };
@@ -17,7 +17,7 @@ export const obtenerVentasController = async (req, res) => {
     const ventas = await ventaModel.obtenerVentas();
     res.json(ventas);
   } catch (err) {
-    console.error(err);
+    console.error('Error en obtenerVentasController:', err);
     res.status(500).json({ error: 'Error al obtener ventas' });
   }
 };
@@ -29,7 +29,7 @@ export const obtenerVentaController = async (req, res) => {
     if (!venta) return res.status(404).json({ error: 'Venta no encontrada' });
     res.json(venta);
   } catch (err) {
-    console.error(err);
+    console.error('Error en obtenerVentaController:', err);
     res.status(500).json({ error: 'Error al obtener venta' });
   }
 };

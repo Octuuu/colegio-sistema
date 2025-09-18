@@ -41,3 +41,11 @@ export const obtenerAlumnosPorId = async (id, token) => {
 };
 
 
+export const obtenerAlumnos = async (token) => {
+  const res = await axios.get(`${API_URL}/alumnos`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};

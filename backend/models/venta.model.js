@@ -13,7 +13,9 @@ export const crearVenta = async ({ alumno_id, tutor_id, productos, fecha, metodo
 
   // 2️⃣ Insertar detalle de venta y actualizar stock
   for (const item of productos) {
-    const subtotal = item.cantidad * item.precio_unitario;
+    const cantidad = Number(item.cantidad) || 0;
+    const precioUnitario = Number(item.precio_unitario) || 0;
+    const subtotal = cantidad * precioUnitario;
     totalVenta += subtotal;
 
     await pool.query(
@@ -25,18 +27,18 @@ export const crearVenta = async ({ alumno_id, tutor_id, productos, fecha, metodo
         item.insumo_id || null,
         item.producto_id || null,
         item.servicio_id || null,
-        item.cantidad,
-        item.precio_unitario,
+        cantidad,
+        precioUnitario,
         subtotal
       ]
     );
 
     // 🔹 Actualizar stock automáticamente
     if (item.producto_id) {
-      await pool.query('UPDATE productos SET stock = stock - ? WHERE id = ?', [item.cantidad, item.producto_id]);
+      await pool.query('UPDATE productos SET stock = stock - ? WHERE id = ?', [cantidad, item.producto_id]);
     }
     if (item.insumo_id) {
-      await pool.query('UPDATE insumos SET stock = stock - ? WHERE id = ?', [item.cantidad, item.insumo_id]);
+      await pool.query('UPDATE insumos SET stock = stock - ? WHERE id = ?', [cantidad, item.insumo_id]);
     }
   }
 
@@ -52,6 +54,10 @@ export const crearVenta = async ({ alumno_id, tutor_id, productos, fecha, metodo
 
   // 5️⃣ Insertar detalle de factura
   for (const item of productos) {
+    const cantidad = Number(item.cantidad) || 0;
+    const precioUnitario = Number(item.precio_unitario) || 0;
+    const subtotal = cantidad * precioUnitario;
+
     await pool.query(
       `INSERT INTO detalle_factura_venta 
        (factura_id, producto_servicio, cantidad, precio_unitario, subtotal)
@@ -59,9 +65,9 @@ export const crearVenta = async ({ alumno_id, tutor_id, productos, fecha, metodo
       [
         facturaId,
         item.producto_id || item.servicio_id || item.insumo_id,
-        item.cantidad,
-        item.precio_unitario,
-        item.cantidad * item.precio_unitario
+        cantidad,
+        precioUnitario,
+        subtotal
       ]
     );
   }
