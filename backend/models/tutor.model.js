@@ -12,13 +12,24 @@ export const getTutorById = async (id) => {
   return rows[0];
 };
 
-// Crear tutor
-export const createTutor = async ({ nombre, apellido, telefono, correo, direccion }) => {
+// Crear tutor y vincularlo a un alumno
+export const createTutor = async ({ nombre, apellido, telefono, correo, direccion, alumno_id }) => {
+  // 1. Insertar tutor
   const [result] = await pool.query(
     'INSERT INTO tutores (nombre, apellido, telefono, correo, direccion) VALUES (?, ?, ?, ?, ?)',
     [nombre, apellido, telefono, correo, direccion]
   );
-  return result.insertId;
+  const tutorId = result.insertId;
+
+  // 2. Vincular tutor al alumno (si se pasó alumno_id)
+  if (alumno_id) {
+    await pool.query(
+      'INSERT INTO alumno_tutor (alumno_id, tutor_id) VALUES (?, ?)',
+      [alumno_id, tutorId]
+    );
+  }
+
+  return tutorId;
 };
 
 // Actualizar tutor
@@ -34,14 +45,6 @@ export const deleteTutor = async (id) => {
   await pool.query('DELETE FROM tutores WHERE id = ?', [id]);
 };
 
-// Vincular tutor a un alumno
-export const vincularTutorAlumno = async (alumnoId, tutorId) => {
-  await pool.query(
-    'INSERT INTO alumno_tutor (alumno_id, tutor_id) VALUES (?, ?)',
-    [alumnoId, tutorId]
-  );
-};
-
 // Obtener tutores de un alumno
 export const getTutoresDeAlumno = async (alumnoId) => {
   const [rows] = await pool.query(
@@ -50,18 +53,6 @@ export const getTutoresDeAlumno = async (alumnoId) => {
      JOIN alumno_tutor at ON t.id = at.tutor_id
      WHERE at.alumno_id = ?`,
     [alumnoId]
-  );
-  return rows;
-};
-
-// Obtener alumnos de un tutor
-export const getAlumnosDeTutor = async (tutorId) => {
-  const [rows] = await pool.query(
-    `SELECT a.*
-     FROM alumnos a
-     JOIN alumno_tutor at ON a.id = at.alumno_id
-     WHERE at.tutor_id = ?`,
-    [tutorId]
   );
   return rows;
 };

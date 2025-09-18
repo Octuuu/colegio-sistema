@@ -1,6 +1,6 @@
 import * as tutorModel from '../models/tutor.model.js';
 
-// Todos los tutores
+// Obtener todos los tutores
 export const getTutores = async (req, res) => {
   try {
     const tutores = await tutorModel.getAllTutores();
@@ -11,7 +11,7 @@ export const getTutores = async (req, res) => {
   }
 };
 
-// Tutor por ID
+// Obtener tutor por ID
 export const getTutor = async (req, res) => {
   try {
     const tutor = await tutorModel.getTutorById(req.params.id);
@@ -23,11 +23,11 @@ export const getTutor = async (req, res) => {
   }
 };
 
-// Crear tutor
+// Crear tutor y vincularlo a un alumno
 export const createTutorController = async (req, res) => {
   try {
     const tutorId = await tutorModel.createTutor(req.body);
-    res.json({ message: 'Tutor creado', id: tutorId });
+    res.json({ message: 'Tutor creado y vinculado al alumno', id: tutorId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error al crear tutor' });
@@ -56,7 +56,17 @@ export const deleteTutorController = async (req, res) => {
   }
 };
 
-// Vincular tutor a alumno
+// Obtener tutores de un alumno
+export const getTutoresDeAlumnoController = async (req, res) => {
+  try {
+    const tutores = await tutorModel.getTutoresDeAlumno(req.params.alumnoId);
+    res.json(tutores);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener tutores del alumno' });
+  }
+};
+
 export const vincularTutorAlumnoController = async (req, res) => {
   try {
     const { alumnoId, tutorId } = req.body;
@@ -65,27 +75,5 @@ export const vincularTutorAlumnoController = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error al vincular tutor al alumno' });
-  }
-};
-
-// Obtener tutores de un alumno
-export const getTutoresDeAlumnoController = async (req, res) => {
-  try {
-    const tutores = await tutorModel.getTutoresDeAlumno(req.params.alumnoId);
-    res.json(tutores);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al obtener tutores de alumno' });
-  }
-};
-
-// Obtener alumnos de un tutor
-export const getAlumnosDeTutorController = async (req, res) => {
-  try {
-    const alumnos = await tutorModel.getAlumnosDeTutor(req.params.tutorId);
-    res.json(alumnos);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al obtener alumnos de tutor' });
   }
 };

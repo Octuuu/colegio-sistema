@@ -15,6 +15,7 @@ router.post('/vincular', tutorController.vincularTutorAlumnoController);
 
 // Consultas de vinculación
 router.get('/alumno/:alumnoId', tutorController.getTutoresDeAlumnoController);
-router.get('/tutor/:tutorId', tutorController.getAlumnosDeTutorController);
+router.post('/vincular', tutorController.vincularTutorAlumnoController);
+
 
 export default router;
