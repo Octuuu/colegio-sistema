@@ -19,6 +19,8 @@ import serviciosRoutes from "./routes/servicios.routes.js";
 import insumosRoutes from "./routes/insumos.routes.js";
 import InsumosMovimientosRoutes from "./routes/insumosMovimientos.routes.js";
 import tutorRoutes from './routes/tutor.routes.js';
+import ventaRoutes from './routes/venta.routes.js';
+
 const app = express();
 
 app.use(cors({
@@ -49,6 +51,7 @@ app.use("/api/servicios", serviciosRoutes);
 app.use("/api/insumos", insumosRoutes);
 app.use("/api/insumos", InsumosMovimientosRoutes);
 app.use('/api/tutores', tutorRoutes);
+app.use('/api/ventas', ventaRoutes);
 
 // manejo de errores
 app.use(errorHandler);
