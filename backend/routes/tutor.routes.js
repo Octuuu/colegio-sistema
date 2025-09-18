@@ -10,9 +10,6 @@ router.post('/', tutorController.createTutorController);
 router.put('/:id', tutorController.updateTutorController);
 router.delete('/:id', tutorController.deleteTutorController);
 
-// Vinculación alumno-tutor
-router.post('/vincular', tutorController.vincularTutorAlumnoController);
-
 // Consultas de vinculación
 router.get('/alumno/:alumnoId', tutorController.getTutoresDeAlumnoController);
 router.post('/vincular', tutorController.vincularTutorAlumnoController);

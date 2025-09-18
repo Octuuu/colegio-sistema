@@ -13,11 +13,11 @@ export const getTutorById = async (id) => {
 };
 
 // Crear tutor y vincularlo a un alumno
-export const createTutor = async ({ nombre, apellido, telefono, correo, direccion, alumno_id }) => {
+export const createTutor = async ({ nombre, apellido, telefono, email, direccion, alumno_id }) => {
   // 1. Insertar tutor
   const [result] = await pool.query(
-    'INSERT INTO tutores (nombre, apellido, telefono, correo, direccion) VALUES (?, ?, ?, ?, ?)',
-    [nombre, apellido, telefono, correo, direccion]
+    'INSERT INTO tutores (nombre, apellido, telefono, email, direccion) VALUES (?, ?, ?, ?, ?)',
+    [nombre, apellido, telefono, email, direccion]
   );
   const tutorId = result.insertId;
 
@@ -33,10 +33,10 @@ export const createTutor = async ({ nombre, apellido, telefono, correo, direccio
 };
 
 // Actualizar tutor
-export const updateTutor = async (id, { nombre, apellido, telefono, correo, direccion }) => {
+export const updateTutor = async (id, { nombre, apellido, telefono, email, direccion }) => {
   await pool.query(
-    'UPDATE tutores SET nombre = ?, apellido = ?, telefono = ?, correo = ?, direccion = ? WHERE id = ?',
-    [nombre, apellido, telefono, correo, direccion, id]
+    'UPDATE tutores SET nombre = ?, apellido = ?, telefono = ?, email = ?, direccion = ? WHERE id = ?',
+    [nombre, apellido, telefono, email, direccion, id]
   );
 };
 
@@ -55,4 +55,12 @@ export const getTutoresDeAlumno = async (alumnoId) => {
     [alumnoId]
   );
   return rows;
+};
+
+// Vincular un tutor existente a un alumno existente
+export const vincularTutorAlumno = async (alumnoId, tutorId) => {
+  await pool.query(
+    'INSERT INTO alumno_tutor (alumno_id, tutor_id) VALUES (?, ?)',
+    [alumnoId, tutorId]
+  );
 };
