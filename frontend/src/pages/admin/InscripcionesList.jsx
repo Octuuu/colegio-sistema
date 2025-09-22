@@ -1,154 +1,49 @@
+import { useParams } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { 
-  obtenerAlumnosInscritos, 
-  actualizarInscripcion, 
-  darDeBajaInscripcion, 
-  reactivarInscripcion 
-} from '../../services/inscripcionesService';
-import axios from 'axios';
+import { obtenerAlumnosInscritos } from '../../services/inscripcionesService';
 
 const InscripcionesList = () => {
   const { token } = useContext(AuthContext);
-  const [cursos, setCursos] = useState([]);
-  const [cursoSeleccionado, setCursoSeleccionado] = useState('');
+  const { cursoId } = useParams(); // <-- obtenemos el ID del curso
   const [inscripciones, setInscripciones] = useState([]);
 
   useEffect(() => {
-    const fetchCursos = async () => {
-      try {
-        const res = await axios.get('http://localhost:3000/api/cursos', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setCursos(res.data);
-      } catch (err) {
-        console.error(err.response?.data || err.message);
-      }
-    };
-    fetchCursos();
-  }, [token]);
+    if (!cursoId) return;
 
-  useEffect(() => {
-    if (!cursoSeleccionado) return;
     const fetchInscripciones = async () => {
       try {
-        const data = await obtenerAlumnosInscritos(cursoSeleccionado, token);
+        const data = await obtenerAlumnosInscritos(cursoId, token);
         setInscripciones(data);
       } catch (err) {
-        console.error(err.response?.data || err.message);
+        console.error(err);
       }
     };
+
     fetchInscripciones();
-  }, [cursoSeleccionado, token]);
-
-  const handleChange = (id, field, value) => {
-    setInscripciones(prev =>
-      prev.map(insc => (insc.id === id ? { ...insc, [field]: value } : insc))
-    );
-  };
-
-  const handleUpdate = async (insc) => {
-    try {
-      await actualizarInscripcion(insc.id, insc, token);
-      alert('Inscripción actualizada');
-    } catch (err) {
-      console.error(err);
-      alert('Error al actualizar');
-    }
-  };
+  }, [cursoId, token]);
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 bg-white dark:bg-gray-800 p-6 rounded shadow">
-      <h2 className="text-4xl font-extrabold mb-6 text-center text-gray-800 dark:text-white">
-        Inscripciones por Curso
-      </h2>
-
-      <select
-        value={cursoSeleccionado}
-        onChange={(e) => setCursoSeleccionado(e.target.value)}
-        className="border border-slate-500 h-[36px] font-semibold pl-5 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
-      >
-        <option value="">Seleccione un curso</option>
-        {cursos.map(curso => (
-          <option key={curso.id} value={curso.id}>
-            {curso.anio}° - {curso.bachillerato}
-          </option>
-        ))}
-      </select>
-
-      {inscripciones.length > 0 && (
-        <table className="w-full border mt-4">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-2">Alumno</th>
-              <th className="p-2">Año lectivo</th>
-              <th className="p-2">Fecha inscripción</th>
-              <th className="p-2">Estado</th>
-              <th className="p-2">Acciones</th>
+    <div className="p-6">
+      <h2 className="text-2xl mb-4">Alumnos inscritos en el curso</h2>
+      <table className="w-full border">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Año lectivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inscripciones.map((i) => (
+            <tr key={i.id}>
+              <td>{i.alumno_nombre}</td>
+              <td>{i.alumno_apellido}</td>
+              <td>{i.anio_lectivo}</td>
             </tr>
-          </thead>
-          <tbody>
-            {inscripciones.map(insc => (
-              <tr key={insc.id}>
-                <td className="p-2">{insc.alumno_nombre} {insc.alumno_apellido}</td>
-                <td className="p-2">
-                  <input
-                    type="text"
-                    value={insc.anio_lectivo}
-                    onChange={(e) => handleChange(insc.id, 'anio_lectivo', e.target.value)}
-                    className="border border-slate-400 px-2 py-1 rounded"
-                  />
-                </td>
-                <td className="p-2">
-                  <input
-                    type="date"
-                    value={insc.fecha_inscripcion}
-                    onChange={(e) => handleChange(insc.id, 'fecha_inscripcion', e.target.value)}
-                    className="border border-slate-400 px-2 py-1 rounded"
-                  />
-                </td>
-                <td className="p-2 font-semibold">
-                  {insc.estado || 'activo'}
-                </td>
-                <td className="p-2 space-x-2">
-                  <button
-                    onClick={() => handleUpdate(insc)}
-                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-                  >
-                    Guardar
-                  </button>
-
-                  {insc.estado === 'activo' ? (
-                    <button
-                      onClick={async () => {
-                        await darDeBajaInscripcion(insc.id, token);
-                        setInscripciones(prev =>
-                          prev.map(i => (i.id === insc.id ? { ...i, estado: 'inactivo' } : i))
-                        );
-                      }}
-                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                    >
-                      Dar de baja
-                    </button>
-                  ) : (
-                    <button
-                      onClick={async () => {
-                        await reactivarInscripcion(insc.id, token);
-                        setInscripciones(prev =>
-                          prev.map(i => (i.id === insc.id ? { ...i, estado: 'activo' } : i))
-                        );
-                      }}
-                      className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                    >
-                      Reactivar
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

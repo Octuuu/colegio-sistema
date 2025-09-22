@@ -6,7 +6,6 @@ import {
     obtenerTodasInscripciones,
     darDeBajaInscripcion,
     reactivarInscripcion,
-    obtenerAlumnosPorCurso
 } from "../models/inscripciones.model.js";
 
 export const nuevaInscripcion = async (req, res) => {
