@@ -1,25 +1,38 @@
 import pool from '../config/db.js';
 
-// Crear inscripción
+// crear inscripción
 export const crearInscripcion = async (alumnoId, cursoId, anioLectivo) => {
-    // Verificar si ya existe la inscripción
-    const [existe] = await pool.query(
-        `SELECT id FROM inscripciones 
-         WHERE alumno_id = ? AND curso_id = ? AND anio_lectivo = ?`,
-        [alumnoId, cursoId, anioLectivo]
-    );
+  // verificar si ya existe inscripción (activa o inactiva)
+  const [existe] = await pool.query(
+    `SELECT id, estado FROM inscripciones 
+     WHERE alumno_id = ? AND curso_id = ? AND anio_lectivo = ?`,
+    [alumnoId, cursoId, anioLectivo]
+  );
 
-    if (existe.length > 0) {
-        throw new Error('El alumno ya está inscrito en este curso para el año lectivo indicado');
+  if (existe.length > 0) {
+    // Si existe pero está inactiva → reactivarla
+    if (existe[0].estado === 'inactivo') {
+      await pool.query(
+        `UPDATE inscripciones 
+         SET estado = 'activo', fecha_inscripcion = NOW()
+         WHERE id = ?`,
+        [existe[0].id]
+      );
+      return existe[0].id;
     }
 
-    const [result] = await pool.query(
-        `INSERT INTO inscripciones (alumno_id, curso_id, anio_lectivo, fecha_inscripcion)
-         VALUES (?, ?, ?, NOW())`,
-        [alumnoId, cursoId, anioLectivo]
-    );
+    // Si ya está activa → lanzar error
+    throw new Error('El alumno ya está inscrito en este curso para el año lectivo indicado');
+  }
 
-    return result.insertId;
+  // Si no existe, crear nueva inscripción
+  const [result] = await pool.query(
+    `INSERT INTO inscripciones (alumno_id, curso_id, anio_lectivo, fecha_inscripcion, estado)
+     VALUES (?, ?, ?, NOW(), 'activo')`,
+    [alumnoId, cursoId, anioLectivo]
+  );
+
+  return result.insertId;
 };
 
 // Obtener inscripciones de un alumno
