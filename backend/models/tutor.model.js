@@ -57,7 +57,6 @@ export const getTutoresDeAlumno = async (alumnoId) => {
   return rows;
 };
 
-// Vincular un tutor existente a un alumno existente
 export const vincularTutorAlumno = async (alumnoId, tutorId) => {
   await pool.query(
     'INSERT INTO alumno_tutor (alumno_id, tutor_id) VALUES (?, ?)',

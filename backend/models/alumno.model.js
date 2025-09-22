@@ -33,12 +33,25 @@ export const createAlumno = async ({ nombre, apellido, cedula, fecha_nacimiento,
 };
 
 // Actualizar alumno
-export const updateAlumno = async (id, { nombre, apellido, cedula, fecha_nacimiento, telefono, direccion,email }) => {
-  await pool.query(
-    'UPDATE alumnos SET nombre = ?, apellido = ?, cedula = ?, fecha_nacimiento = ?, telefono = ?, direccion = ?, email = ? WHERE id = ?',
-    [nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email, id]
-  );
+// Actualizar alumno
+export const updateAlumno = async (id, { nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email }) => {
+  try {
+    // Normalizar la fecha a formato YYYY-MM-DD si viene con formato ISO
+    let fechaFormateada = null;
+    if (fecha_nacimiento) {
+      fechaFormateada = new Date(fecha_nacimiento).toISOString().split('T')[0];
+    }
+
+    await pool.query(
+      'UPDATE alumnos SET nombre = ?, apellido = ?, cedula = ?, fecha_nacimiento = ?, telefono = ?, direccion = ?, email = ? WHERE id = ?',
+      [nombre, apellido, cedula, fechaFormateada, telefono, direccion, email, id]
+    );
+  } catch (error) {
+    console.error('❌ Error al actualizar alumno en modelo:', error);
+    throw new Error('Error al actualizar alumno');
+  }
 };
+
 
 // Eliminar alumno
 export const deleteAlumno = async (id) => {

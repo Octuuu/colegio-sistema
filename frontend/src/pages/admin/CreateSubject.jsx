@@ -1,42 +1,35 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { crearMateria } from '../../services/crearMateria';
-import { useNavigate } from 'react-router-dom';
 
-const CreateSubject = () => {
+const CreateSubject = ({ onSuccess }) => {
   const { token } = useContext(AuthContext);
-  const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
   });
 
-  // Manejar cambios en inputs
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Manejar submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       await crearMateria(formData, token);
-      alert('Materia creado con éxito');
-      navigate('/admin/materias');
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error(error);
-      alert('Error al crear materia');
+      alert('❌ Error al crear materia');
     }
   };
 
   return (
     <div className="max-w-xl mx-auto mt-8 bg-white dark:bg-gray-800 p-6 rounded shadow">
-      <h2 className="text-4xl text-center font-extrabold mb-12 text-gray-800 dark:text-white">Crear materias</h2>
+      <h2 className="text-2xl text-center font-bold mb-6 text-gray-800 dark:text-white">
+        Crear materia
+      </h2>
       <form onSubmit={handleSubmit} className="grid gap-4">
         <input
           name="nombre"
@@ -46,17 +39,14 @@ const CreateSubject = () => {
           required
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
-
         <input
           name="descripcion"
           value={formData.descripcion}
           onChange={handleChange}
-          placeholder="Descripcion"
+          placeholder="Descripción"
           required
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
-
-
         <button
           type="submit"
           className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 font-bold"

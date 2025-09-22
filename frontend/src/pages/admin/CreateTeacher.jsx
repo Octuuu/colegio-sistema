@@ -1,12 +1,10 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { crearProfesor } from '../../services/profesorService';
-import { useNavigate } from 'react-router-dom';
 
-const CreateTeacher = () => {
+function CreateTeacher({ onSuccess }) {
   const { token } = useContext(AuthContext);
-  const navigate = useNavigate();
-
+  
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -16,7 +14,6 @@ const CreateTeacher = () => {
     direccion: '',
   });
 
-  // Manejar cambios en inputs
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -24,23 +21,23 @@ const CreateTeacher = () => {
     });
   };
 
-  // Manejar submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       await crearProfesor(formData, token);
-      alert('Profesor creado con éxito');
-      navigate('/admin/profesor');
+      if (onSuccess) onSuccess(); 
     } catch (error) {
-      console.error(error);
-      alert('Error al crear profesor');
+      console.error('❌ Error al crear profesor:', error);
+      alert('No se pudo crear el profesor');
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-8 bg-white dark:bg-gray-800 p-6 rounded shadow">
-      <h2 className="text-4xl text-center font-extrabold mb-12 text-gray-800 dark:text-white">Crear Profesor</h2>
+    <div className="max-w-xl mx-auto bg-white dark:bg-gray-800 p-6 rounded shadow">
+      <h2 className="text-4xl text-center font-extrabold mb-8 text-gray-800 dark:text-white">
+        Crear Profesor
+      </h2>
       <form onSubmit={handleSubmit} className="grid gap-4">
         <input
           name="nombre"
@@ -48,8 +45,7 @@ const CreateTeacher = () => {
           onChange={handleChange}
           placeholder="Nombre"
           required
-          className="input"
-          class='border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500'
+          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
         <input
           name="apellido"
@@ -57,58 +53,58 @@ const CreateTeacher = () => {
           onChange={handleChange}
           placeholder="Apellido"
           required
-          className="input"
-          class='border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500'
+          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
-
         <input
           name="telefono"
           value={formData.telefono}
           onChange={handleChange}
           placeholder="Teléfono"
-          className="input"
-          class='border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500'
+          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
-
         <input
           type="email"
           name="correo"
           value={formData.correo}
           onChange={handleChange}
-          placeholder="Email"
+          placeholder="Correo"
           required
-          className="input"
-          class='border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500'
+          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
-
         <input
           name="cedula"
           value={formData.cedula}
           onChange={handleChange}
           placeholder="Cédula"
           required
-          className="input"
-          class='border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500'
+          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
-      
         <input
           name="direccion"
           value={formData.direccion}
           onChange={handleChange}
           placeholder="Dirección"
-          className="input"
-          class='border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500'
+          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 font-bold"
-        >
-          Registrar profesor
-        </button>
+        <div className="flex justify-end gap-2 mt-2">
+          <button
+            type="button"
+            onClick={() => onSuccess && onSuccess()} 
+            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            Registrar
+          </button>
+        </div>
       </form>
     </div>
   );
-};
+}
 
 export default CreateTeacher;

@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { obtenerCursoPorId, actualizarCurso } from '../../services/cursoService.js';
 
-function EditarCurso() {
+function EditarCurso({ onSuccess }) {
   const [anio, setAnio] = useState('');
   const [bachillerato, setBachillerato] = useState('');
   const [cargando, setCargando] = useState(true);
   const { id } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCurso = async () => {
@@ -22,12 +21,11 @@ function EditarCurso() {
       } catch (error) {
         console.error('❌ Error al obtener el curso:', error);
         alert('⚠️ No autorizado o curso no encontrado.');
-        navigate('/login'); // o la ruta correspondiente
       }
     };
 
     fetchCurso();
-  }, [id, navigate]);
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,8 +34,7 @@ function EditarCurso() {
       if (!token) throw new Error('No hay token');
 
       await actualizarCurso(id, { anio, bachillerato }, token);
-      alert('✅ Curso actualizado correctamente');
-      navigate('/admin/cursosList'); // cambiá la ruta según tu lista de cursos
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error('❌ Error al actualizar el curso:', error);
       alert('❌ No se pudo actualizar el curso');

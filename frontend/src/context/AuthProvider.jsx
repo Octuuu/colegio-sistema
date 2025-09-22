@@ -4,10 +4,10 @@ import { AuthContext } from './AuthContext';
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true); // 🔄 para evitar render mientras carga
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
-    // Cargar usuario desde localStorage si existe
+    
     const savedUser = localStorage.getItem('user');
     const savedToken = localStorage.getItem('token');
 
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
       setToken(savedToken);
     }
 
-    setLoading(false); // ✅ ya terminó de cargar
+    setLoading(false); 
   }, []);
 
   const login = (userData, jwt) => {
@@ -33,7 +33,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
   };
 
-  // 🛑 Esperar a que termine de cargar antes de renderizar children
   if (loading) return <div className="text-center p-10 text-gray-600">Cargando...</div>;
 
   return (

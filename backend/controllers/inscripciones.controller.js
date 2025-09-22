@@ -3,7 +3,9 @@ import {
     obtenerInscripcionesPorAlumno,
     obtenerAlumnosPorCurso,
     eliminarInscripcion,
-    obtenerTodasInscripciones
+    obtenerTodasInscripciones,
+    darDeBajaInscripcion,
+    reactivarInscripcion,
 } from "../models/inscripciones.model.js";
 
 export const nuevaInscripcion = async (req, res) => {
@@ -69,5 +71,35 @@ export const getTodasInscripciones = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al obtener todas las inscripciones' });
+  }
+};
+
+// dar de baja
+export const darDeBajaInscripcionHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await darDeBajaInscripcion(id);
+    if (result === 0) {
+      return res.status(404).json({ message: 'Inscripción no encontrada' });
+    }
+    res.json({ message: 'Inscripción dada de baja' });
+  } catch (error) {
+    console.error('erorr al dar de baja la inscripcion', error);
+    res.status(500).json({ message: 'Error al dar de baja la inscripción' });
+  }
+}
+
+// reactivar inscripcion
+export const reactivarInscripcionHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await reactivarInscripcion(id);
+    if (result === 0) {
+      return res.status(404).json({ message: 'Inscripción no encontrada' });
+    }
+    res.json({ message: 'Inscripción reactivada' });
+  } catch (error) {
+    console.error('error al reactivar la inscripcion', error);
+    res.status(500).json({ message: 'Error al reactivar la inscripción' });
   }
 };

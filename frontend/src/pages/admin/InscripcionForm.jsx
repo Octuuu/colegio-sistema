@@ -15,7 +15,6 @@ const InscripcionForm = () => {
 
   const [error, setError] = useState(null);
 
-  // Obtener alumnos y cursos al cargar el componente
   useEffect(() => {
     const fetchAlumnos = async () => {
       try {
@@ -52,7 +51,6 @@ const InscripcionForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación rápida
     if (!formData.alumno_id || !formData.curso_id || !formData.anio_lectivo) {
       alert('Todos los campos son requeridos');
       return;

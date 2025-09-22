@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
-import { crearAlumno } from '../../services/alumnoService';
+import { AuthContext } from '../../../context/AuthContext';
+import { crearAlumno } from '../../../services/alumnoService';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -20,7 +20,6 @@ const AlumnoForm = () => {
     curso_id: '',
   });
 
-  // obtener cursos del backend cuando carga el componente
   useEffect(() => {
     const fetchCursos = async () => {
       try {
@@ -36,15 +35,13 @@ const AlumnoForm = () => {
     fetchCursos();
   }, [token]);
 
-  // Manejar cambios en inputs
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
-
-  // Manejar submit
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 

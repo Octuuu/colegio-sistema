@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { actualizarMateria } from '../../services/crearMateria.js';
 
-function EditarMateria({ materia, onClose }) {
+function EditarMateria({ materia, onSuccess }) {
   const [nombre, setNombre] = useState(materia.nombre);
   const [descripcion, setDescripcion] = useState(materia.descripcion);
 
@@ -12,8 +12,7 @@ function EditarMateria({ materia, onClose }) {
       if (!token) throw new Error('No hay token');
 
       await actualizarMateria(materia.id, { nombre, descripcion }, token);
-      alert('✅ Materia actualizada correctamente');
-      onClose();
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error('❌ Error al actualizar la materia:', error);
       alert('❌ No se pudo actualizar la materia');
@@ -47,7 +46,7 @@ function EditarMateria({ materia, onClose }) {
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
-          Guardar Cambiosssss
+          Guardar Cambios
         </button>
       </form>
     </div>

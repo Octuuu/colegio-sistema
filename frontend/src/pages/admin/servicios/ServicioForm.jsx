@@ -6,7 +6,7 @@ const ServicioForm = ({ servicio, onSubmit, onCancel, proveedores }) => {
     tipo: '',
     descripcion: '',
     costo: '',
-    proveedor_id: '', // se llenará con el select
+    proveedor_id: '', 
   });
 
   useEffect(() => {
@@ -76,7 +76,6 @@ const ServicioForm = ({ servicio, onSubmit, onCancel, proveedores }) => {
           className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        {/* Select para proveedores */}
         <select
           name="proveedor_id"
           value={formData.proveedor_id}

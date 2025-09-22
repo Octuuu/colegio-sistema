@@ -9,7 +9,6 @@ const InscripcionesList = () => {
   const [cursoSeleccionado, setCursoSeleccionado] = useState('');
   const [inscripciones, setInscripciones] = useState([]);
 
-  // Obtener cursos
   useEffect(() => {
     const fetchCursos = async () => {
       try {
@@ -24,7 +23,6 @@ const InscripcionesList = () => {
     fetchCursos();
   }, [token]);
 
-  // Obtener inscripciones cuando se selecciona un curso
   useEffect(() => {
     if (!cursoSeleccionado) return;
     const fetchInscripciones = async () => {
@@ -38,7 +36,6 @@ const InscripcionesList = () => {
     fetchInscripciones();
   }, [cursoSeleccionado, token]);
 
-  // Manejar cambios de inputs de edición
   const handleChange = (id, field, value) => {
     setInscripciones((prev) =>
       prev.map((insc) =>
@@ -46,8 +43,7 @@ const InscripcionesList = () => {
       )
     );
   };
-
-  // Guardar cambios de inscripción
+  
   const handleUpdate = async (insc) => {
     try {
       await actualizarInscripcion(insc.id, insc, token);

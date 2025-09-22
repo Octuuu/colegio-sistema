@@ -8,8 +8,8 @@ import Asistencias from '../pages/profesor/Asistencias';
 import Calificaciones from '../pages/profesor/Calificaciones';
 import Cursos from '../pages/profesor/Cursos';
 import Materias from '../pages/profesor/Materias';
-import Alumnos from '../pages/admin/Alumnos';
-import AlumnosCursos from '../pages/admin/AlumnosCursos'
+import Alumnos from '../pages/admin/alumnos/Alumnos';
+import AlumnosCursos from '../pages/admin/alumnos/AlumnosCursos'
 import HomeRedirect from '../components/HomeRedirect';
 import CreateCourse from '../pages/admin/CreateCourse';
 import CreateSubject from '../pages/admin/CreateSubject';
@@ -17,8 +17,8 @@ import AsignedSubject from '../pages/admin/AsignedSubject';
 import CreateTeacher from '../pages/admin/CreateTeacher';
 import MateriasList from '../pages/admin/MateriasList';
 import EditarMateria from '../pages/admin/EditMateria';
-import EditarAlumno from '../pages/admin/EditAlumno';
-import AlumnosList from '../pages/admin/AlumnosList';
+import EditarAlumno from '../pages/admin/alumnos/EditAlumno';
+import AlumnosList from '../pages/admin/alumnos/AlumnosList';
 import EditarCurso from '../pages/admin/EditCurso';
 import CursosList from '../pages/admin/CursosList';
 import EditarProfesor from '../pages/admin/EditProfesor';
@@ -112,7 +112,7 @@ export default function AppRoutes() {
         <Route path="/alumno/dashboard" element={<AlumnoDashboard />} />
       </Route>
 
-      {/* Ruta no autorizada */}
+      {/* ruta no autorizada */}
       <Route path="/unauthorized" element={<h1>No tenés permiso</h1>} />
     </Routes>
   );

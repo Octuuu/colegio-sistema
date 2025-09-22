@@ -29,7 +29,7 @@ export const eliminarInsumo = async (id, token) => {
   return data;
 };
 
-// Stock bajo
+// stock bajo
 export const obtenerInsumosStockBajo = async (limite = 5, token) => {
   const { data } = await axios.get(`${API_URL}/reportes/stock-bajo?limite=${limite}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -37,7 +37,7 @@ export const obtenerInsumosStockBajo = async (limite = 5, token) => {
   return data;
 };
 
-// Movimientos
+// movimientos
 export const registrarMovimiento = async (insumoId, movimiento, token) => {
   const { tipo, cantidad, descripcion } = movimiento;
   const { data } = await axios.post(`${API_URL}/${insumoId}/movimientos`, 

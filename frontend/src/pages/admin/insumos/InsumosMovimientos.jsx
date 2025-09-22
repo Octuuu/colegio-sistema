@@ -1,14 +1,15 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { registrarMovimiento, obtenerMovimientos } from "../../../services/insumoService";
+import Modal from "../../../components/Modal";
 
 const InsumosMovimientos = ({ insumoId }) => {
   const { token } = useContext(AuthContext);
   const [movimientos, setMovimientos] = useState([]);
   const [form, setForm] = useState({ tipo: "entrada", cantidad: "", descripcion: "" });
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Obtener movimientos del insumo
   const fetchMovimientos = async () => {
     if (!insumoId) return;
     try {
@@ -33,7 +34,6 @@ const InsumosMovimientos = ({ insumoId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!form.cantidad || Number(form.cantidad) <= 0) {
       alert("La cantidad debe ser mayor que 0");
       return;
@@ -43,6 +43,7 @@ const InsumosMovimientos = ({ insumoId }) => {
       await registrarMovimiento(insumoId, { ...form, cantidad: Number(form.cantidad) }, token);
       setForm({ tipo: "entrada", cantidad: "", descripcion: "" });
       fetchMovimientos();
+      setIsModalOpen(false);
     } catch (err) {
       console.error("Error al registrar movimiento:", err);
       alert("Error al registrar movimiento");
@@ -50,42 +51,59 @@ const InsumosMovimientos = ({ insumoId }) => {
   };
 
   return (
-    <div className="p-4 mt-4 border rounded bg-gray-50 dark:bg-gray-800">
-      <h3 className="text-lg font-bold mb-4">Registrar Movimiento</h3>
+    <div className="mt-4">
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="mb-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+      >
+        Registrar Movimiento
+      </button>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-4 flex-wrap">
-        <select
-          name="tipo"
-          value={form.tipo}
-          onChange={handleChange}
-          className="p-2 border rounded"
-        >
-          <option value="entrada">Entrada</option>
-          <option value="salida">Salida</option>
-        </select>
-        <input
-          type="number"
-          name="cantidad"
-          value={form.cantidad}
-          onChange={handleChange}
-          placeholder="Cantidad"
-          className="p-2 border rounded"
-          required
-        />
-        <input
-          name="descripcion"
-          value={form.descripcion}
-          onChange={handleChange}
-          placeholder="Descripción"
-          className="p-2 border rounded flex-1 min-w-[150px]"
-        />
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Registrar
-        </button>
-      </form>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h3 className="text-lg font-bold mb-4">Registrar Movimiento</h3>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+          <select
+            name="tipo"
+            value={form.tipo}
+            onChange={handleChange}
+            className="p-2 border rounded"
+          >
+            <option value="entrada">Entrada</option>
+            <option value="salida">Salida</option>
+          </select>
+          <input
+            type="number"
+            name="cantidad"
+            value={form.cantidad}
+            onChange={handleChange}
+            placeholder="Cantidad"
+            className="p-2 border rounded"
+            required
+          />
+          <input
+            name="descripcion"
+            value={form.descripcion}
+            onChange={handleChange}
+            placeholder="Descripción"
+            className="p-2 border rounded"
+          />
+          <div className="flex justify-end gap-2 mt-2">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 rounded bg-gray-500 text-white hover:bg-gray-600"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+            >
+              Registrar
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       <h3 className="text-lg font-bold mb-2">Historial de Movimientos</h3>
       <table className="min-w-full bg-white dark:bg-gray-700 border">
@@ -104,7 +122,7 @@ const InsumosMovimientos = ({ insumoId }) => {
             </tr>
           ) : movimientos.length > 0 ? (
             movimientos.map((m) => (
-              <tr key={m.id} className="border-b">
+              <tr key={m.id} className="border-b text-center">
                 <td className="p-2">{new Date(m.fecha).toLocaleString()}</td>
                 <td className="p-2">{m.tipo}</td>
                 <td className="p-2">{m.cantidad}</td>

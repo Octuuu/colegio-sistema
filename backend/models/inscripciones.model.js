@@ -67,3 +67,21 @@ export const obtenerTodasInscripciones = async () => {
   );
   return rows;
 };
+
+// dar de baaj
+export const darDeBajaInscripcion = async (inscripcionId) => {
+  const [result] = await pool.query(
+    'UPDATE inscripciones SET estado = "inactivo" WHERE id = ?',
+    [inscripcionId]
+  );
+  return result.affectedRows;
+};
+
+// reactivar inscripcion
+export const reactivarInscripcion = async (inscripcionId) => {
+  const [result] = await pool.query(
+    'UPDATE inscripciones SET estado = "activo" WHERE id = ?',
+    [inscripcionId]
+  );
+  return result.affectedRows;
+};

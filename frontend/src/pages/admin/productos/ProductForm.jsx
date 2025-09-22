@@ -18,6 +18,8 @@ const ProductForm = ({ producto, onSubmit, onCancel, proveedores }) => {
         stock: producto.stock || '',
         proveedor_id: producto.proveedor_id || ''
       });
+    } else {
+      setFormData({ nombre: '', descripcion: '', precio: '', stock: '', proveedor_id: '' });
     }
   }, [producto]);
 
@@ -29,17 +31,17 @@ const ProductForm = ({ producto, onSubmit, onCancel, proveedores }) => {
     e.preventDefault();
     if (!onSubmit) return;
     onSubmit(formData);
-    setFormData({
-      nombre: '',
-      descripcion: '',
-      precio: '',
-      stock: '',
-      proveedor_id: ''
-    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded shadow grid gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white dark:bg-gray-800 p-6 rounded shadow grid gap-4 max-w-md mx-auto"
+    >
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        {producto ? 'Editar Producto' : 'Crear Producto'}
+      </h2>
+
       <input
         type="text"
         name="nombre"
@@ -47,8 +49,9 @@ const ProductForm = ({ producto, onSubmit, onCancel, proveedores }) => {
         value={formData.nombre}
         onChange={handleChange}
         required
-        className="border p-2 rounded"
+        className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       />
+
       <input
         type="text"
         name="descripcion"
@@ -56,8 +59,9 @@ const ProductForm = ({ producto, onSubmit, onCancel, proveedores }) => {
         value={formData.descripcion}
         onChange={handleChange}
         required
-        className="border p-2 rounded"
+        className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       />
+
       <input
         type="number"
         name="precio"
@@ -65,8 +69,9 @@ const ProductForm = ({ producto, onSubmit, onCancel, proveedores }) => {
         value={formData.precio}
         onChange={handleChange}
         required
-        className="border p-2 rounded"
+        className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       />
+
       <input
         type="number"
         name="stock"
@@ -74,14 +79,15 @@ const ProductForm = ({ producto, onSubmit, onCancel, proveedores }) => {
         value={formData.stock}
         onChange={handleChange}
         required
-        className="border p-2 rounded"
+        className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       />
+
       <select
         name="proveedor_id"
         value={formData.proveedor_id}
         onChange={handleChange}
         required
-        className="border p-2 rounded"
+        className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       >
         <option value="">Seleccionar proveedor</option>
         {proveedores.map((p) => (
@@ -89,19 +95,22 @@ const ProductForm = ({ producto, onSubmit, onCancel, proveedores }) => {
         ))}
       </select>
 
-      <div className="flex justify-between">
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          {producto ? 'Actualizar' : 'Crear'}
-        </button>
+      <div className="flex justify-between mt-4">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
           >
             Cancelar
           </button>
         )}
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+          {producto ? 'Actualizar' : 'Crear'}
+        </button>
       </div>
     </form>
   );

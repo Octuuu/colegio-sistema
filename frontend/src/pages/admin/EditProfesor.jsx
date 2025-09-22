@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { actualizarProfesor } from '../../services/profesorService';
 
-function EditarProfesor({ profesor, onClose }) {
+function EditarProfesor({ profesor, onSuccess }) {
   const [nombre, setNombre] = useState(profesor.nombre);
   const [apellido, setApellido] = useState(profesor.apellido);
   const [telefono, setTelefono] = useState(profesor.telefono);
@@ -20,8 +20,7 @@ function EditarProfesor({ profesor, onClose }) {
         { nombre, apellido, telefono, correo, cedula, direccion },
         token
       );
-      alert('✅ Profesor actualizado correctamente');
-      onClose(); // cerrar modal y refrescar lista
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error('❌ Error al actualizar el profesor:', error);
       alert('❌ No se pudo actualizar el profesor');
@@ -83,7 +82,7 @@ function EditarProfesor({ profesor, onClose }) {
         <div className="flex justify-end gap-2">
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => onSuccess && onSuccess()}
             className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
           >
             Cancelar
