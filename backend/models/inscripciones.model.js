@@ -54,7 +54,7 @@ export const obtenerAlumnosPorCurso = async (cursoId) => {
             a.nombre AS alumno_nombre, a.apellido AS alumno_apellido, a.email
      FROM inscripciones i
      JOIN alumnos a ON i.alumno_id = a.id
-     WHERE i.curso_id = ? AND i.estado = 'activo'`,
+     WHERE i.curso_id = ?`,  
     [cursoId]
   );
   return rows;

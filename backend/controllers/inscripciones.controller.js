@@ -7,6 +7,7 @@ import {
     darDeBajaInscripcion,
     reactivarInscripcion,
 } from "../models/inscripciones.model.js";
+import pool from "../config/db.js";
 
 export const nuevaInscripcion = async (req, res) => {
   try {
@@ -112,5 +113,21 @@ export const obtenerAlumnosInscritosHandler = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error al obtener alumnos inscritos' });
+  }
+};
+
+export const actualizarInscripcionController = async (req, res) => {
+  const { id } = req.params;
+  const { anio_lectivo, estado } = req.body;
+
+  try {
+    await pool.query(
+      'UPDATE inscripciones SET anio_lectivo = ?, estado = ? WHERE id = ?',
+      [anio_lectivo, estado, id]
+    );
+    res.json({ message: 'Inscripción actualizada correctamente' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error al actualizar inscripción' });
   }
 };

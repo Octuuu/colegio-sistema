@@ -49,9 +49,9 @@ export const obtenerCursoPorId = async (id, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-
   return res.data;
 };
+
 
 // obtener alumnso por cursos 
 export const obtenerAlumnosPorCurso = async (cursoId, token) => {

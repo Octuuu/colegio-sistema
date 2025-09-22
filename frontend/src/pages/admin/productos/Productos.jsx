@@ -11,6 +11,15 @@ import { obtenerProveedores } from '../../../services/proveedorService';
 import Modal from '../../../components/Modal';
 import ProductForm from './ProductForm';
 
+const formatCurrency = (value) => {
+  const number = Number(value) || 0;
+  return new Intl.NumberFormat("es-PY", {
+    style: "currency",
+    currency: "PYG",
+    minimumFractionDigits: 0,
+  }).format(number);
+};
+
 const Productos = () => {
   const { token } = useContext(AuthContext);
   const [productos, setProductos] = useState([]);
@@ -18,7 +27,7 @@ const Productos = () => {
   const [proveedores, setProveedores] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState(null); // <- Notificación
+  const [notification, setNotification] = useState(null);
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -76,8 +85,17 @@ const Productos = () => {
   };
 
   const handleStockChange = async (id) => {
+    const producto = productos.find(p => p.id === id);
+    if (!producto) return;
+
     const cantidad = parseInt(prompt('Ingrese cantidad para agregar o restar del stock (negativo para disminuir):'));
     if (isNaN(cantidad)) return;
+
+    if (producto.stock + cantidad < 0) {
+      showNotification('No se puede reducir el stock por debajo de 0', 'error');
+      return;
+    }
+
     try {
       await actualizarStock(id, cantidad, token);
       await fetchProductos();
@@ -108,7 +126,6 @@ const Productos = () => {
 
   return (
     <div className="p-6">
-      
       {notification && (
         <div
           className={`fixed top-4 right-4 px-4 py-2 rounded shadow text-white ${
@@ -136,11 +153,11 @@ const Productos = () => {
           <thead>
             <tr className="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm uppercase">
               <th className="p-3">Nombre</th>
-              <th className="p-3 ">Descripción</th>
-              <th className="p-3 ">Precio</th>
-              <th className="p-3 ">Stock</th>
-              <th className="p-3 ">Proveedor</th>
-              <th className="p-3  text-center">Acciones</th>
+              <th className="p-3">Descripción</th>
+              <th className="p-3">Precio</th>
+              <th className="p-3">Stock</th>
+              <th className="p-3">Proveedor</th>
+              <th className="p-3 text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -150,11 +167,24 @@ const Productos = () => {
               </tr>
             ) : productos.length > 0 ? (
               productos.map((p) => (
-                <tr key={p.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                <tr key={p.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-700 transition group">
                   <td className="p-3">{p.nombre}</td>
                   <td className="p-3">{p.descripcion}</td>
-                  <td className="p-3">{p.precio}</td>
-                  <td className="p-3">{p.stock}</td>
+                  <td className="p-3">{formatCurrency(p.precio_unitario)}</td>
+                  <td className="p-3 relative">
+                    {p.stock <= 5 ? (
+                      <span className="relative inline-block">
+                        <span className="bg-red-600 text-white rounded-full px-2 py-1 text-xs font-bold cursor-pointer">
+                          {p.stock}
+                        </span>
+                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 w-max px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                          Stock bajo: ¡Quedan {p.stock} unidades!
+                        </span>
+                      </span>
+                    ) : (
+                      p.stock
+                    )}
+                  </td>
                   <td className="p-3">{p.proveedor_nombre || '-'}</td>
                   <td className="p-3 flex justify-center gap-3">
                     <button
@@ -189,7 +219,6 @@ const Productos = () => {
         </table>
       </div>
 
-      {/* Modal Crear/Editar */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ProductForm
           producto={editing}

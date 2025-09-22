@@ -49,9 +49,7 @@ const CursosList = () => {
     setIsModalOpen(true);
   };
 
-  const cerrarError = () => {
-    setError(null);
-  };
+  const cerrarError = () => setError(null);
 
   useEffect(() => {
     cargarCursos();
@@ -90,12 +88,6 @@ const CursosList = () => {
               className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
             >
               Crear curso
-            </button>
-            <button
-              onClick={() => window.history.back()}
-              className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
-            >
-              Volver
             </button>
           </div>
         </div>

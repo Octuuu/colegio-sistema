@@ -1,5 +1,13 @@
 import Modal from "../../../components/Modal";
 
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat("es-PY", {
+    style: "currency",
+    currency: "PYG",
+    minimumFractionDigits: 0,
+  }).format(value);
+};
+
 const ModalConfirmacionVenta = ({ isOpen, onClose, onConfirm, carrito, total, alumno, tutor, submitting }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Confirmar Venta">
@@ -20,13 +28,13 @@ const ModalConfirmacionVenta = ({ isOpen, onClose, onConfirm, carrito, total, al
               <tr key={p.id}>
                 <td className="p-2">{p.nombre}</td>
                 <td className="p-2">{p.cantidad}</td>
-                <td className="p-2">${p.subtotal}</td>
+                <td className="p-2"><td className="p-3">{formatCurrency(p.subtotal)}</td></td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        <p className="mt-2 font-bold">Total: ${total}</p>
+        <p className="mt-2 font-bold">Total: {formatCurrency(total)}</p>
 
         <div className="mt-4 flex justify-end gap-2">
           <button

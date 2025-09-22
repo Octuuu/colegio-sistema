@@ -36,4 +36,3 @@ export const reactivarInscripcion = async (id, token) => {
   });
   return res.data;
 };
-

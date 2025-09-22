@@ -149,6 +149,7 @@ const AlumnosList = () => {
             onSuccess={() => {
               setIsModalOpen(false);
               setNotification({ message: 'Alumno inscrito correctamente', type: 'success' });
+              
               cargarAlumnos();
             }}
           />
