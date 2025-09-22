@@ -22,3 +22,17 @@ export const actualizarInscripcion = async (id, datos, token) => {
   });
   return res.data;
 };
+
+export const darDeBajaInscripcion = async (id, token) => {
+  const res = await axios.patch(`${API_URL}/inscripciones/${id}/baja`, null, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+export const reactivarInscripcion = async (id, token) => {
+  const res = await axios.patch(`${API_URL}/inscripciones/${id}/reactivar`, null, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
