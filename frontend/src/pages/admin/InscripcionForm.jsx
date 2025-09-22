@@ -50,20 +50,14 @@ const InscripcionForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!formData.alumno_id || !formData.curso_id || !formData.anio_lectivo) {
       alert('Todos los campos son requeridos');
       return;
     }
-
     try {
       await crearInscripcion(formData, token);
       alert('Alumno inscrito con éxito');
-      setFormData({
-        alumno_id: '',
-        curso_id: '',
-        anio_lectivo: '',
-      });
+      setFormData({ alumno_id: '', curso_id: '', anio_lectivo: '' });
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || 'Error al inscribir alumno');
@@ -76,9 +70,7 @@ const InscripcionForm = () => {
         Inscribir Alumno
       </h2>
 
-      {error && (
-        <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">{error}</div>
-      )}
+      {error && <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">{error}</div>}
 
       <form onSubmit={handleSubmit} className="grid gap-4">
         <select

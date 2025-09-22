@@ -6,7 +6,8 @@ import {
   borrarInscripcion,
   getTodasInscripciones,
   darDeBajaInscripcionHandler,
-  reactivarInscripcionHandler
+  reactivarInscripcionHandler,
+  obtenerAlumnosInscritosHandler
 } from '../controllers/inscripciones.controller.js';
 import { authenticate, authorize } from '../middlewares/auth.middleware.js';
 
@@ -21,6 +22,7 @@ router.get('/curso/:cursoId', authenticate, authorize(rolesPermitidos), getAlumn
 router.delete('/:id', authenticate, authorize(rolesPermitidos), borrarInscripcion);
 router.patch('/:id/baja', darDeBajaInscripcionHandler);
 router.patch('/:id/reactivar', reactivarInscripcionHandler);
+router.get('/curso/:cursoId', obtenerAlumnosInscritosHandler);
 
 
 export default router;

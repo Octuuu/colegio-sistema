@@ -68,9 +68,12 @@ export default function AppRoutes() {
           <Route path="editarCursos/:id" element={<EditarCurso />} />
           <Route path=":id/alumnos" element={<AlumnosList />} />
           <Route path="editarAlumnos/:id" element={<EditarAlumno />} />
+
           <Route path="inscribirAlumno/:alumnoId" element={<InscripcionForm />} />
           <Route path="inscripcionesList" element={<InscripcionesList />} />
+
           <Route path="matriculaForm" element={<MatriculaForm />} />
+          
           <Route path="proveedorForm" element={<ProveedorForm />} />
           <Route path="proveedoresList" element={<Proveedores />} />
 

@@ -1,6 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { obtenerAlumnosInscritos, actualizarInscripcion } from '../../services/inscripcionesService';
+import { 
+  obtenerAlumnosInscritos, 
+  actualizarInscripcion, 
+  darDeBajaInscripcion, 
+  reactivarInscripcion 
+} from '../../services/inscripcionesService';
 import axios from 'axios';
 
 const InscripcionesList = () => {
@@ -37,13 +42,11 @@ const InscripcionesList = () => {
   }, [cursoSeleccionado, token]);
 
   const handleChange = (id, field, value) => {
-    setInscripciones((prev) =>
-      prev.map((insc) =>
-        insc.id === id ? { ...insc, [field]: value } : insc
-      )
+    setInscripciones(prev =>
+      prev.map(insc => (insc.id === id ? { ...insc, [field]: value } : insc))
     );
   };
-  
+
   const handleUpdate = async (insc) => {
     try {
       await actualizarInscripcion(insc.id, insc, token);
@@ -66,7 +69,7 @@ const InscripcionesList = () => {
         className="border border-slate-500 h-[36px] font-semibold pl-5 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       >
         <option value="">Seleccione un curso</option>
-        {cursos.map((curso) => (
+        {cursos.map(curso => (
           <option key={curso.id} value={curso.id}>
             {curso.anio}° - {curso.bachillerato}
           </option>
@@ -80,11 +83,12 @@ const InscripcionesList = () => {
               <th className="p-2">Alumno</th>
               <th className="p-2">Año lectivo</th>
               <th className="p-2">Fecha inscripción</th>
+              <th className="p-2">Estado</th>
               <th className="p-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {inscripciones.map((insc) => (
+            {inscripciones.map(insc => (
               <tr key={insc.id}>
                 <td className="p-2">{insc.alumno_nombre} {insc.alumno_apellido}</td>
                 <td className="p-2">
@@ -103,13 +107,42 @@ const InscripcionesList = () => {
                     className="border border-slate-400 px-2 py-1 rounded"
                   />
                 </td>
-                <td className="p-2">
+                <td className="p-2 font-semibold">
+                  {insc.estado || 'activo'}
+                </td>
+                <td className="p-2 space-x-2">
                   <button
                     onClick={() => handleUpdate(insc)}
                     className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
                   >
                     Guardar
                   </button>
+
+                  {insc.estado === 'activo' ? (
+                    <button
+                      onClick={async () => {
+                        await darDeBajaInscripcion(insc.id, token);
+                        setInscripciones(prev =>
+                          prev.map(i => (i.id === insc.id ? { ...i, estado: 'inactivo' } : i))
+                        );
+                      }}
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                    >
+                      Dar de baja
+                    </button>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        await reactivarInscripcion(insc.id, token);
+                        setInscripciones(prev =>
+                          prev.map(i => (i.id === insc.id ? { ...i, estado: 'activo' } : i))
+                        );
+                      }}
+                      className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                    >
+                      Reactivar
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

@@ -6,6 +6,7 @@ import {
     obtenerTodasInscripciones,
     darDeBajaInscripcion,
     reactivarInscripcion,
+    obtenerAlumnosPorCurso
 } from "../models/inscripciones.model.js";
 
 export const nuevaInscripcion = async (req, res) => {
@@ -101,5 +102,16 @@ export const reactivarInscripcionHandler = async (req, res) => {
   } catch (error) {
     console.error('error al reactivar la inscripcion', error);
     res.status(500).json({ message: 'Error al reactivar la inscripción' });
+  }
+};
+
+export const obtenerAlumnosInscritosHandler = async (req, res) => {
+  try {
+    const { cursoId } = req.params;
+    const alumnos = await obtenerAlumnosPorCurso(cursoId);
+    res.json(alumnos);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error al obtener alumnos inscritos' });
   }
 };

@@ -47,17 +47,19 @@ export const obtenerInscripcionesPorAlumno = async (alumnoId) => {
     return rows;
 };
 
-// Obtener alumnos de un curso
+// Obtener alumnos inscritos de un curso
 export const obtenerAlumnosPorCurso = async (cursoId) => {
-    const [rows] = await pool.query(
-        `SELECT a.id, a.nombre, a.apellido, a.email
-         FROM inscripciones i
-         JOIN alumnos a ON i.alumno_id = a.id
-         WHERE i.curso_id = ?`,
-        [cursoId]
-    );
-    return rows;
+  const [rows] = await pool.query(
+    `SELECT i.id, i.curso_id, i.alumno_id, i.anio_lectivo, i.fecha_inscripcion, i.estado,
+            a.nombre AS alumno_nombre, a.apellido AS alumno_apellido, a.email
+     FROM inscripciones i
+     JOIN alumnos a ON i.alumno_id = a.id
+     WHERE i.curso_id = ? AND i.estado = 'activo'`,
+    [cursoId]
+  );
+  return rows;
 };
+
 
 // Eliminar inscripción
 export const eliminarInscripcion = async (inscripcionId) => {
