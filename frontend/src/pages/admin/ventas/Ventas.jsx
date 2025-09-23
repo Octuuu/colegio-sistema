@@ -74,41 +74,52 @@ const Ventas = () => {
     }
   };
 
-  // Agregar producto al carrito
   const handleAgregarProducto = (producto) => {
     if (producto.stock <= 0) {
       showNotification(`El producto "${producto.nombre}" está agotado`, "error");
       return;
     }
 
-    setCarrito(prevCarrito => {
-      const exist = prevCarrito.find(p => p.id === producto.id);
-      let nuevoCarrito;
+    let nuevoCarrito;
+
+    setCarrito((prevCarrito) => {
+      const exist = prevCarrito.find((p) => p.id === producto.id);
 
       if (exist) {
-        nuevoCarrito = prevCarrito.map(p =>
+        nuevoCarrito = prevCarrito.map((p) =>
           p.id === producto.id
-            ? { ...p, cantidad: p.cantidad + 1, subtotal: (p.cantidad + 1) * p.precio_unitario }
+            ? {
+                ...p,
+                cantidad: p.cantidad + 1,
+                subtotal: (p.cantidad + 1) * p.precio_unitario,
+              }
             : p
         );
       } else {
-        nuevoCarrito = [...prevCarrito, { ...producto, cantidad: 1, subtotal: producto.precio_unitario }];
+        nuevoCarrito = [
+          ...prevCarrito,
+          {
+            ...producto,
+            cantidad: 1,
+            subtotal: producto.precio_unitario,
+          },
+        ];
       }
-
-      // Reducir stock del producto
-      setProductos(prev =>
-        prev.map(p =>
-          p.id === producto.id ? { ...p, stock: p.stock - 1 } : p
-        )
-      );
-
-      // Recalcular total
-      const nuevoTotal = nuevoCarrito.reduce((acc, p) => acc + p.subtotal, 0);
-      setTotal(nuevoTotal);
 
       return nuevoCarrito;
     });
+
+    // 🔹 Reducir stock aparte, no dentro del setCarrito
+    setProductos((prev) =>
+      prev.map((p) =>
+        p.id === producto.id ? { ...p, stock: p.stock - 1 } : p
+      )
+    );
+
+    // 🔹 Recalcular total después de actualizar el carrito
+    setTotal((prevTotal) => prevTotal + producto.precio_unitario);
   };
+
 
   // Cambiar cantidad de un producto en el carrito
   const handleCantidadChange = (id, cantidad) => {
@@ -137,36 +148,40 @@ const Ventas = () => {
       return nuevoCarrito;
     });
   };
-
-  // Eliminar de a uno del carrito
+  
   const eliminarUno = (id) => {
-    setCarrito(prevCarrito => {
-      const producto = prevCarrito.find(p => p.id === id);
-      if (!producto) return prevCarrito;
+    // Encontrar producto antes
+    const producto = carrito.find(p => p.id === id);
+    if (!producto) return;
 
-      // Devolver stock
-      setProductos(prev =>
-        prev.map(p => p.id === id ? { ...p, stock: p.stock + 1 } : p)
+    const nuevaCantidad = producto.cantidad - 1;
+
+    let nuevoCarrito;
+    if (nuevaCantidad <= 0) {
+      nuevoCarrito = carrito.filter(p => p.id !== id);
+    } else {
+      nuevoCarrito = carrito.map(p =>
+        p.id === id
+          ? { ...p, cantidad: nuevaCantidad, subtotal: nuevaCantidad * p.precio_unitario }
+          : p
       );
+    }
 
-      let nuevoCarrito;
-      if (producto.cantidad === 1) {
-        nuevoCarrito = prevCarrito.filter(p => p.id !== id);
-      } else {
-        nuevoCarrito = prevCarrito.map(p =>
-          p.id === id
-            ? { ...p, cantidad: p.cantidad - 1, subtotal: (p.cantidad - 1) * p.precio_unitario }
-            : p
-        );
-      }
+    // Actualizar carrito
+    setCarrito(nuevoCarrito);
 
-      // Recalcular total
-      const nuevoTotal = nuevoCarrito.reduce((acc, p) => acc + p.subtotal, 0);
-      setTotal(nuevoTotal);
+    // Recalcular total
+    const nuevoTotal = nuevoCarrito.reduce((acc, p) => acc + p.subtotal, 0);
+    setTotal(nuevoTotal);
 
-      return nuevoCarrito;
-    });
+    // Ajustar stock **después de actualizar el carrito**
+    setProductos(prev =>
+      prev.map(p =>
+        p.id === id ? { ...p, stock: p.stock + 1 } : p
+      )
+    );
   };
+
 
   // Confirmar venta
   const handleConfirmVenta = async () => {

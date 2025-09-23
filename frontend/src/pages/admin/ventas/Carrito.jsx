@@ -22,22 +22,22 @@ const Carrito = ({ carrito, cambiarCantidad, eliminarUno, total, formatCurrency 
               <td className="p-2">{p.nombre}</td>
               <td className="p-2">
                 <div className="flex items-center gap-2">
-  <button
-    onClick={() => cambiarCantidad(p.id, p.cantidad - 1)}
-    disabled={p.cantidad <= 1}
-    className="px-2 bg-gray-300 rounded"
-  >
-    -
-  </button>
-  <span>{p.cantidad}</span>
-  <button
-    onClick={() => cambiarCantidad(p.id, p.cantidad + 1)}
-    disabled={p.cantidad >= p.cantidad + p.stock}
-    className="px-2 bg-gray-300 rounded"
-  >
-    +
-  </button>
-</div>
+                  <button
+                    onClick={() => cambiarCantidad(p.id, p.cantidad - 1)}
+                    disabled={p.cantidad <= 1}
+                    className="px-2 bg-gray-300 rounded"
+                  >
+                    -
+                  </button>
+                  <span>{p.cantidad}</span>
+                  <button
+                    onClick={() => cambiarCantidad(p.id, p.cantidad + 1)}
+                    disabled={p.cantidad >= p.cantidad + p.stock}
+                    className="px-2 bg-gray-300 rounded"
+                  >
+                    +
+                  </button>
+                </div>
 
               </td>
               <td className="p-2">{formatCurrency(p.precio_unitario)}</td>
