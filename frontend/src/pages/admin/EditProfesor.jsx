@@ -8,6 +8,7 @@ function EditarProfesor({ profesor, onSuccess }) {
   const [correo, setCorreo] = useState(profesor.correo);
   const [cedula, setCedula] = useState(profesor.cedula);
   const [direccion, setDireccion] = useState(profesor.direccion);
+  const [estado, setEstado] = useState(profesor.estado ?? 1); // 🔹 por defecto Activo
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ function EditarProfesor({ profesor, onSuccess }) {
 
       await actualizarProfesor(
         profesor.id,
-        { nombre, apellido, telefono, correo, cedula, direccion },
+        { nombre, apellido, telefono, correo, cedula, direccion, estado },
         token
       );
       if (onSuccess) onSuccess();
@@ -83,6 +84,16 @@ function EditarProfesor({ profesor, onSuccess }) {
           className="w-full border border-gray-300 p-2 rounded"
           required
         />
+        {/* 🔹 Selector de estado */}
+        <select
+          value={estado}
+          onChange={(e) => setEstado(Number(e.target.value))}
+          className="w-full border border-gray-300 p-2 rounded"
+        >
+          <option value={1}>Activo</option>
+          <option value={0}>Inactivo</option>
+        </select>
+
         <div className="flex justify-end gap-2">
           <button
             type="button"

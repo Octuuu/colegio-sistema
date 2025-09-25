@@ -89,6 +89,7 @@ const ProfesorList = () => {
               <th className="p-2">Correo</th>
               <th className="p-2">Cédula</th>
               <th className="p-2">Dirección</th>
+              <th className="p-2">Estado</th> {/* 🔹 Nuevo campo */}
               <th className="p-2">Acciones</th>
             </tr>
           </thead>
@@ -101,6 +102,13 @@ const ProfesorList = () => {
                 <td className="p-2">{p.correo}</td>
                 <td className="p-2">{p.cedula}</td>
                 <td className="p-2">{p.direccion}</td>
+                <td className="p-2">
+                  {p.estado === 1 ? (
+                    <span className="text-green-600 font-semibold">Activo</span>
+                  ) : (
+                    <span className="text-red-600 font-semibold">Inactivo</span>
+                  )}
+                </td>
                 <td className="p-2 space-x-2">
                   <button
                     onClick={() => handleEdit(p)}
