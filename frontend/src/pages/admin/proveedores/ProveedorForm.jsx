@@ -49,13 +49,17 @@ const ProveedorForm = ({ proveedor, onSubmit, onCancel }) => {
         value={formData.nombre}
         onChange={handleChange}
         required
+        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+        title="Solo se permiten letras y espacios"
         className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       />
 
       <input
         type="text"
         name="tipo"
-        placeholder="Tipo (local, externo...)"
+        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+        title="Solo se permiten letras y espacios"
+        placeholder="Tipo (local, externo)"
         value={formData.tipo}
         onChange={handleChange}
         required
@@ -63,7 +67,7 @@ const ProveedorForm = ({ proveedor, onSubmit, onCancel }) => {
       />
 
       <input
-        type="text"
+        type="number"
         name="telefono"
         placeholder="Teléfono"
         value={formData.telefono}

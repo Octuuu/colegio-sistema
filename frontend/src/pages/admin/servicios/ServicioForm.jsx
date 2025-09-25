@@ -50,6 +50,8 @@ const ServicioForm = ({ servicio, onSubmit, onCancel, proveedores }) => {
           onChange={handleChange}
           required
           className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
         />
         <input
           name="tipo"
@@ -58,6 +60,8 @@ const ServicioForm = ({ servicio, onSubmit, onCancel, proveedores }) => {
           onChange={handleChange}
           required
           className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
         />
         <textarea
           name="descripcion"
@@ -65,6 +69,8 @@ const ServicioForm = ({ servicio, onSubmit, onCancel, proveedores }) => {
           value={formData.descripcion}
           onChange={handleChange}
           className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
         />
         <input
           name="costo"

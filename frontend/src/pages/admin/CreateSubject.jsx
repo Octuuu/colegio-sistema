@@ -33,6 +33,8 @@ const CreateSubject = ({ onSuccess }) => {
       <form onSubmit={handleSubmit} className="grid gap-4">
         <input
           name="nombre"
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
           value={formData.nombre}
           onChange={handleChange}
           placeholder="Nombre de la materia"
@@ -45,6 +47,8 @@ const CreateSubject = ({ onSuccess }) => {
           onChange={handleChange}
           placeholder="Descripción"
           required
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
         <button

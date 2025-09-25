@@ -38,6 +38,8 @@ function EditarProfesor({ profesor, onSuccess }) {
           placeholder="Nombre"
           className="w-full border border-gray-300 p-2 rounded"
           required
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
         />
         <input
           type="text"
@@ -46,9 +48,11 @@ function EditarProfesor({ profesor, onSuccess }) {
           placeholder="Apellido"
           className="w-full border border-gray-300 p-2 rounded"
           required
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
         />
         <input
-          type="text"
+          type="number"
           value={telefono}
           onChange={(e) => setTelefono(e.target.value)}
           placeholder="Teléfono"

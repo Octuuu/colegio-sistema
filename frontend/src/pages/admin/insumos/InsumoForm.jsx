@@ -33,6 +33,8 @@ const InsumoForm = ({ insumo, onSubmit, onCancel, proveedores }) => {
           placeholder="Nombre"
           className="p-2 border rounded"
           required
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
         />
         <input
           name="descripcion"
@@ -41,6 +43,8 @@ const InsumoForm = ({ insumo, onSubmit, onCancel, proveedores }) => {
           placeholder="Descripción"
           className="p-2 border rounded"
           required
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
         />
         <input
           type="number"

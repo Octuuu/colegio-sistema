@@ -28,7 +28,7 @@ const FormEditarInscripcion = ({ inscripcion, onClose, onSuccess }) => {
       <div>
         <label>Año lectivo</label>
         <input
-          type="text"
+          type="number"
           name="anio_lectivo"
           value={formData.anio_lectivo}
           onChange={handleChange}

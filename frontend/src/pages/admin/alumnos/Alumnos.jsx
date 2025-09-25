@@ -49,7 +49,7 @@ const AlumnoForm = ({ onSuccess }) => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} required className={inputClass} />
+        <input name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} required className={inputClass} pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" />
         <input name="apellido" placeholder="Apellido" value={formData.apellido} onChange={handleChange} required className={inputClass} />
         <input name="cedula" placeholder="Cédula" value={formData.cedula} onChange={handleChange} required className={inputClass} />
         <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleChange} required className={inputClass} />

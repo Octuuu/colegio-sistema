@@ -42,12 +42,15 @@ const CrearCurso = ({ onSuccess }) => {
           placeholder="Año"
           required
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
+          type="number"
         />
         <input
           name="bachillerato"
           value={formData.bachillerato}
           onChange={handleChange}
           placeholder="Bachillerato"
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
           required
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />

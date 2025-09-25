@@ -44,6 +44,8 @@ function CreateTeacher({ onSuccess }) {
           value={formData.nombre}
           onChange={handleChange}
           placeholder="Nombre"
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
           required
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
@@ -52,6 +54,8 @@ function CreateTeacher({ onSuccess }) {
           value={formData.apellido}
           onChange={handleChange}
           placeholder="Apellido"
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo se permiten letras y espacios"
           required
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
@@ -61,6 +65,7 @@ function CreateTeacher({ onSuccess }) {
           onChange={handleChange}
           placeholder="Teléfono"
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
+          type='number'
         />
         <input
           type="email"

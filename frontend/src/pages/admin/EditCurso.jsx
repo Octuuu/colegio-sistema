@@ -68,6 +68,8 @@ const EditarCurso = ({ curso, onSuccess }) => {
             onChange={handleChange}
             className="border p-2 rounded w-full"
             required
+            pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+            title="Solo se permiten letras y espacios"
           />
         </div>
         <button

@@ -49,12 +49,16 @@ const ProductForm = ({ producto, onSubmit, onCancel, proveedores }) => {
         value={formData.nombre}
         onChange={handleChange}
         required
+        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+        title="Solo se permiten letras y espacios"
         className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       />
 
       <input
         type="text"
         name="descripcion"
+        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+        title="Solo se permiten letras y espacios"
         placeholder="Descripción"
         value={formData.descripcion}
         onChange={handleChange}
