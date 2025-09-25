@@ -18,9 +18,9 @@ export const createProfe = async ({ nombre, apellido, telefono, correo, cedula, 
   const emailUsuario = `${cedula}@correo.com`;
   const password = cedula.split('').reverse().join('') + '.';
 
-  // 1. Insertar profe
+  // 1. Insertar profe (estado por defecto = 1)
   const [result] = await pool.query(
-    'INSERT INTO profesores (nombre, apellido, telefono, correo, cedula, direccion) VALUES (?, ?, ?, ?, ?, ?)',
+    'INSERT INTO profesores (nombre, apellido, telefono, correo, cedula, direccion, estado) VALUES (?, ?, ?, ?, ?, ?, 1)',
     [nombre, apellido, telefono, correo, cedula, direccion]
   );
 
@@ -32,17 +32,17 @@ export const createProfe = async ({ nombre, apellido, telefono, correo, cedula, 
   return profeId;
 };
 
-// Actualizar profe
-export const updateProfe = async (id, { nombre, apellido, telefono, correo, cedula, direccion }) => {
+// Actualizar profe (con estado)
+export const updateProfe = async (id, { nombre, apellido, telefono, correo, cedula, direccion, estado }) => {
   await pool.query(
-    'UPDATE profesores SET nombre = ?, apellido = ?, telefono = ?, correo = ?, cedula = ?, direccion = ? WHERE id = ?',
-    [nombre, apellido, telefono, correo, cedula, direccion, id]
+    'UPDATE profesores SET nombre = ?, apellido = ?, telefono = ?, correo = ?, cedula = ?, direccion = ?, estado = ? WHERE id = ?',
+    [nombre, apellido, telefono, correo, cedula, direccion, estado, id]
   );
 };
 
-// Eliminar profe
+// Eliminar profe (borrado lógico -> estado = 0)
 export const deleteProfe = async (id) => {
-  await pool.query('DELETE FROM profesores WHERE id = ?', [id]);
+  await pool.query('UPDATE profesores SET estado = 0 WHERE id = ?', [id]);
 };
 
 // obtener alumnos de la materia que dicta el profe

@@ -32,11 +32,8 @@ export const createAlumno = async ({ nombre, apellido, cedula, fecha_nacimiento,
   return alumnoId;
 };
 
-// Actualizar alumno
-// Actualizar alumno
 export const updateAlumno = async (id, { nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email }) => {
   try {
-    // Normalizar la fecha a formato YYYY-MM-DD si viene con formato ISO
     let fechaFormateada = null;
     if (fecha_nacimiento) {
       fechaFormateada = new Date(fecha_nacimiento).toISOString().split('T')[0];
@@ -52,13 +49,10 @@ export const updateAlumno = async (id, { nombre, apellido, cedula, fecha_nacimie
   }
 };
 
-
-// Eliminar alumno
 export const deleteAlumno = async (id) => {
   await pool.query('DELETE FROM alumnos WHERE id = ?', [id]);
 };
 
-// obtener curso y materias de alumno 
 export const getCursoYMateriasDeAlumno = async (alumnoId) => {
   const [rows] = await pool.query(`
     SELECT 
@@ -91,6 +85,3 @@ export const getCursoYMateriasDeAlumno = async (alumnoId) => {
 
   return curso;
 };
-
-
-//

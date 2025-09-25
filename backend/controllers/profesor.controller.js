@@ -38,7 +38,7 @@ export const createProfeHandler = async (req, res) => {
   }
 };
 
-// Actualizar profe
+// Actualizar profe (incluye estado)
 export const updateProfeHandler = async (req, res) => {
   try {
     await updateProfe(req.params.id, req.body);
@@ -48,19 +48,18 @@ export const updateProfeHandler = async (req, res) => {
   }
 };
 
-// Eliminar profe
-// Eliminar profe
+// Eliminar profe (inactivar)
 export const deleteProfeHandler = async (req, res) => {
   try {
     await deleteProfe(req.params.id);
-    res.json({ message: 'Profesor eliminado correctamente' });
+    res.json({ message: 'Profesor inactivado correctamente' });
   } catch (error) {
     console.error('❌ Error al eliminar profesor:', error); 
     res.status(500).json({ error: error.message });
   }
 };
 
-// obtenr alumnos de la materia que dicta el profe
+// obtener alumnos de la materia que dicta el profe
 export const getAlumnosMateria = async (req, res) => {
   try {
     const profesorId = req.user.profesor_id; 
@@ -76,5 +75,3 @@ export const getAlumnosMateria = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-// traer el historial del asistencias
