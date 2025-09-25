@@ -5,6 +5,7 @@ import Modal from '../../components/Modal';
 import CrearCurso from './CreateCourse.jsx';
 import EditarCurso from './EditCurso.jsx';
 import Notification from '../../components/Notification.jsx';
+import ActionButton from '../../components/ActionButton.jsx';
 
 const CursosList = () => {
   const { token } = useContext(AuthContext);
@@ -69,12 +70,11 @@ const CursosList = () => {
         <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-10 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-md text-center max-w-md w-full">
             <p className="text-red-600 font-semibold mb-4">{error}</p>
-            <button
+            <ActionButton
               onClick={cerrarError}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-            >
-              Aceptar
-            </button>
+              text="Aceptar"
+              color="blue"
+            />
           </div>
         </div>
       )}
@@ -82,14 +82,13 @@ const CursosList = () => {
       <div className={`${error ? 'blur-sm pointer-events-none select-none' : ''}`}>
         <div className="flex justify-between mb-5">
           <h1 className="font-medium text-2xl">Cursos Registrados</h1>
-          <div>
-            <button
-              onClick={handleCreate}
-              className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
-            >
-              Crear curso
-            </button>
-          </div>
+          {/* Botón Crear curso gris */}
+          <button
+            onClick={handleCreate}
+            className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
+          >
+            Crear curso
+          </button>
         </div>
 
         <div className="max-h-[500px] overflow-y-auto border rounded">
@@ -106,22 +105,22 @@ const CursosList = () => {
                 <tr key={c.id} className="text-center border-t">
                   <td className="p-2">{c.anio}°</td>
                   <td className="p-2">{c.bachillerato}</td>
-                  <td className="p-3 space-x-2 font-medium">
-                    <button
+                  <td className="p-3 space-x-2 font-medium flex justify-center">
+                    <ActionButton
                       onClick={() => handleEdit(c)}
-                      className="text-blue-700 bg-blue-100 px-2 py-1 rounded hover:bg-blue-200"
-                    >
-                      Editar
-                    </button>
-                    <button
+                      text="Editar"
+                      color="blue"
+                      size="sm"
+                    />
+                    <ActionButton
                       onClick={() => handleDelete(c.id)}
-                      className="text-red-700 bg-red-100 px-2 py-1 rounded hover:bg-red-200"
-                    >
-                      Eliminar
-                    </button>
+                      text="Eliminar"
+                      color="red"
+                      size="sm"
+                    />
                     <a
                       href={`/admin/${c.id}/alumnos`}
-                      className="text-green-700 bg-green-100 px-2 py-1 rounded hover:bg-green-200"
+                      className="text-green-700 bg-green-100 px-2 py-1 rounded hover:bg-green-200 transition"
                     >
                       Ver alumnos
                     </a>

@@ -35,7 +35,6 @@ const Proveedores = () => {
     fetchProveedores();
   }, [fetchProveedores]);
 
-  
   const handleSubmit = async (formData) => {
     try {
       if (editing) {
@@ -78,7 +77,6 @@ const Proveedores = () => {
 
   return (
     <div className="p-6">
-     
       {notification.message && (
         <Notification
           message={notification.message}
@@ -99,7 +97,7 @@ const Proveedores = () => {
         </button>
       </div>
 
-      <div className="overflow-x-auto ">
+      <div className="overflow-x-auto">
         <table className="min-w-full bg-white dark:bg-gray-800">
           <thead>
             <tr className="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm uppercase">
@@ -108,13 +106,16 @@ const Proveedores = () => {
               <th className="p-3 border">Teléfono</th>
               <th className="p-3 border">Correo</th>
               <th className="p-3 border">Dirección</th>
+              <th className="p-3 border">Estado</th> {/* Nueva columna */}
               <th className="p-3 border text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="6" className="text-center p-6">Cargando proveedores...</td>
+                <td colSpan="7" className="text-center p-6">
+                  Cargando proveedores...
+                </td>
               </tr>
             ) : proveedores.length > 0 ? (
               proveedores.map((p) => (
@@ -124,6 +125,17 @@ const Proveedores = () => {
                   <td className="p-3">{p.telefono}</td>
                   <td className="p-3">{p.correo}</td>
                   <td className="p-3">{p.direccion}</td>
+                  <td className="p-3">
+                    {p.estado === 1 ? (
+                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">
+                        Activo
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-sm">
+                        Inactivo
+                      </span>
+                    )}
+                  </td>
                   <td className="p-3 flex justify-center gap-3">
                     <button
                       onClick={() => handleEdit(p)}
@@ -133,7 +145,7 @@ const Proveedores = () => {
                     </button>
                     <button
                       onClick={() => handleDelete(p.id)}
-                      className="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200 transition border border-red-300 "
+                      className="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200 transition border border-red-300"
                     >
                       Eliminar
                     </button>
@@ -142,7 +154,7 @@ const Proveedores = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center p-6 text-gray-500">
+                <td colSpan="7" className="text-center p-6 text-gray-500">
                   No hay proveedores registrados
                 </td>
               </tr>
@@ -151,11 +163,20 @@ const Proveedores = () => {
         </table>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setEditing(null); }}>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditing(null);
+        }}
+      >
         <ProveedorForm
           proveedor={editing}
           onSubmit={handleSubmit}
-          onCancel={() => { setIsModalOpen(false); setEditing(null); }}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setEditing(null);
+          }}
         />
       </Modal>
     </div>

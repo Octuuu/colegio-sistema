@@ -1,13 +1,13 @@
 import pool from "../config/db.js";
 
-export const crearProveedor = async (nombre, tipo, telefono, correo, direccion) => {
+export const crearProveedor = async (nombre, tipo, telefono, correo, direccion, estado = 1) => {
     const [result] = await pool.query(
-        `INSERT INTO proveedores (nombre, tipo, telefono, correo, direccion)
-         VALUES (?, ?, ?, ?, ?)`,
-        [nombre, tipo, telefono, correo, direccion]
+        `INSERT INTO proveedores (nombre, tipo, telefono, correo, direccion, estado)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [nombre, tipo, telefono, correo, direccion, estado]
     );
     return result.insertId;
-}
+};
 
 export const obtenerProveedores = async () => {
     const [rows] = await pool.query(`SELECT * FROM proveedores ORDER BY nombre`);
@@ -19,10 +19,12 @@ export const obtenerProveedorPorId = async (id) => {
     return rows[0];
 };
 
-export const actualizarProveedor = async (id, nombre, tipo, telefono, correo, direccion) => {
+export const actualizarProveedor = async (id, nombre, tipo, telefono, correo, direccion, estado) => {
     const [result] = await pool.query(
-        `UPDATE proveedores SET nombre = ?, tipo = ?, telefono = ?, correo = ?, direccion = ? WHERE id = ?`,
-        [nombre, tipo, telefono, correo, direccion, id]
+        `UPDATE proveedores 
+         SET nombre = ?, tipo = ?, telefono = ?, correo = ?, direccion = ?, estado = ?
+         WHERE id = ?`,
+        [nombre, tipo, telefono, correo, direccion, estado, id]
     );
     return result.affectedRows;
 };

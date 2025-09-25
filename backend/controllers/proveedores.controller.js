@@ -9,13 +9,13 @@ import {
 // Crear proveedor
 export const nuevoProveedor = async (req, res) => {
     try {
-        const { nombre, tipo, telefono, correo, direccion } = req.body;
+        const { nombre, tipo, telefono, correo, direccion, estado } = req.body;
 
         if (!nombre || !tipo) {
             return res.status(400).json({ message: 'Nombre y tipo son obligatorios' });
         }
 
-        const id = await crearProveedor(nombre, tipo, telefono, correo, direccion);
+        const id = await crearProveedor(nombre, tipo, telefono, correo, direccion, estado ?? 1);
         res.status(201).json({ message: 'Proveedor creado', id });
     } catch (error) {
         console.error(error);
@@ -55,9 +55,9 @@ export const getProveedorPorId = async (req, res) => {
 export const editarProveedor = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, tipo, telefono, correo, direccion } = req.body;
+        const { nombre, tipo, telefono, correo, direccion, estado } = req.body;
 
-        const filas = await actualizarProveedor(id, nombre, tipo, telefono, correo, direccion);
+        const filas = await actualizarProveedor(id, nombre, tipo, telefono, correo, direccion, estado);
 
         if (filas === 0) {
             return res.status(404).json({ message: 'Proveedor no encontrado' });

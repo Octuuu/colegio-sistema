@@ -6,7 +6,8 @@ const ProveedorForm = ({ proveedor, onSubmit, onCancel }) => {
     tipo: '',
     telefono: '',
     correo: '',
-    direccion: ''
+    direccion: '',
+    estado: 1, // por defecto Activo
   });
 
   useEffect(() => {
@@ -16,15 +17,17 @@ const ProveedorForm = ({ proveedor, onSubmit, onCancel }) => {
         tipo: proveedor.tipo || '',
         telefono: proveedor.telefono || '',
         correo: proveedor.correo || '',
-        direccion: proveedor.direccion || ''
+        direccion: proveedor.direccion || '',
+        estado: proveedor.estado ?? 1, // si no existe, toma 1
       });
     } else {
-      setFormData({ nombre: '', tipo: '', telefono: '', correo: '', direccion: '' });
+      setFormData({ nombre: '', tipo: '', telefono: '', correo: '', direccion: '', estado: 1 });
     }
   }, [proveedor]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: name === "estado" ? Number(value) : value });
   };
 
   const handleSubmit = (e) => {
@@ -49,7 +52,7 @@ const ProveedorForm = ({ proveedor, onSubmit, onCancel }) => {
         value={formData.nombre}
         onChange={handleChange}
         required
-        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+$"
         title="Solo se permiten letras y espacios"
         className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       />
@@ -57,7 +60,7 @@ const ProveedorForm = ({ proveedor, onSubmit, onCancel }) => {
       <input
         type="text"
         name="tipo"
-        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+        pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+$"
         title="Solo se permiten letras y espacios"
         placeholder="Tipo (local, externo)"
         value={formData.tipo}
@@ -92,6 +95,17 @@ const ProveedorForm = ({ proveedor, onSubmit, onCancel }) => {
         onChange={handleChange}
         className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
       />
+
+      {/* Select para estado */}
+      <select
+        name="estado"
+        value={formData.estado}
+        onChange={handleChange}
+        className="border border-slate-500 h-[36px] font-semibold pl-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
+      >
+        <option value={1}>Activo</option>
+        <option value={0}>Inactivo</option>
+      </select>
 
       <div className="flex justify-between mt-4">
         {onCancel && (
