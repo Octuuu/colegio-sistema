@@ -20,6 +20,8 @@ import insumosRoutes from "./routes/insumos.routes.js";
 import InsumosMovimientosRoutes from "./routes/insumosMovimientos.routes.js";
 import tutorRoutes from './routes/tutor.routes.js';
 import ventaRoutes from './routes/venta.routes.js';
+import compraRoutes from './routes/compra.routes.js';
+
 
 const app = express();
 
@@ -52,6 +54,7 @@ app.use("/api/insumos", insumosRoutes);
 app.use("/api/insumos", InsumosMovimientosRoutes);
 app.use('/api/tutores', tutorRoutes);
 app.use('/api/ventas', ventaRoutes);
+app.use('/api/compras', compraRoutes);
 
 // manejo de errores
 app.use(errorHandler);
