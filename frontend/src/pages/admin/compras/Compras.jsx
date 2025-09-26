@@ -142,7 +142,18 @@ const Compras = () => {
 
     try {
       const { facturaId } = await crearCompra(compraData, token);
-      await descargarFacturaCompraPDF(facturaId, token);
+
+        // Validar antes de usarlo
+        const facturaIdNum = Number(facturaId);
+        if (!facturaIdNum || isNaN(facturaIdNum)) {
+        console.error("FacturaId inválido:", facturaId);
+        showNotification("Error al generar factura", "error");
+        setSubmitting(false);
+        return;
+        }
+
+await descargarFacturaCompraPDF(facturaIdNum, token);
+
 
       showNotification("Compra registrada y factura generada ✅", "success");
 
