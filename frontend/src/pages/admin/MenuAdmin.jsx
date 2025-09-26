@@ -24,6 +24,7 @@ const MenuAdmin = () => {
     { title: 'Insumos', path: '/admin/insumos' },
     { title: 'Movimientos de insumos', path: '/admin/insumosMovimientos' },
     { title: 'Ventas', path: '/admin/ventas' },
+    { title: 'Compras', path: '/admin/compras' },
   ];
 
   return (

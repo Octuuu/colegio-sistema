@@ -42,6 +42,7 @@ import Servicios from '../pages/admin/servicios/Servicios';
 import Insumos from '../pages/admin/insumos/Insumos';
 import InsumosMovimientos from '../pages/admin/insumos/InsumosMovimientos';
 import Ventas from '../pages/admin/ventas/Ventas';
+import Compras from '../pages/admin/compras/Compras';
 
 export default function AppRoutes() {
   return (
@@ -86,8 +87,9 @@ export default function AppRoutes() {
           <Route path="insumos" element={<Insumos />} />
           <Route path="insumosMovimientos" element={<InsumosMovimientos />} />
 
-
           <Route path="ventas" element={<Ventas />} />
+
+          <Route path="compras" element={<Compras />} />
         </Route>
       </Route>
 
