@@ -9,7 +9,6 @@ import {
   actualizarInscripcion
 } from '../../services/inscripcionesService';
 
-// Modal para ver datos del alumno (solo lectura)
 const VerAlumnoModal = ({ alumno, onClose }) => (
   <div className="space-y-4">
     <h2 className="text-xl font-bold">Datos del alumno</h2>
@@ -206,14 +205,12 @@ const InscripcionesList = () => {
         </tbody>
       </table>
 
-      {/* Modal Ver Alumno */}
       {verAlumnoModal && alumnoSeleccionado && (
         <Modal isOpen={verAlumnoModal} onClose={() => setVerAlumnoModal(false)}>
           <VerAlumnoModal alumno={alumnoSeleccionado} onClose={() => setVerAlumnoModal(false)} />
         </Modal>
       )}
 
-      {/* Modal Editar Inscripción */}
       {editarInscripcionModal && alumnoSeleccionado && (
         <Modal isOpen={editarInscripcionModal} onClose={() => setEditarInscripcionModal(false)}>
           <EditarInscripcionModal

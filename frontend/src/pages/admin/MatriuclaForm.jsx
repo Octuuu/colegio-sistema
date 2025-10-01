@@ -14,7 +14,6 @@ const MatriculaForm = () => {
     recibidoPor: ''
   });
 
-
   const [error, setError] = useState(null);
 
   useEffect(() => {

@@ -7,7 +7,6 @@ import {
   getCursoYMateriasDeAlumno,
 } from '../models/alumno.model.js';
 
-// Obtener todos los alumnos
 export const getAlumnos = async (req, res) => {
   try {
     const alumnos = await getAllAlumnos();
@@ -18,19 +17,17 @@ export const getAlumnos = async (req, res) => {
   }
 };
 
-// Obtener un alumno por ID
 export const getAlumno = async (req, res) => {
   try {
     const alumno = await getAlumnoById(req.params.id);
     if (!alumno) return res.status(404).json({ error: 'Alumno no encontrado' });
     res.json(alumno);
   } catch (error) {
-    console.error('❌ Error al obtener alumno:', error);
+    console.error('error al obtener alumno:', error);
     res.status(500).json({ error: 'Error al obtener alumno' });
   }
 };
 
-// Crear nuevo alumno
 export const createAlumnoHandler = async (req, res) => {
   try {
     const { nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email } = req.body;
@@ -42,12 +39,11 @@ export const createAlumnoHandler = async (req, res) => {
     const id = await createAlumno({ nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email });
     res.status(201).json({ id, message: 'Alumno y usuario creados correctamente' });
   } catch (error) {
-    console.error('❌ Error en createAlumnoHandler:', error);
+    console.error('Error en createAlumnoHandler:', error);
     res.status(500).json({ error: 'Error al crear alumno' });
   }
 };
 
-// Actualizar alumno
 export const updateAlumnoHandler = async (req, res) => {
   try {
     const { id } = req.params;
@@ -60,12 +56,11 @@ export const updateAlumnoHandler = async (req, res) => {
     await updateAlumno(id, { nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email });
     res.json({ message: 'Alumno actualizado correctamente' });
   } catch (error) {
-    console.error('❌ Error al actualizar alumno:', error.sqlMessage || error);
+    console.error('error al actualizar alumno:', error.sqlMessage || error);
     res.status(500).json({ error: 'Error al actualizar alumno' });
   }
 };
 
-// Eliminar alumno
 export const deleteAlumnoHandler = async (req, res) => {
   try {
     await deleteAlumno(req.params.id);
@@ -76,7 +71,6 @@ export const deleteAlumnoHandler = async (req, res) => {
   }
 };
 
-// obtener curso y materia de alumno por ID
 export const getCursoConMaterias = async (req, res) => {
   try {
     const alumnoId = req.params.id;
@@ -85,12 +79,11 @@ export const getCursoConMaterias = async (req, res) => {
     if (!curso) return res.status(404).json({ error: 'Alumno o curso no encontrado' });
     res.json(curso);
   } catch (error) {
-    console.error('❌ Error al obtener curso y materias:', error);
+    console.error('error al obtener curso y materias:', error);
     res.status(500).json({ error: 'Error al obtener curso y materias' });
   }
 };
 
-// obtener curso y materias del alumno logueado
 export const getCursoConMateriasAlumno = async (req, res) => {
   try {
     const alumnoId = req.user.alumno_id;
@@ -105,7 +98,7 @@ export const getCursoConMateriasAlumno = async (req, res) => {
 
     res.json(curso);
   } catch (error) {
-    console.error('❌ Error al obtener curso y materias del alumno logueado:', error);
+    console.error('error al obtener curso y materias del alumno logueado:', error);
     res.status(500).json({ error: 'Error al obtener curso y materias' });
   }
 };

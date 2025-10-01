@@ -46,7 +46,7 @@ app.use('/api/asistencias', asistenciaRoutes);
 app.use('/api/calificacion', calificacionRoutes);
 app.use('/api/perfil', perfilRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
-app.use('/api/matriculas', matriculaRoutes);
+app.use('/api/pagos-matricula', matriculaRoutes);
 app.use('/api/proveedores', ProveedoresRoutes);
 app.use("/api/productos", productosRoutes);
 app.use("/api/servicios", serviciosRoutes);

@@ -7,7 +7,7 @@ const SeleccionarProveedor = ({ proveedores, selectedProveedor, setSelectedProve
         onChange={(e) => setSelectedProveedor(Number(e.target.value))}
         className="border p-2 rounded w-full"
       >
-        <option value="">-- Seleccionar --</option>
+        <option value="">Seleccionar</option>
         {proveedores.map((p) => (
           <option key={p.id} value={p.id}>
             {p.nombre}

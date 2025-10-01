@@ -9,19 +9,11 @@ import {
 
 const router = Router();
 
-// Crear proveedor
+
 router.post('/', nuevoProveedor);
-
-// Obtener todos los proveedores
 router.get('/', getProveedores);
-
-// Obtener proveedor por ID
 router.get('/:id', getProveedorPorId);
-
-// Actualizar proveedor
 router.put('/:id', editarProveedor);
-
-// Eliminar proveedor
 router.delete('/:id', borrarProveedor);
 
 export default router;

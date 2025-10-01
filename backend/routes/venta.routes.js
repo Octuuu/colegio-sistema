@@ -5,7 +5,6 @@ import { descargarFacturaController } from '../controllers/factura.controller.js
 
 const router = Router();
 
-// CRUD básico de ventas
 router.post('/', ventaController.crearVentaController);
 router.get('/', ventaController.obtenerVentasController);
 router.get('/:id', ventaController.obtenerVentaController);

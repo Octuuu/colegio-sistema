@@ -17,7 +17,6 @@ router.get('/:id', obtenerProductoPorIdController);
 router.put('/:id', actualizarProductoController);
 router.delete('/:id', eliminarProductoController);
 
-// Rutas adicionales
 router.patch('/:id/stock', actualizarStockController);
 router.get('/stock-bajo', productosBajoStockController);
 

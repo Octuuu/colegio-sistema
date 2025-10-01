@@ -25,12 +25,12 @@ const AlumnoForm = ({ onSuccess }) => {
     e.preventDefault();
     try {
       await crearAlumno(formData, token);
-      setNotification({ message: '✅ Alumno creado con éxito', type: 'success' });
+      setNotification({ message: 'alumno creado con éxito', type: 'success' });
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error('Error al crear alumno:', err);
       setNotification({ 
-        message: err.response?.data?.error || '❌ Error al crear alumno', 
+        message: err.response?.data?.error || 'error al crear alumno', 
         type: 'error' 
       });
     }

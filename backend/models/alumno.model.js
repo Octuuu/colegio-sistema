@@ -1,24 +1,20 @@
 import pool from '../config/db.js';
 import { createUser } from './usuario.model.js';
 
-// Todos los alumnos
 export const getAllAlumnos = async () => {
   const [rows] = await pool.query('SELECT * FROM alumnos');
   return rows;
 };
 
-// Alumno por ID
 export const getAlumnoById = async (id) => {
   const [rows] = await pool.query('SELECT * FROM alumnos WHERE id = ?', [id]);
   return rows[0];
 };
 
-// Crear alumno y su cuenta de usuario
 export const createAlumno = async ({ nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email }) => {
   const emailUsuario = `${cedula}@correo.com`;
   const password = cedula.split('').reverse().join('') + '.';
 
-  // 1. Insertar alumno
   const [result] = await pool.query(
     'INSERT INTO alumnos (nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email) VALUES (?, ?, ?, ?, ?, ?, ?)',
     [nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email]
@@ -26,7 +22,6 @@ export const createAlumno = async ({ nombre, apellido, cedula, fecha_nacimiento,
 
   const alumnoId = result.insertId;
 
-  // 2. Crear usuario vinculado
   await createUser({ gmail: emailUsuario, password, rol_id: 3,  alumno_id: alumnoId });
 
   return alumnoId;

@@ -13,7 +13,6 @@ export const authenticate = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log('Token decodificado:', decoded);
 
-    // 🔹 Obtener datos básicos desde la tabla usuarios
     const [userRows] = await pool.query(
       `SELECT id AS usuario_id, rol_id, profesor_id, alumno_id
        FROM usuarios
@@ -28,7 +27,6 @@ export const authenticate = async (req, res, next) => {
       return res.status(401).json({ error: 'Usuario no encontrado' });
     }
 
-    // 🔹 Guardar datos en req.user
     req.user = {
       id: user.usuario_id,
       rol_id: user.rol_id,

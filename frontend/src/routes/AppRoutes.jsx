@@ -111,7 +111,7 @@ export default function AppRoutes() {
         </Route>
       </Route>
 
-      {/* Rutas protegidas para alumno */}
+      {/* rutas protegidas para alumno */}
       <Route element={<ProtectedRoute allowedRoles={[3]} />}>
         <Route path="/alumno" element={<Navigate to="/alumno/dashboard" replace />} />
         <Route path="/alumno/dashboard" element={<AlumnoDashboard />} />
