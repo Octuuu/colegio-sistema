@@ -43,6 +43,7 @@ import Insumos from '../pages/admin/insumos/Insumos';
 import InsumosMovimientos from '../pages/admin/insumos/InsumosMovimientos';
 import Ventas from '../pages/admin/ventas/Ventas';
 import Compras from '../pages/admin/compras/Compras';
+import MatriculasPage from '../pages/admin/matricula';
 
 export default function AppRoutes() {
   return (
@@ -73,7 +74,7 @@ export default function AppRoutes() {
           <Route path="inscribirAlumno/:alumnoId" element={<InscripcionForm />} />
           <Route path="inscripcionesList/:cursoId" element={<InscripcionesList />} />
 
-          <Route path="matriculaForm" element={<MatriculaForm />} />
+          <Route path="matriculaForm" element={<MatriculasPage />} />
 
           <Route path="proveedorForm" element={<ProveedorForm />} />
           <Route path="proveedoresList" element={<Proveedores />} />
