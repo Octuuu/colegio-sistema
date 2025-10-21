@@ -200,3 +200,20 @@ export const obtenerDetalleCaja = async (caja_id) => {
 
   return { caja, movimientos: movRows, balance };
 };
+
+export const listarCajas = async () => {
+  const [rows] = await pool.query(`
+    SELECT cac.id, cac.fecha_apertura, cac.fecha_cierre, cac.monto_apertura, cac.monto_cierre, 
+           cac.estado,
+           ua.nombre AS usuario_apertura,
+           uc.nombre AS usuario_cierre,
+           (SELECT SUM(monto) FROM caja WHERE tipo_movimiento='ingreso' AND caja_apertura_id=cac.id) AS total_ingresos,
+           (SELECT SUM(monto) FROM caja WHERE tipo_movimiento='egreso' AND caja_apertura_id=cac.id) AS total_egresos
+    FROM cajas_apertura_cierre cac
+    LEFT JOIN usuarios ua ON cac.usuario_apertura_id = ua.id
+    LEFT JOIN usuarios uc ON cac.usuario_cierre_id = uc.id
+    ORDER BY cac.id DESC
+  `);
+
+  return rows;
+};

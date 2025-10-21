@@ -8,6 +8,7 @@ import {
   obtenerBalanceController,
   obtenerResumenPorFechaController,
   obtenerDetalleCajaController,
+  listarCajasController,
 } from '../controllers/caja.controller.js';
 
 const router = Router();
@@ -32,5 +33,6 @@ router.get('/', getCajaAbiertaController);
 
 router.get('/detalle/:id', obtenerDetalleCajaController);
 
+router.get('/todas', listarCajasController);
 
 export default router;

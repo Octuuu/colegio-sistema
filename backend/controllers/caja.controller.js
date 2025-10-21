@@ -120,3 +120,12 @@ export const obtenerDetalleCajaController = async (req, res) => {
   }
 };
 
+export const listarCajasController = async (req, res) => {
+  try {
+    const cajas = await listarCajas();
+    res.json(cajas);
+  } catch (error) {
+    console.error('Error listarCajasController:', error);
+    res.status(500).json({ message: 'Error al listar las cajas' });
+  }
+};

@@ -80,3 +80,27 @@ export const crearMovimiento = async (datos, token) => {
     throw error;
   }
 };
+
+export const obtenerTodasLasCajas = async (token) => {
+  try {
+    const res = await axios.get(`${API_URL}/todas`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  } catch (error) {
+    console.error('Error obtenerTodasLasCajas:', error.response?.data || error.message);
+    return [];
+  }
+};
+
+export const obtenerDetalleCaja = async (id, token) => {
+  try {
+    const res = await axios.get(`${API_URL}/detalle/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  } catch (error) {
+    console.error('Error obtenerDetalleCaja:', error.response?.data || error.message);
+    return null;
+  }
+};
