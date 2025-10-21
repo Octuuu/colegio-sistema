@@ -21,7 +21,8 @@ import InsumosMovimientosRoutes from "./routes/insumosMovimientos.routes.js";
 import tutorRoutes from './routes/tutor.routes.js';
 import ventaRoutes from './routes/venta.routes.js';
 import compraRoutes from './routes/compra.routes.js';
-
+import pagosMensualidadRoutes from './routes/pagosMensualidad.routes.js';
+import cajaRoutes from './routes/caja.routes.js';
 
 const app = express();
 
@@ -46,7 +47,7 @@ app.use('/api/asistencias', asistenciaRoutes);
 app.use('/api/calificacion', calificacionRoutes);
 app.use('/api/perfil', perfilRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
-app.use('/api/pagos-matricula', matriculaRoutes);
+app.use('/api/matriculas', matriculaRoutes);
 app.use('/api/proveedores', ProveedoresRoutes);
 app.use("/api/productos", productosRoutes);
 app.use("/api/servicios", serviciosRoutes);
@@ -55,6 +56,8 @@ app.use("/api/insumos", InsumosMovimientosRoutes);
 app.use('/api/tutores', tutorRoutes);
 app.use('/api/ventas', ventaRoutes);
 app.use('/api/compras', compraRoutes);
+app.use('/api/mensualidades', pagosMensualidadRoutes);
+app.use('/api/caja', cajaRoutes);
 
 // manejo de errores
 app.use(errorHandler);

@@ -1,3 +1,5 @@
+import React from "react";
+
 const SeleccionarProveedor = ({ proveedores, selectedProveedor, setSelectedProveedor }) => {
   return (
     <div className="mb-4">
@@ -9,9 +11,7 @@ const SeleccionarProveedor = ({ proveedores, selectedProveedor, setSelectedProve
       >
         <option value="">Seleccionar</option>
         {proveedores.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.nombre}
-          </option>
+          <option key={p.id} value={p.id}>{p.nombre}</option>
         ))}
       </select>
     </div>

@@ -1,35 +1,44 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_URL = "http://localhost:3000/api/matriculas";
 
-// crear pago de matrícula
-export const crearMatricula = async (datos, token) => {
-  const res = await axios.post(`${API_URL}/matriculas`, datos, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.data;
-};
-
-// obtener pagos por inscripción
-export const obtenerMatriculasPorInscripcion = async (inscripcionId, token) => {
-  const res = await axios.get(`${API_URL}/matriculas/inscripcion/${inscripcionId}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.data;
-};
-
-// obtener todos los pagos
+// Obtener todos los pagos
 export const obtenerTodosLosPagos = async (token) => {
-  const res = await axios.get(`${API_URL}/matriculas`, {
-    headers: { Authorization: `Bearer ${token}` }
+  const res = await axios.get(`${API_URL}/pagos`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };
 
-// eliminar pago
-export const eliminarMatricula = async (id, token) => {
-  const res = await axios.delete(`${API_URL}/matriculas/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
+// Obtener pagos por matrícula específica
+export const obtenerPagosPorMatricula = async (matriculaId, token) => {
+  const res = await axios.get(`${API_URL}/${matriculaId}/pagos`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };
+
+// Crear un nuevo pago/matrícula
+export const crearMatricula = async (data, token) => {
+  const res = await axios.post(API_URL, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+// Eliminar un pago
+export const eliminarMatricula = async (id, token) => {
+  const res = await axios.delete(`${API_URL}/pagos/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+// Obtener todas las matrículas pendientes (si las necesitas)
+export const obtenerMatriculasPendientes = async (token) => {
+  const res = await axios.get(`${API_URL}/pendientes`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+

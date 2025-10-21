@@ -1,70 +1,61 @@
 import {
-  crearPagoMatricula,
-  obtenerPagosPorMatricula,
-  obtenerTodosLosPagos,
-  eliminarPagoMatricula
-} from '../models/pagos_matricula.model.js';
+  crearPago,
+  obtenerTodosPagos,
+  obtenerPagosPorAlumno,
+  eliminarPago
+} from "../models/pagos_matricula.model.js";
 
-// Crear nuevo pago
-export const nuevoPagoMatricula = async (req, res) => {
+// Registrar un nuevo pago
+export const nuevoPago = async (req, res) => {
   try {
-    const { matriculaId, fechaPago, monto, metodoPago, recibidoPor } = req.body;
+    const { alumnoId, fechaPago, monto, metodoPago, recibidoPor } = req.body;
 
-    if (!matriculaId || !monto || !metodoPago) {
-      return res.status(400).json({ message: "Faltan datos requeridos" });
+    // Validaciones básicas
+    if (!alumnoId || !fechaPago || !monto || !metodoPago || !recibidoPor) {
+      return res.status(400).json({ message: "Todos los campos son requeridos" });
     }
 
-    const id = await crearPagoMatricula(
-      matriculaId,
-      fechaPago || new Date(),
+    const insertId = await crearPago({
+      alumnoId: Number(alumnoId),
+      fechaPago,
       monto,
       metodoPago,
-      recibidoPor || null
-    );
+      recibidoPor
+    });
 
-    res.status(201).json({ message: "Pago registrado correctamente", id });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al registrar pago" });
+    res.status(201).json({ id: insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
   }
 };
-
-// Obtener pagos de una matrícula
-export const getPagosPorMatricula = async (req, res) => {
+// Listar todos los pagos
+export const listarPagos = async (req, res) => {
   try {
-    const { matriculaId } = req.params;
-    const pagos = await obtenerPagosPorMatricula(matriculaId);
+    const pagos = await obtenerTodosPagos();
     res.json(pagos);
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Error al obtener pagos" });
   }
 };
 
-// Obtener todos los pagos
-export const getTodosLosPagos = async (req, res) => {
+// Listar pagos de un alumno
+export const listarPagosPorAlumno = async (req, res) => {
   try {
-    const pagos = await obtenerTodosLosPagos();
+    const pagos = await obtenerPagosPorAlumno(req.params.alumnoId);
     res.json(pagos);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al obtener pagos" });
+  } catch (err) {
+    res.status(500).json({ message: "Error al obtener pagos del alumno" });
   }
 };
 
 // Eliminar pago
-export const borrarPagoMatricula = async (req, res) => {
+export const borrarPago = async (req, res) => {
   try {
-    const { id } = req.params;
-    const filasAfectadas = await eliminarPagoMatricula(id);
-
-    if (filasAfectadas === 0) {
-      return res.status(404).json({ message: "Pago no encontrado" });
-    }
-
-    res.json({ message: "Pago eliminado y matrícula actualizada" });
-  } catch (error) {
-    console.error(error);
+    const result = await eliminarPago(req.params.id);
+    res.json({ eliminado: result });
+  } catch (err) {
     res.status(500).json({ message: "Error al eliminar pago" });
   }
 };

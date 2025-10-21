@@ -44,6 +44,8 @@ import InsumosMovimientos from '../pages/admin/insumos/InsumosMovimientos';
 import Ventas from '../pages/admin/ventas/Ventas';
 import Compras from '../pages/admin/compras/Compras';
 import MatriculasPage from '../pages/admin/matricula';
+import MensualidadesPage from '../pages/admin/mensualidades/MensualidadesPage';
+import Caja from '../pages/admin/caja/Caja';
 
 export default function AppRoutes() {
   return (
@@ -91,6 +93,10 @@ export default function AppRoutes() {
           <Route path="ventas" element={<Ventas />} />
 
           <Route path="compras" element={<Compras />} />
+
+          <Route path="mensualidad" element={<MensualidadesPage />} />
+
+          <Route path="caja" element={<Caja />} />
         </Route>
       </Route>
 

@@ -2,10 +2,12 @@ import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { obtenerProveedores } from "../../../services/proveedorService";
 import { obtenerProductos } from "../../../services/productoService";
+import { obtenerInsumos } from "../../../services/insumoService"; // Nuevo servicio
 import { crearCompra, descargarFacturaCompraPDF } from "../../../services/compraService";
 
 import SeleccionarProveedor from "./SeleccionarProveedor";
-import ProductosDisponibles from "./ProductosDisponibles.jsx";
+import ProductosDisponibles from "./ProductosDisponibles";
+import InsumosDisponibles from "./InsumosDisponibles";
 import Carrito from "./Carrito";
 import ModalConfirmacionCompra from "./ModalConfirmacionCompra";
 
@@ -23,8 +25,13 @@ const Compras = () => {
 
   const [proveedores, setProveedores] = useState([]);
   const [selectedProveedor, setSelectedProveedor] = useState(null);
+
   const [productos, setProductos] = useState([]);
-  const [carrito, setCarrito] = useState([]);
+  const [insumos, setInsumos] = useState([]);
+
+  const [carritoProductos, setCarritoProductos] = useState([]);
+  const [carritoInsumos, setCarritoInsumos] = useState([]);
+
   const [total, setTotal] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -35,7 +42,7 @@ const Compras = () => {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  // Cargar proveedores y productos
+  // Cargar proveedores, productos e insumos
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -44,10 +51,12 @@ const Compras = () => {
 
         const productosData = await obtenerProductos(token);
         setProductos(
-          productosData.map((p) => ({
-            ...p,
-            precio_unitario: Number(p.precio_unitario) || 0,
-          }))
+          productosData.map((p) => ({ ...p, precio_unitario: Number(p.precio_unitario) || 0 }))
+        );
+
+        const insumosData = await obtenerInsumos(token);
+        setInsumos(
+          insumosData.map((i) => ({ ...i, precio_unitario: Number(i.precio_unitario) || 0 }))
         );
       } catch (err) {
         console.error(err);
@@ -56,75 +65,83 @@ const Compras = () => {
     cargarDatos();
   }, [token]);
 
+  // Funciones para agregar productos/insumos al carrito
   const handleAgregarProducto = (producto) => {
-    let nuevoCarrito;
-    setCarrito((prevCarrito) => {
-      const exist = prevCarrito.find((p) => p.id === producto.id);
-
+    setCarritoProductos((prev) => {
+      const exist = prev.find((p) => p.id === producto.id);
       if (exist) {
-        nuevoCarrito = prevCarrito.map((p) =>
+        return prev.map((p) =>
           p.id === producto.id
-            ? {
-                ...p,
-                cantidad: p.cantidad + 1,
-                subtotal: (p.cantidad + 1) * p.precio_unitario,
-              }
+            ? { ...p, cantidad: p.cantidad + 1, subtotal: (p.cantidad + 1) * p.precio_unitario }
             : p
         );
-      } else {
-        nuevoCarrito = [
-          ...prevCarrito,
-          { ...producto, cantidad: 1, subtotal: producto.precio_unitario },
-        ];
       }
-      return nuevoCarrito;
+      return [...prev, { ...producto, cantidad: 1, subtotal: producto.precio_unitario }];
     });
-
     setTotal((prev) => prev + producto.precio_unitario);
   };
 
-  const handleCantidadChange = (id, cantidad) => {
-    setCarrito((prevCarrito) => {
-      const nuevoCarrito = prevCarrito.map((p) =>
-        p.id === id
-          ? { ...p, cantidad, subtotal: cantidad * p.precio_unitario }
-          : p
-      );
-      const nuevoTotal = nuevoCarrito.reduce((acc, p) => acc + p.subtotal, 0);
-      setTotal(nuevoTotal);
-      return nuevoCarrito;
+  const handleAgregarInsumo = (insumo) => {
+    setCarritoInsumos((prev) => {
+      const exist = prev.find((i) => i.id === insumo.id);
+      if (exist) {
+        return prev.map((i) =>
+          i.id === insumo.id
+            ? { ...i, cantidad: i.cantidad + 1, subtotal: (i.cantidad + 1) * i.precio_unitario }
+            : i
+        );
+      }
+      return [...prev, { ...insumo, cantidad: 1, subtotal: insumo.precio_unitario }];
     });
+    setTotal((prev) => prev + insumo.precio_unitario);
   };
 
-  const eliminarUno = (id) => {
-    const producto = carrito.find((p) => p.id === id);
-    if (!producto) return;
-
-    const nuevaCantidad = producto.cantidad - 1;
-    let nuevoCarrito;
-
-    if (nuevaCantidad <= 0) {
-      nuevoCarrito = carrito.filter((p) => p.id !== id);
+  // Función para cambiar cantidad de productos/insumos
+  const handleCantidadChange = (id, cantidad, tipo) => {
+    if (tipo === "producto") {
+      setCarritoProductos((prev) => {
+        const nuevo = prev.map((p) =>
+          p.id === id ? { ...p, cantidad, subtotal: cantidad * p.precio_unitario } : p
+        );
+        const nuevoTotal = calcularTotal(nuevo, carritoInsumos);
+        setTotal(nuevoTotal);
+        return nuevo;
+      });
     } else {
-      nuevoCarrito = carrito.map((p) =>
-        p.id === id
-          ? {
-              ...p,
-              cantidad: nuevaCantidad,
-              subtotal: nuevaCantidad * p.precio_unitario,
-            }
-          : p
-      );
+      setCarritoInsumos((prev) => {
+        const nuevo = prev.map((i) =>
+          i.id === id ? { ...i, cantidad, subtotal: cantidad * i.precio_unitario } : i
+        );
+        const nuevoTotal = calcularTotal(carritoProductos, nuevo);
+        setTotal(nuevoTotal);
+        return nuevo;
+      });
     }
-
-    setCarrito(nuevoCarrito);
-    const nuevoTotal = nuevoCarrito.reduce((acc, p) => acc + p.subtotal, 0);
-    setTotal(nuevoTotal);
   };
 
+  // Función para eliminar productos/insumos
+  const handleEliminar = (id, tipo) => {
+    if (tipo === "producto") {
+      const nuevo = carritoProductos.filter((p) => p.id !== id);
+      setCarritoProductos(nuevo);
+      setTotal(calcularTotal(nuevo, carritoInsumos));
+    } else {
+      const nuevo = carritoInsumos.filter((i) => i.id !== id);
+      setCarritoInsumos(nuevo);
+      setTotal(calcularTotal(carritoProductos, nuevo));
+    }
+  };
+
+  const calcularTotal = (productos, insumos) => {
+    const totalProductos = productos.reduce((acc, p) => acc + p.subtotal, 0);
+    const totalInsumos = insumos.reduce((acc, i) => acc + i.subtotal, 0);
+    return totalProductos + totalInsumos;
+  };
+
+  // Confirmar compra
   const handleConfirmCompra = async () => {
-    if (!selectedProveedor || carrito.length === 0) {
-      alert("Debe seleccionar proveedor y agregar al menos un producto");
+    if (!selectedProveedor || (carritoProductos.length === 0 && carritoInsumos.length === 0)) {
+      alert("Debe seleccionar proveedor y agregar al menos un producto o insumo");
       return;
     }
 
@@ -132,8 +149,13 @@ const Compras = () => {
 
     const compraData = {
       proveedor_id: selectedProveedor,
-      productos: carrito.map(({ id, cantidad, precio_unitario }) => ({
+      productos: carritoProductos.map(({ id, cantidad, precio_unitario }) => ({
         producto_id: id,
+        cantidad,
+        precio_unitario,
+      })),
+      insumos: carritoInsumos.map(({ id, cantidad, precio_unitario }) => ({
+        insumo_id: id,
         cantidad,
         precio_unitario,
       })),
@@ -142,32 +164,14 @@ const Compras = () => {
 
     try {
       const { facturaId } = await crearCompra(compraData, token);
-
-        const facturaIdNum = Number(facturaId);
-        if (!facturaIdNum || isNaN(facturaIdNum)) {
-        console.error("FacturaId inválido:", facturaId);
-        showNotification("Error al generar factura", "error");
-        setSubmitting(false);
-        return;
-        }
-
-await descargarFacturaCompraPDF(facturaIdNum, token);
-
-
+      await descargarFacturaCompraPDF(facturaId, token);
       showNotification("Compra registrada y factura generada", "success");
 
-      setCarrito([]);
+      setCarritoProductos([]);
+      setCarritoInsumos([]);
       setTotal(0);
       setSelectedProveedor(null);
       setIsModalOpen(false);
-
-      const productosData = await obtenerProductos(token);
-      setProductos(
-        productosData.map((p) => ({
-          ...p,
-          precio_unitario: Number(p.precio_unitario) || 0,
-        }))
-      );
     } catch (err) {
       console.error(err);
       showNotification("Error al registrar compra", "error");
@@ -202,15 +206,29 @@ await descargarFacturaCompraPDF(facturaIdNum, token);
         formatCurrency={formatCurrency}
       />
 
+      <InsumosDisponibles
+        insumos={insumos}
+        agregarAlCarrito={handleAgregarInsumo}
+        formatCurrency={formatCurrency}
+      />
+
       <Carrito
-        carrito={carrito}
-        cambiarCantidad={handleCantidadChange}
-        eliminarUno={eliminarUno}
+        carrito={carritoProductos}
+        cambiarCantidad={(id, cantidad) => handleCantidadChange(id, cantidad, "producto")}
+        eliminarUno={(id) => handleEliminar(id, "producto")}
         total={total}
         formatCurrency={formatCurrency}
       />
 
-      {carrito.length > 0 && (
+      <Carrito
+        carrito={carritoInsumos}
+        cambiarCantidad={(id, cantidad) => handleCantidadChange(id, cantidad, "insumo")}
+        eliminarUno={(id) => handleEliminar(id, "insumo")}
+        total={total}
+        formatCurrency={formatCurrency}
+      />
+
+      {(carritoProductos.length > 0 || carritoInsumos.length > 0) && (
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4"
@@ -223,7 +241,7 @@ await descargarFacturaCompraPDF(facturaIdNum, token);
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmCompra}
-        carrito={carrito}
+        carrito={[...carritoProductos, ...carritoInsumos]}
         total={total}
         proveedor={selectedProveedor}
         submitting={submitting}

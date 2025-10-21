@@ -72,7 +72,7 @@ const Insumos = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("⚠️ ¿Eliminar insumo?")) return;
+    if (!window.confirm("eliminar insumo?")) return;
     try {
       await eliminarInsumo(id, token);
       showNotification("Insumo eliminado correctamente");
@@ -121,7 +121,7 @@ const Insumos = () => {
 
       {stockBajo.length > 0 && (
         <div className="mb-4 p-4 bg-red-100 text-red-800 rounded">
-          <h3 className="font-semibold">⚠️ Insumos con stock bajo:</h3>
+          <h3 className="font-semibold">Insumos con stock bajo:</h3>
           <ul className="list-disc ml-6">
             {stockBajo.map((s) => (
               <li key={s.id}>
@@ -166,12 +166,7 @@ const Insumos = () => {
                     >
                       Editar
                     </button>
-                    <button
-                      onClick={() => handleDelete(i.id)}
-                      className="font-medium text-red-700 bg-red-100 px-2 py-1 rounded hover:bg-red-200"
-                    >
-                      Eliminar
-                    </button>
+              
                     <button
                       onClick={() => openMovimientos(i)}
                       className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition"
@@ -216,3 +211,12 @@ const Insumos = () => {
 };
 
 export default Insumos;
+
+/*
+<button
+                      onClick={() => handleDelete(i.id)}
+                      className="font-medium text-red-700 bg-red-100 px-2 py-1 rounded hover:bg-red-200"
+                    >
+                      Eliminar
+                    </button>
+*/

@@ -5,7 +5,10 @@ import Modal from '../../../components/Modal.jsx';
 import EditarAlumno from './EditAlumno.jsx';
 import CrearAlumno from './Alumnos.jsx';
 import InscribirAlumno from '../InscripcionForm.jsx';
+import MatriculaForm from '../matricula/MatriculaForm.jsx';
 import Notification from '../../../components/Notification.jsx';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const AlumnosList = () => {
   const { token } = useContext(AuthContext);
@@ -18,7 +21,23 @@ const AlumnosList = () => {
   const cargarAlumnos = useCallback(async () => {
     try {
       const data = await obtenerAlumnos(token);
-      setAlumnos(data);
+      
+      // Obtener estado de matrícula para cada alumno
+      const alumnosConMatricula = await Promise.all(
+        data.map(async (alumno) => {
+          try {
+            const res = await axios.get(`http://localhost:3000/api/matriculas/matricula/alumno/${alumno.id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+            return { ...alumno, matricula: res.data.length > 0 };
+          } catch {
+            return { ...alumno, matricula: false };
+          }
+        })
+      );
+
+      setAlumnos(alumnosConMatricula);
     } catch (err) {
       console.error('Error al cargar alumnos:', err);
       setNotification({ message: 'Error al cargar alumnos', type: 'error' });
@@ -73,16 +92,10 @@ const AlumnosList = () => {
       <div className="flex justify-between mb-4">
         <h2 className="text-2xl font-bold">Alumnos registrados</h2>
         <div className="space-x-3">
-          <button
-            onClick={handleCreate}
-            className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
-          >
+          <button onClick={handleCreate} className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100">
             Crear alumno
           </button>
-          <button
-            onClick={handleInscribir}
-            className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
-          >
+          <button onClick={handleInscribir} className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100">
             Inscribir alumno
           </button>
         </div>
@@ -95,6 +108,7 @@ const AlumnosList = () => {
               <th className="p-2">Nombre</th>
               <th className="p-2">Apellido</th>
               <th className="p-2">Email</th>
+              <th className="p-2">Matrícula</th>
               <th className="p-2">Acciones</th>
             </tr>
           </thead>
@@ -104,6 +118,18 @@ const AlumnosList = () => {
                 <td className="p-2">{a.nombre}</td>
                 <td className="p-2">{a.apellido}</td>
                 <td className="p-2">{a.email}</td>
+                <td className="p-2">
+                  {a.matricula ? (
+                    <span className="text-green-700 font-semibold">Registrada</span>
+                  ) : (
+                    <Link
+                      to={`/matriculas/nueva/${a.id}`}
+                      className="text-red-700 font-semibold hover:underline"
+                    >
+                      Registrar
+                    </Link>
+                  )}
+                </td>
                 <td className="p-2 space-x-2">
                   <button
                     onClick={() => handleEdit(a)}
@@ -149,7 +175,6 @@ const AlumnosList = () => {
             onSuccess={() => {
               setIsModalOpen(false);
               setNotification({ message: 'Alumno inscrito correctamente', type: 'success' });
-              
               cargarAlumnos();
             }}
           />

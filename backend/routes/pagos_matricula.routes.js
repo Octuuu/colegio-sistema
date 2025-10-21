@@ -1,23 +1,17 @@
 import { Router } from "express";
 import {
-  nuevoPagoMatricula,
-  getPagosPorMatricula,
-  getTodosLosPagos,
-  borrarPagoMatricula
+  nuevoPago,
+  listarPagos,
+  listarPagosPorAlumno,
+  borrarPago
 } from "../controllers/pagos_matricula.controller.js";
 
 const router = Router();
 
-// Crear pago
-router.post("/", nuevoPagoMatricula);
-
-// Obtener pagos de una matrícula
-router.get("/matricula/:matriculaId", getPagosPorMatricula);
-
-// Obtener todos los pagos
-router.get("/", getTodosLosPagos);
-
-// Eliminar pago
-router.delete("/:id", borrarPagoMatricula);
+// PAGOS
+router.post("/", nuevoPago);                          
+router.get("/", listarPagos);           
+router.get("/alumno/:alumnoId", listarPagosPorAlumno); 
+router.delete("/:id", borrarPago);             
 
 export default router;
