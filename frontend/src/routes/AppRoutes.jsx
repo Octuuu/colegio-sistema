@@ -46,6 +46,8 @@ import Compras from '../pages/admin/compras/Compras';
 import MatriculasPage from '../pages/admin/matricula';
 import MensualidadesPage from '../pages/admin/mensualidades/MensualidadesPage';
 import Caja from '../pages/admin/caja/Caja';
+import CajaLista from '../pages/admin/caja/CajaLista';
+import CajaDetalle from '../pages/admin/caja/CajaDetalle';
 
 export default function AppRoutes() {
   return (
@@ -97,6 +99,9 @@ export default function AppRoutes() {
           <Route path="mensualidad" element={<MensualidadesPage />} />
 
           <Route path="caja" element={<Caja />} />
+          <Route path="/admin/caja/lista" element={<CajaLista />} />
+          <Route path="/admin/caja/detalle/:id" element={<CajaDetalle />} />
+
         </Route>
       </Route>
 

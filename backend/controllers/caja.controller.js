@@ -113,16 +113,40 @@ export const obtenerDetalleCajaController = async (req, res) => {
 
     if (!detalle) return res.status(404).json({ message: 'No se encontró la caja.' });
 
-    res.json(detalle);
+    // Forzar valores por defecto para que el frontend no rompa
+    const cajaSeguro = {
+      ...detalle.caja,
+      usuario_apertura: detalle.caja.usuario_apertura || '-',
+      usuario_cierre: detalle.caja.usuario_cierre || '-',
+      monto_apertura: detalle.caja.monto_apertura ?? 0,
+      monto_cierre: detalle.caja.monto_cierre ?? 0,
+      fecha_apertura: detalle.caja.fecha_apertura || null,
+      fecha_cierre: detalle.caja.fecha_cierre || null,
+      estado: detalle.caja.estado || '-',
+      descripcion: detalle.caja.descripcion || '-',
+    };
+
+    // Movimientos con id garantizado para key en frontend
+    const movimientosSeguro = detalle.movimientos.map((mov, index) => ({
+      id: mov.id ?? index,
+      fecha: mov.fecha || null,
+      tipo: mov.tipo || '-',
+      descripcion: mov.descripcion || '-',
+      monto: mov.monto ?? 0,
+      registrado_por: mov.registrado_por || '-',
+    }));
+
+    res.json({ caja: cajaSeguro, movimientos: movimientosSeguro, balance: detalle.balance });
   } catch (error) {
-    console.error(error);
+    console.error('Error obtenerDetalleCajaController:', error);
     res.status(500).json({ message: 'Error al obtener el detalle de la caja', error: error.message });
   }
 };
 
+
 export const listarCajasController = async (req, res) => {
   try {
-    const cajas = await listarCajas();
+    const cajas = await CajaModel.listarCajas();
     res.json(cajas);
   } catch (error) {
     console.error('Error listarCajasController:', error);

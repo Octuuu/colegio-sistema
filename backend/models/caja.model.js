@@ -58,27 +58,45 @@ export const abrirCaja = async ({ monto_apertura = 0, usuario_apertura_id = 1, d
 };
 
 
-export const cerrarCaja = async ({ caja_id, monto_cierre = 0, usuario_cierre_id = 1, descripcion = null }) => {
+export const cerrarCaja = async ({ caja_id, usuario_cierre_id = 1, descripcion = null }) => {
   const fecha_cierre = formatFechaMySQL();
-  const montoValido = isNaN(Number(monto_cierre)) ? 0 : Number(monto_cierre);
 
-  // Solo actualizar la caja que se pasa
+  // 🧩 1️⃣ Obtener datos de la caja actual
+  const [cajaRows] = await pool.query(`SELECT monto_apertura FROM cajas_apertura_cierre WHERE id = ?`, [caja_id]);
+  if (cajaRows.length === 0) throw new Error('No se encontró la caja con ese ID.');
+  const monto_apertura = Number(cajaRows[0].monto_apertura) || 0;
+
+  // 🧮 2️⃣ Calcular ingresos y egresos reales
+  const [balanceRows] = await pool.query(
+    `SELECT 
+       COALESCE(SUM(CASE WHEN tipo_movimiento='ingreso' THEN monto ELSE 0 END),0) AS total_ingresos,
+       COALESCE(SUM(CASE WHEN tipo_movimiento='egreso' THEN monto ELSE 0 END),0) AS total_egresos
+     FROM caja
+     WHERE caja_apertura_id = ?`,
+    [caja_id]
+  );
+
+  const total_ingresos = Number(balanceRows[0].total_ingresos) || 0;
+  const total_egresos = Number(balanceRows[0].total_egresos) || 0;
+
+  // ✅ 3️⃣ El saldo final incluye la apertura + ingresos - egresos
+  const saldo_final = monto_apertura + total_ingresos - total_egresos;
+
+  // 📝 4️⃣ Actualizar la caja
   const [res] = await pool.query(
     `UPDATE cajas_apertura_cierre
      SET fecha_cierre = ?, monto_cierre = ?, usuario_cierre_id = ?, estado = 'cerrada',
          descripcion = CONCAT(IFNULL(descripcion, ''), ?)
      WHERE id = ? AND estado='abierta'`,
-    [fecha_cierre, montoValido, usuario_cierre_id, `\nCierre: ${descripcion || ''}`, caja_id]
+    [fecha_cierre, saldo_final, usuario_cierre_id, `\nCierre: ${descripcion || ''}`, caja_id]
   );
 
   if (res.affectedRows !== 1) throw new Error('No se pudo cerrar la caja');
 
-  // Retornar la caja cerrada
+  // 🔙 5️⃣ Retornar la caja cerrada actualizada
   const [rows] = await pool.query(`SELECT * FROM cajas_apertura_cierre WHERE id = ?`, [caja_id]);
   return rows[0];
 };
-
-
 
 export const getCajaAbierta = async () => {
   const [rows] = await pool.query(
@@ -168,47 +186,48 @@ export const obtenerBalanceEntreFechas = async ({ desde, hasta }) => {
 // 📋 DETALLE DE CAJA (apertura, movimientos y balance)
 // ============================================================
 export const obtenerDetalleCaja = async (caja_id) => {
-  // 📦 Obtener datos de la caja
-  const [cajaRows] = await pool.query(
-    `SELECT * FROM cajas_apertura_cierre WHERE id = ?`,
-    [caja_id]
-  );
+  const [cajaRows] = await pool.query(`SELECT * FROM cajas_apertura_cierre WHERE id = ?`, [caja_id]);
   const caja = cajaRows[0];
   if (!caja) return null;
 
-  // 💰 Obtener movimientos de esa caja
   const [movRows] = await pool.query(
     `SELECT fecha, tipo_movimiento AS tipo, descripcion, monto 
-     FROM caja 
-     WHERE caja_apertura_id = ?
-     ORDER BY fecha ASC`,
+     FROM caja WHERE caja_apertura_id = ? ORDER BY fecha ASC`,
     [caja_id]
   );
 
-  // 📊 Calcular balance de esa caja
   const [balanceRows] = await pool.query(
     `SELECT 
-       SUM(CASE WHEN tipo_movimiento = 'ingreso' THEN monto ELSE 0 END) AS total_ingresos,
-       SUM(CASE WHEN tipo_movimiento = 'egreso' THEN monto ELSE 0 END) AS total_egresos,
-       SUM(CASE WHEN tipo_movimiento = 'ingreso' THEN monto ELSE -monto END) AS neto
+       COALESCE(SUM(CASE WHEN tipo_movimiento='ingreso' THEN monto ELSE 0 END),0) AS total_ingresos,
+       COALESCE(SUM(CASE WHEN tipo_movimiento='egreso' THEN monto ELSE 0 END),0) AS total_egresos,
+       COALESCE(SUM(CASE WHEN tipo_movimiento='ingreso' THEN monto ELSE -monto END),0) AS neto
      FROM caja
      WHERE caja_apertura_id = ?`,
     [caja_id]
   );
 
   const balance = balanceRows[0];
-
   return { caja, movimientos: movRows, balance };
 };
 
+
 export const listarCajas = async () => {
   const [rows] = await pool.query(`
-    SELECT cac.id, cac.fecha_apertura, cac.fecha_cierre, cac.monto_apertura, cac.monto_cierre, 
-           cac.estado,
-           ua.nombre AS usuario_apertura,
-           uc.nombre AS usuario_cierre,
-           (SELECT SUM(monto) FROM caja WHERE tipo_movimiento='ingreso' AND caja_apertura_id=cac.id) AS total_ingresos,
-           (SELECT SUM(monto) FROM caja WHERE tipo_movimiento='egreso' AND caja_apertura_id=cac.id) AS total_egresos
+    SELECT 
+      cac.id,
+      cac.fecha_apertura,
+      cac.fecha_cierre,
+      cac.monto_apertura,
+      cac.monto_cierre,         -- ✅ AÑADIDO AQUÍ
+      cac.estado,
+      ua.gmail AS usuario_apertura,
+      uc.gmail AS usuario_cierre,
+      -- Total de ingresos y egresos
+      (SELECT COALESCE(SUM(monto),0) FROM caja WHERE tipo_movimiento='ingreso' AND caja_apertura_id=cac.id) AS total_ingresos,
+      (SELECT COALESCE(SUM(monto),0) FROM caja WHERE tipo_movimiento='egreso' AND caja_apertura_id=cac.id) AS total_egresos,
+      -- Saldo real
+      ((SELECT COALESCE(SUM(monto),0) FROM caja WHERE tipo_movimiento='ingreso' AND caja_apertura_id=cac.id) -
+       (SELECT COALESCE(SUM(monto),0) FROM caja WHERE tipo_movimiento='egreso' AND caja_apertura_id=cac.id)) AS saldo_cierre
     FROM cajas_apertura_cierre cac
     LEFT JOIN usuarios ua ON cac.usuario_apertura_id = ua.id
     LEFT JOIN usuarios uc ON cac.usuario_cierre_id = uc.id

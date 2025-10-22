@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import MovimientoForm from './MovimientoForm';
 import MovimientosTable from './MovimientosTable';
 import ResumenCaja from './ResumenCaja';
@@ -119,6 +120,9 @@ export default function Caja() {
           >
             Cerrar Caja
           </button>
+          <Link to="/admin/caja/lista" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Ver historial
+          </Link>
         </div>
       </div>
 
