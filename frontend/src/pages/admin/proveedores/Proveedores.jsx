@@ -9,6 +9,7 @@ import {
 import ProveedorForm from './ProveedorForm';
 import Modal from '../../../components/Modal';
 import Notification from '../../../components/Notification';
+import ListaGenerica from '../../../components/ListaGenerica.jsx';
 
 const Proveedores = () => {
   const { token } = useContext(AuthContext);
@@ -18,6 +19,7 @@ const Proveedores = () => {
   const [editing, setEditing] = useState(null);
   const [notification, setNotification] = useState({ message: '', type: '' });
 
+  // 🔹 Cargar proveedores
   const fetchProveedores = useCallback(async () => {
     setLoading(true);
     try {
@@ -35,6 +37,7 @@ const Proveedores = () => {
     fetchProveedores();
   }, [fetchProveedores]);
 
+  // 🔹 Crear o editar proveedor
   const handleSubmit = async (formData) => {
     try {
       if (editing) {
@@ -53,6 +56,7 @@ const Proveedores = () => {
     }
   };
 
+  // 🔹 Eliminar proveedor
   const handleDelete = async (id) => {
     if (!window.confirm('¿Desea eliminar este proveedor?')) return;
     try {
@@ -77,6 +81,7 @@ const Proveedores = () => {
 
   return (
     <div className="p-6">
+      {/* 🔸 Notificación */}
       {notification.message && (
         <Notification
           message={notification.message}
@@ -85,84 +90,64 @@ const Proveedores = () => {
         />
       )}
 
+      {/* 🔸 Encabezado */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
           Gestión de Proveedores
         </h1>
         <button
           onClick={handleCreate}
-          className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
+          className="bg-gray-50 px-3 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
         >
           + Crear Proveedor
         </button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white dark:bg-gray-800">
-          <thead>
-            <tr className="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm uppercase">
-              <th className="p-3 border">Nombre</th>
-              <th className="p-3 border">Tipo</th>
-              <th className="p-3 border">Teléfono</th>
-              <th className="p-3 border">Correo</th>
-              <th className="p-3 border">Dirección</th>
-              <th className="p-3 border">Estado</th> {/* Nueva columna */}
-              <th className="p-3 border text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="7" className="text-center p-6">
-                  Cargando proveedores...
-                </td>
-              </tr>
-            ) : proveedores.length > 0 ? (
-              proveedores.map((p) => (
-                <tr key={p.id} className="border-b dark:hover:bg-gray-700 transition">
-                  <td className="p-3">{p.nombre}</td>
-                  <td className="p-3">{p.tipo}</td>
-                  <td className="p-3">{p.telefono}</td>
-                  <td className="p-3">{p.correo}</td>
-                  <td className="p-3">{p.direccion}</td>
-                  <td className="p-3">
-                    {p.estado === 1 ? (
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">
-                        Activo
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-sm">
-                        Inactivo
-                      </span>
-                    )}
-                  </td>
-                  <td className="p-3 flex justify-center gap-3">
-                    <button
-                      onClick={() => handleEdit(p)}
-                      className="text-blue-600 bg-blue-100 px-3 py-1 rounded hover:bg-blue-200 transition"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(p.id)}
-                      className="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200 transition border border-red-300"
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="text-center p-6 text-gray-500">
-                  No hay proveedores registrados
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      {/* 🔹 Lista genérica */}
+      <ListaGenerica
+        title=""
+        loading={loading}
+        columns={[
+          { key: 'nombre', label: 'Nombre' },
+          { key: 'tipo', label: 'Tipo' },
+          { key: 'telefono', label: 'Teléfono' },
+          { key: 'correo', label: 'Correo' },
+          { key: 'direccion', label: 'Dirección' },
+          {
+            key: 'estado',
+            label: 'Estado',
+            render: (estado) =>
+              estado === 1 ? (
+                <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">
+                  Activo
+                </span>
+              ) : (
+                <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-sm">
+                  Inactivo
+                </span>
+              ),
+          },
+        ]}
+        data={proveedores}
+        renderActions={(p) => (
+          <div className="flex justify-center gap-2">
+            <button
+              onClick={() => handleEdit(p)}
+              className="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200"
+            >
+              Editar
+            </button>
+            <button
+              onClick={() => handleDelete(p.id)}
+              className="bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200"
+            >
+              Eliminar
+            </button>
+          </div>
+        )}
+      />
 
+      {/* 🔹 Modal para crear/editar */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => {

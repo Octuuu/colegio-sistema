@@ -1,9 +1,16 @@
 import pool from "../config/db.js";
 
 // Crear pago de matrícula y registrar en caja
-export const crearPago = async ({ alumnoId, fechaPago, monto, metodoPago, recibidoPor, estado = 'pagado' }) => {
-  // Validar fecha
-  const fechaMysql = fechaPago || new Date().toISOString().slice(0, 19).replace('T', ' ');
+export const crearPago = async ({
+  alumnoId,
+  fechaPago,
+  monto,
+  metodoPago,
+  recibidoPor,
+  estado = "pagado"
+}) => {
+  // Fecha formateada
+  const fechaMysql = fechaPago || new Date().toISOString().slice(0, 19).replace("T", " ");
 
   // Validar monto
   const montoNumber = Number(monto);
@@ -11,28 +18,35 @@ export const crearPago = async ({ alumnoId, fechaPago, monto, metodoPago, recibi
     throw new Error("Monto inválido");
   }
 
-  // Insertar el pago en la tabla pagos_matricula
+  // 1️⃣ Insertar el pago en pagos_matricula
   const [result] = await pool.query(
     `INSERT INTO pagos_matricula 
-       (alumno_id, fecha_pago, monto, metodo_pago, recibido_por, estado)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+       (alumno_id, fecha_pago, monto, metodo_pago, recibido_por, estado, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
     [alumnoId, fechaMysql, montoNumber, metodoPago, recibidoPor || null, estado]
   );
 
   const pagoMatriculaId = result.insertId;
 
-  // Buscar la caja abierta actual
+  // 2️⃣ Buscar caja abierta actual
   const [cajaActivaRows] = await pool.query(
     'SELECT id FROM cajas_apertura_cierre WHERE estado = "abierta" ORDER BY id DESC LIMIT 1'
   );
   const cajaAperturaId = cajaActivaRows.length > 0 ? cajaActivaRows[0].id : null;
 
-  // Registrar el movimiento en caja
+  // 3️⃣ Registrar movimiento en caja (vinculado al pago)
   await pool.query(
     `INSERT INTO caja 
-       (fecha, tipo_movimiento, descripcion, pago_matricula_id, monto, caja_apertura_id, registrado_por)
-     VALUES (?, 'ingreso', ?, ?, ?, ?, ?)`,
-    [fechaMysql, `Pago de matrícula`, pagoMatriculaId, montoNumber, cajaAperturaId, recibidoPor || null]
+       (fecha, tipo_movimiento, descripcion, pago_matricula_id, monto, caja_apertura_id, registrado_por, created_at, updated_at)
+     VALUES (?, 'ingreso', ?, ?, ?, ?, ?, NOW(), NOW())`,
+    [
+      fechaMysql,
+      `Pago de matrícula del alumno ID ${alumnoId}`,
+      pagoMatriculaId,
+      montoNumber,
+      cajaAperturaId,
+      recibidoPor || null
+    ]
   );
 
   return pagoMatriculaId;

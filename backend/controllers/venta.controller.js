@@ -1,6 +1,5 @@
 import * as ventaModel from '../models/venta.model.js';
 
-// Crear venta
 export const crearVentaController = async (req, res) => {
   try {
     const resultado = await ventaModel.crearVenta(req.body);
@@ -11,7 +10,6 @@ export const crearVentaController = async (req, res) => {
   }
 };
 
-// Obtener todas las ventas
 export const obtenerVentasController = async (req, res) => {
   try {
     const ventas = await ventaModel.obtenerVentas();
@@ -22,7 +20,6 @@ export const obtenerVentasController = async (req, res) => {
   }
 };
 
-// Obtener venta por ID
 export const obtenerVentaController = async (req, res) => {
   try {
     const venta = await ventaModel.obtenerVentaPorId(req.params.id);
@@ -31,5 +28,36 @@ export const obtenerVentaController = async (req, res) => {
   } catch (err) {
     console.error('Error en obtenerVentaController:', err);
     res.status(500).json({ error: 'Error al obtener venta' });
+  }
+};
+
+export const obtenerResumenVentasController = async (req, res) => {
+  try {
+    const resumen = await ventaModel.obtenerResumenVentas();
+    res.json(resumen);
+  } catch (err) {
+    console.error('Error en obtenerResumenVentasController:', err);
+    res.status(500).json({ error: 'Error al obtener resumen' });
+  }
+};
+
+export const obtenerResumenMensualController = async (req, res) => {
+  try {
+    const data = await ventaModel.obtenerResumenMensual();
+    res.json(data);
+  } catch (err) {
+    console.error('Error en obtenerResumenMensualController:', err);
+    res.status(500).json({ error: 'Error al obtener resumen mensual' });
+  }
+};
+
+export const obtenerProductosMasVendidosController = async (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 6;
+    const productos = await ventaModel.obtenerProductosMasVendidos(limit);
+    res.json(productos);
+  } catch (err) {
+    console.error('Error en obtenerProductosMasVendidosController:', err);
+    res.status(500).json({ error: 'Error al obtener productos más vendidos' });
   }
 };

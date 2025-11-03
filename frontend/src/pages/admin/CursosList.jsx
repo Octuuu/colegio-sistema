@@ -6,6 +6,7 @@ import CrearCurso from './CreateCourse.jsx';
 import EditarCurso from './EditCurso.jsx';
 import Notification from '../../components/Notification.jsx';
 import ActionButton from '../../components/ActionButton.jsx';
+import ListaGenerica from '../../components/ListaGenerica.jsx';
 
 const CursosList = () => {
   const { token } = useContext(AuthContext);
@@ -16,6 +17,7 @@ const CursosList = () => {
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [error, setError] = useState(null);
 
+  // 🔹 Cargar cursos
   const cargarCursos = useCallback(async () => {
     try {
       const data = await obtenerCurso(token);
@@ -26,6 +28,7 @@ const CursosList = () => {
     }
   }, [token]);
 
+  // 🔹 Eliminar curso
   const handleDelete = async (id) => {
     if (confirm('¿Estás seguro de eliminar este curso?')) {
       try {
@@ -38,26 +41,31 @@ const CursosList = () => {
     }
   };
 
+  // 🔹 Editar curso
   const handleEdit = (curso) => {
     setCursoSeleccionado(curso);
-    setModo("editar");
+    setModo('editar');
     setIsModalOpen(true);
   };
 
+  // 🔹 Crear curso
   const handleCreate = () => {
     setCursoSeleccionado(null);
-    setModo("crear");
+    setModo('crear');
     setIsModalOpen(true);
   };
 
+  // 🔹 Cerrar error
   const cerrarError = () => setError(null);
 
+  // 🔹 useEffect para cargar cursos
   useEffect(() => {
     cargarCursos();
   }, [cargarCursos]);
 
   return (
     <div className="relative p-6">
+      {/* Notificación */}
       {notification.message && (
         <Notification
           message={notification.message}
@@ -66,23 +74,20 @@ const CursosList = () => {
         />
       )}
 
+      {/* Error */}
       {error && (
         <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-10 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-md text-center max-w-md w-full">
             <p className="text-red-600 font-semibold mb-4">{error}</p>
-            <ActionButton
-              onClick={cerrarError}
-              text="Aceptar"
-              color="blue"
-            />
+            <ActionButton onClick={cerrarError} text="Aceptar" color="blue" />
           </div>
         </div>
       )}
 
       <div className={`${error ? 'blur-sm pointer-events-none select-none' : ''}`}>
+        {/* Encabezado */}
         <div className="flex justify-between mb-5">
           <h1 className="font-medium text-2xl">Cursos Registrados</h1>
-          {/* Botón Crear curso gris */}
           <button
             onClick={handleCreate}
             className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
@@ -91,49 +96,44 @@ const CursosList = () => {
           </button>
         </div>
 
-        <div className="max-h-[500px] overflow-y-auto border rounded">
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-50 sticky top-0 z-10">
-              <tr>
-                <th className="p-2">Año</th>
-                <th className="p-2">Nombre del curso</th>
-                <th className="p-2">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cursos.map((c) => (
-                <tr key={c.id} className="text-center border-t">
-                  <td className="p-2">{c.anio}°</td>
-                  <td className="p-2">{c.bachillerato}</td>
-                  <td className="p-3 space-x-2 font-medium flex justify-center">
-                    <ActionButton
-                      onClick={() => handleEdit(c)}
-                      text="Editar"
-                      color="blue"
-                      size="sm"
-                    />
-                    <ActionButton
-                      onClick={() => handleDelete(c.id)}
-                      text="Eliminar"
-                      color="red"
-                      size="sm"
-                    />
-                    <a
-                      href={`/admin/${c.id}/alumnos`}
-                      className="text-green-700 bg-green-100 px-2 py-1 rounded hover:bg-green-200 transition"
-                    >
-                      Ver alumnos
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* 🔹 Lista genérica */}
+        <ListaGenerica
+          title="Listado de Cursos"
+          columns={[
+            { key: 'anio', label: 'Año', render: (val) => `${val}°` },
+            { key: 'bachillerato', label: 'Nombre del curso' },
+          ]}
+          data={cursos}
+          error={error}
+          onCloseError={cerrarError}
+          renderActions={(curso) => (
+            <div className="flex justify-center gap-2">
+              <ActionButton
+                onClick={() => handleEdit(curso)}
+                text="Editar"
+                color="blue"
+                size="sm"
+              />
+              <ActionButton
+                onClick={() => handleDelete(curso.id)}
+                text="Eliminar"
+                color="red"
+                size="sm"
+              />
+              <a
+                href={`/admin/${curso.id}/alumnos`}
+                className="text-green-700 bg-green-100 px-2 py-1 rounded hover:bg-green-200 transition"
+              >
+                Ver alumnos
+              </a>
+            </div>
+          )}
+        />
       </div>
 
+      {/* 🔹 Modal de crear / editar */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        {modo === "editar" && cursoSeleccionado && (
+        {modo === 'editar' && cursoSeleccionado && (
           <EditarCurso
             curso={cursoSeleccionado}
             onSuccess={() => {
@@ -143,7 +143,7 @@ const CursosList = () => {
             }}
           />
         )}
-        {modo === "crear" && (
+        {modo === 'crear' && (
           <CrearCurso
             onSuccess={() => {
               setIsModalOpen(false);

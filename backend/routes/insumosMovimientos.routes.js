@@ -5,20 +5,15 @@ import {
   stockBajoController,
   consumoPeriodoController,
 } from "../controllers/insumosMovimientos.controller.js";
+import { authenticate, authorize } from '../middlewares/auth.middleware.js';
+import { auditar } from '../middlewares/auditoria.middleware.js';
 
 const router = Router();
+const rolesPermitidos = ['admin'];
 
-// Registrar movimiento (entrada/salida)
-router.post("/:id/movimientos", registrarMovimientoController);
-
-// Obtener historial de movimientos
-router.get("/:id/movimientos", obtenerMovimientosController);
-
-// Reporte: insumos con stock bajo
-router.get("/reportes/stock-bajo", stockBajoController);
-
-// Reporte: consumo por periodo
-router.get("/reportes/consumo", consumoPeriodoController);
+router.post("/:id/movimientos", authenticate, authorize(rolesPermitidos), auditar('REGISTRAR MOVIMIENTO INSUMO', 'Se registró un movimiento de insumo'), registrarMovimientoController);
+router.get("/:id/movimientos", authenticate, authorize(rolesPermitidos), obtenerMovimientosController);
+router.get("/reportes/stock-bajo", authenticate, authorize(rolesPermitidos), stockBajoController);
+router.get("/reportes/consumo", authenticate, authorize(rolesPermitidos), consumoPeriodoController);
 
 export default router;
-

@@ -10,6 +10,7 @@ import {
 import { obtenerProveedores } from '../../../services/proveedorService';
 import Modal from '../../../components/Modal';
 import ProductForm from './ProductForm';
+import Notification from '../../../components/Notification';
 
 const formatCurrency = (value) => {
   const number = Number(value) || 0;
@@ -27,12 +28,7 @@ const Productos = () => {
   const [proveedores, setProveedores] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
-
-  const showNotification = (message, type = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 3000);
-  };
+  const [notification, setNotification] = useState({ message: '', type: '' });
 
   const fetchProductos = async () => {
     setLoading(true);
@@ -41,7 +37,7 @@ const Productos = () => {
       setProductos(data);
     } catch (err) {
       console.error(err);
-      showNotification('Error al obtener productos', 'error');
+      setNotification({ message: 'Error al obtener productos', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -53,7 +49,7 @@ const Productos = () => {
       setProveedores(data);
     } catch (err) {
       console.error(err);
-      showNotification('Error al obtener proveedores', 'error');
+      setNotification({ message: 'Error al obtener proveedores', type: 'error' });
     }
   };
 
@@ -77,10 +73,10 @@ const Productos = () => {
     try {
       await eliminarProducto(id, token);
       await fetchProductos();
-      showNotification('Producto eliminado correctamente');
+      setNotification({ message: 'Producto eliminado correctamente', type: 'success' });
     } catch (err) {
       console.error(err);
-      showNotification('Error al eliminar producto', 'error');
+      setNotification({ message: 'Error al eliminar producto', type: 'error' });
     }
   };
 
@@ -92,17 +88,17 @@ const Productos = () => {
     if (isNaN(cantidad)) return;
 
     if (producto.stock + cantidad < 0) {
-      showNotification('No se puede reducir el stock por debajo de 0', 'error');
+      setNotification({ message: 'No se puede reducir el stock por debajo de 0', type: 'error' });
       return;
     }
 
     try {
       await actualizarStock(id, cantidad, token);
       await fetchProductos();
-      showNotification('Stock actualizado correctamente');
+      setNotification({ message: 'Stock actualizado correctamente', type: 'success' });
     } catch (err) {
       console.error(err);
-      showNotification('Error al actualizar stock', 'error');
+      setNotification({ message: 'Error al actualizar stock', type: 'error' });
     }
   };
 
@@ -110,30 +106,29 @@ const Productos = () => {
     try {
       if (editing) {
         await actualizarProducto(editing.id, formData, token);
-        showNotification('Producto actualizado correctamente');
+        setNotification({ message: 'Producto actualizado correctamente', type: 'success' });
       } else {
         await crearProducto(formData, token);
-        showNotification('Producto creado correctamente');
+        setNotification({ message: 'Producto creado correctamente', type: 'success' });
       }
       setEditing(null);
       setIsModalOpen(false);
       fetchProductos();
     } catch (err) {
       console.error(err);
-      showNotification('Error al guardar producto', 'error');
+      setNotification({ message: 'Error al guardar producto', type: 'error' });
     }
   };
 
   return (
     <div className="p-6">
-      {notification && (
-        <div
-          className={`fixed top-4 right-4 px-4 py-2 rounded shadow text-white ${
-            notification.type === 'success' ? 'bg-green-600' : 'bg-red-600'
-          }`}
-        >
-          {notification.message}
-        </div>
+      {/* Notificación global */}
+      {notification.message && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification({ message: '', type: '' })}
+        />
       )}
 
       <div className="flex justify-between items-center mb-6">
@@ -148,22 +143,24 @@ const Productos = () => {
         </button>
       </div>
 
-      <div className="overflow-x-auto ">
-        <table className="min-w-full bg-white dark:bg-gray-800 ">
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white dark:bg-gray-800">
           <thead>
             <tr className="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm uppercase">
-              <th className="p-3">Nombre</th>
-              <th className="p-3">Descripción</th>
-              <th className="p-3">Precio</th>
-              <th className="p-3">Stock</th>
-              <th className="p-3">Proveedor</th>
-              <th className="p-3 text-center">Acciones</th>
+              <th className="p-3 border">Nombre</th>
+              <th className="p-3 border">Descripción</th>
+              <th className="p-3 border">Precio</th>
+              <th className="p-3 border">Stock</th>
+              <th className="p-3 border">Proveedor</th>
+              <th className="p-3 border text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="6" className="text-center p-6">Cargando productos...</td>
+                <td colSpan="6" className="text-center p-6">
+                  Cargando productos...
+                </td>
               </tr>
             ) : productos.length > 0 ? (
               productos.map((p) => (
@@ -172,6 +169,7 @@ const Productos = () => {
                   <td className="p-3">{p.descripcion}</td>
                   <td className="p-3">{formatCurrency(p.precio_unitario)}</td>
                   <td className="p-3 relative">
+                    {/* Mensajito flotante de stock bajo */}
                     {p.stock <= 5 ? (
                       <span className="relative inline-block">
                         <span className="bg-red-600 text-white rounded-full px-2 py-1 text-xs font-bold cursor-pointer">
@@ -219,7 +217,13 @@ const Productos = () => {
         </table>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditing(null);
+        }}
+      >
         <ProductForm
           producto={editing}
           onSubmit={handleSubmitForm}

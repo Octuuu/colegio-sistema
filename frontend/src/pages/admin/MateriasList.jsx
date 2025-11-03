@@ -5,6 +5,7 @@ import Modal from '../../components/Modal';
 import EditarMateria from './EditMateria';
 import CreateSubject from './CreateSubject.jsx';
 import Notification from '../../components/Notification.jsx';
+import ListaGenerica from '../../components/ListaGenerica.jsx';
 
 const MateriasList = () => {
   const { token } = useContext(AuthContext);
@@ -14,6 +15,7 @@ const MateriasList = () => {
   const [modo, setModo] = useState(null);
   const [notification, setNotification] = useState({ message: '', type: '' });
 
+  // 🔹 Cargar materias
   const cargarMaterias = useCallback(async () => {
     try {
       const data = await obtenerMaterias(token);
@@ -24,6 +26,7 @@ const MateriasList = () => {
     }
   }, [token]);
 
+  // 🔹 Eliminar materia
   const handleDelete = async (id) => {
     if (confirm('¿Estás seguro de eliminar esta materia?')) {
       try {
@@ -37,12 +40,14 @@ const MateriasList = () => {
     }
   };
 
+  // 🔹 Editar materia
   const handleEdit = (materia) => {
     setMateriaSeleccionada(materia);
     setModo('editar');
     setIsModalOpen(true);
   };
 
+  // 🔹 Crear materia
   const handleCreate = () => {
     setMateriaSeleccionada(null);
     setModo('crear');
@@ -55,6 +60,7 @@ const MateriasList = () => {
 
   return (
     <div className="p-6">
+      {/* 🔸 Notificación */}
       {notification.message && (
         <Notification
           message={notification.message}
@@ -63,58 +69,52 @@ const MateriasList = () => {
         />
       )}
 
+      {/* 🔸 Encabezado */}
       <div className="flex justify-between mb-4">
         <h2 className="text-2xl font-bold">Materias registradas</h2>
         <div className="flex gap-4">
           <button
             onClick={handleCreate}
-            className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
+            className="bg-gray-50 px-3 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
           >
             Crear materia
           </button>
           <button
             onClick={() => window.history.back()}
-            className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
+            className="bg-gray-50 px-3 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
           >
             Volver al tablero
           </button>
         </div>
       </div>
 
-      <div className="max-h-[500px] overflow-y-auto border rounded">
-        <table className="w-full border-0 border-collapse">
-          <thead className="bg-gray-50 sticky top-0 z-10">
-            <tr>
-              <th className="p-2">Nombre</th>
-              <th className="p-2">Descripción</th>
-              <th className="p-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {materias.map((m) => (
-              <tr key={m.id} className="text-center border-t">
-                <td className="p-2">{m.nombre}</td>
-                <td className="p-2">{m.descripcion}</td>
-                <td className="p-2 space-x-2">
-                  <button
-                    onClick={() => handleEdit(m)}
-                    className="font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded hover:bg-blue-200"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(m.id)}
-                    className="font-medium text-red-700 bg-red-100 px-2 py-1 rounded hover:bg-red-200"
-                  >
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* 🔸 Lista genérica */}
+      <ListaGenerica
+        title="Listado de materias"
+        columns={[
+          { key: 'nombre', label: 'Nombre' },
+          { key: 'descripcion', label: 'Descripción' },
+        ]}
+        data={materias}
+        renderActions={(materia) => (
+          <div className="flex justify-center gap-2">
+            <button
+              onClick={() => handleEdit(materia)}
+              className="font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded hover:bg-blue-200"
+            >
+              Editar
+            </button>
+            <button
+              onClick={() => handleDelete(materia.id)}
+              className="font-medium text-red-700 bg-red-100 px-2 py-1 rounded hover:bg-red-200"
+            >
+              Eliminar
+            </button>
+          </div>
+        )}
+      />
 
+      {/* 🔸 Modal para Crear / Editar */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {modo === 'editar' && materiaSeleccionada && (
           <EditarMateria

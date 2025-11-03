@@ -105,7 +105,7 @@ const AlumnosList = () => {
         <table className="w-full border-collapse">
           <thead className="bg-gray-200 sticky top-0 z-10">
             <tr>
-              <th className="p-2">Nombre</th>
+              <th className="p-2">Nombreee</th>
               <th className="p-2">Apellido</th>
               <th className="p-2">Email</th>
               <th className="p-2">Matrícula</th>

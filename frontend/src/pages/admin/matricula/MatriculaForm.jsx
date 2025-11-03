@@ -6,115 +6,102 @@ const MatriculaForm = () => {
   const { token } = useContext(AuthContext);
   const [alumnos, setAlumnos] = useState([]);
   const [formData, setFormData] = useState({
-    alumnoId: "",
-    fechaPago: "",
+    alumno_id: "",
+    fecha_pago: "",
     monto: "",
-    metodoPago: "",
-    recibidoPor: ""
+    metodo_pago: ""
   });
   const [error, setError] = useState(null);
 
-  // Cargar alumnos
   useEffect(() => {
     const fetchAlumnos = async () => {
       try {
         const res = await axios.get("http://localhost:3000/api/alumnos", {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         setAlumnos(res.data);
       } catch (err) {
-        console.error(err);
-        setError("Error al cargar datos de alumnos");
+        console.error("Error al cargar alumnos:", err);
+        setError("No se pudieron cargar los alumnos");
       }
     };
     fetchAlumnos();
   }, [token]);
 
-  // Manejar cambios de inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Enviar formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
 
-    // Validaciones
-    if (!formData.alumnoId || !formData.fechaPago || !formData.monto || !formData.metodoPago || !formData.recibidoPor) {
-      alert("Todos los campos son requeridos");
+    // Validación simple
+    if (!formData.alumno_id || !formData.fecha_pago || !formData.monto || !formData.metodo_pago) {
+      alert("Todos los campos son obligatorios");
       return;
     }
 
-    const montoNumber = Number(formData.monto);
-    if (isNaN(montoNumber) || montoNumber <= 0) {
-      alert("El monto debe ser un número válido mayor a 0");
-      return;
-    }
-
-    const fecha = new Date(formData.fechaPago);
-    if (isNaN(fecha.getTime())) {
-      alert("La fecha es inválida");
-      return;
-    }
-    const fechaMysql = fecha.toISOString().split("T")[0]; // YYYY-MM-DD
-
+    // Convertir tipos correctamente
     const payload = {
-      alumnoId: Number(formData.alumnoId),
-      fechaPago: fechaMysql,
-      monto: montoNumber,
-      metodoPago: formData.metodoPago,
-      recibidoPor: formData.recibidoPor
+      alumnoId: Number(formData.alumno_id),
+      fechaPago: new Date(formData.fecha_pago).toISOString().split("T")[0],
+      monto: Number(formData.monto),
+      metodoPago: formData.metodo_pago,
+      recibidoPor: 2
     };
 
+    console.log("Payload a enviar:", payload);
+
     try {
-      await axios.post("http://localhost:3000/api/matriculas", payload, {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await axios.post("http://localhost:3000/api/matriculas", payload, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      alert("Pago registrado correctamente ✅");
+      console.log("Respuesta del servidor:", res.data);
+      alert("Matrícula registrada correctamente");
 
       // Resetear formulario
       setFormData({
-        alumnoId: "",
-        fechaPago: "",
+        alumno_id: "",
+        fecha_pago: "",
         monto: "",
-        metodoPago: "",
-        recibidoPor: ""
+        metodo_pago: ""
       });
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Error al registrar pago");
+      console.error("Error completo:", err);
+      console.error("Error response:", err.response);
+      setError(err.response?.data?.message || "Error al registrar matrícula");
+      alert(err.response?.data?.message || "Error al registrar matrícula");
     }
   };
 
   return (
     <div className="max-w-xl mx-auto bg-white dark:bg-gray-800 p-6 rounded shadow">
-      <h2 className="text-2xl font-extrabold mb-6 text-center text-gray-800 dark:text-white">
-        Registrar Pago de Matrícula
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
+        Registrar Matrícula
       </h2>
 
       {error && <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">{error}</div>}
 
       <form onSubmit={handleSubmit} className="grid gap-4">
         <select
-          name="alumnoId"
-          value={formData.alumnoId}
+          name="alumno_id"
+          value={formData.alumno_id}
           onChange={handleChange}
           required
           className="border border-slate-500 h-[36px] pl-5"
         >
           <option value="">Seleccione un alumno</option>
           {alumnos.map(a => (
-            <option key={a.id} value={a.id}>
-              {a.nombre} {a.apellido}
-            </option>
+            <option key={a.id} value={a.id}>{a.nombre} {a.apellido}</option>
           ))}
         </select>
 
         <input
           type="date"
-          name="fechaPago"
-          value={formData.fechaPago}
+          name="fecha_pago"
+          value={formData.fecha_pago}
           onChange={handleChange}
           required
           className="border border-slate-500 h-[36px] pl-5"
@@ -132,19 +119,9 @@ const MatriculaForm = () => {
 
         <input
           type="text"
-          name="metodoPago"
+          name="metodo_pago"
           placeholder="Método de pago"
-          value={formData.metodoPago}
-          onChange={handleChange}
-          required
-          className="border border-slate-500 h-[36px] pl-5"
-        />
-
-        <input
-          type="text"
-          name="recibidoPor"
-          placeholder="Recibido por"
-          value={formData.recibidoPor}
+          value={formData.metodo_pago}
           onChange={handleChange}
           required
           className="border border-slate-500 h-[36px] pl-5"
@@ -154,7 +131,7 @@ const MatriculaForm = () => {
           type="submit"
           className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 font-bold"
         >
-          Registrar Matrícula
+          Registrar
         </button>
       </form>
     </div>

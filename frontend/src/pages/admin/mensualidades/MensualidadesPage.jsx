@@ -3,10 +3,10 @@ import MensualidadForm from "./MensualidadForm";
 import MensualidadesList from "./MensualidadesList";
 
 const MensualidadesPage = () => {
-  const [tab, setTab] = useState("list"); // 'list' | 'pay'
+  const [tab, setTab] = useState("list");
 
   return (
-    <div className="max-w-6xl mx-auto mt-8 p-6 bg-white rounded shadow">
+    <div className="max-w-6xl mx-auto bg-white ">
       <h1 className="text-2xl font-bold mb-4">Gestión de Mensualidades</h1>
 
       <div className="flex gap-2 mb-6">

@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, BookOpen, GraduationCap, CreditCard, DollarSign, Truck, Package, Wrench, Boxes, ShoppingCart, ClipboardList, Wallet } from 'lucide-react';
+import { 
+  LayoutDashboard, Users, BookOpen, GraduationCap, CreditCard, 
+  DollarSign, Truck, Package, Wrench, Boxes, ShoppingCart, Wallet, 
+  FileText, Settings 
+} from 'lucide-react';
 import ThemeToggle from '../../components/ThemeToggle';
 
 const MenuAdmin = () => {
@@ -25,15 +29,17 @@ const MenuAdmin = () => {
     { title: 'Ventas', path: '/admin/ventas', icon: <ShoppingCart size={18} /> },
     { title: 'Compras', path: '/admin/compras', icon: <DollarSign size={18} /> },
     { title: 'Caja', path: '/admin/caja', icon: <Wallet size={18} /> },
+    { title: 'Auditoría', path: '/admin/auditoria', icon: <FileText size={18} /> },
+    { title: 'Configuración', path:"/admin/configuracion", icon: <Settings size={18} /> },
   ];
 
   return (
     <div className="h-[98vh] ml-4 mt-2 w-64 bg-gray-50 dark:bg-gray-800 p-2 flex flex-col rounded-2xl border border-gray-300">
-      <h1 className="text-2xl font-bold dark:text-blue-200 mb-6 mt-6 text-center border-b pb-2">
+      <h1 className="text-2xl font-bold dark:text-blue-200 mb-2 mt-1 text-center border-b pb-2">
         Administrador
       </h1>
 
-      <nav className="flex flex-col gap-2">
+      <nav className="flex flex-col gap-1">
         {links.map((link, i) => (
           <Link
             key={i}
@@ -49,8 +55,6 @@ const MenuAdmin = () => {
           </Link>
         ))}
       </nav>
-
-   
     </div>
   );
 };

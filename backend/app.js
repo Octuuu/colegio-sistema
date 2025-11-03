@@ -23,6 +23,8 @@ import ventaRoutes from './routes/venta.routes.js';
 import compraRoutes from './routes/compra.routes.js';
 import pagosMensualidadRoutes from './routes/pagosMensualidad.routes.js';
 import cajaRoutes from './routes/caja.routes.js';
+import auditoriaRoutes from './routes/auditoria.routes.js';
+import backupRoutes from './routes/backup.routes.js';
 
 const app = express();
 
@@ -58,6 +60,9 @@ app.use('/api/ventas', ventaRoutes);
 app.use('/api/compras', compraRoutes);
 app.use('/api/mensualidades', pagosMensualidadRoutes);
 app.use('/api/caja', cajaRoutes);
+app.use('/api/auditoria', auditoriaRoutes);
+app.use('/api/backup', backupRoutes);
+
 
 // manejo de errores
 app.use(errorHandler);

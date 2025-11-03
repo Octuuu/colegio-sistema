@@ -11,7 +11,6 @@ import Carrito from "./Carrito";
 import ModalConfirmacionVenta from "./ModalConfirmacionVenta";
 import Modal from "../../../components/Modal";
 
-// Formatear precios en guaraníes
 const formatCurrency = (value) => {
   const number = Number(value) || 0;
   return new Intl.NumberFormat("es-PY", {
@@ -34,14 +33,12 @@ const Ventas = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Notificaciones flotantes
   const [notification, setNotification] = useState(null);
   const showNotification = (message, type = "success") => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
   };
 
-  // Cargar alumnos y productos al iniciar
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -207,7 +204,7 @@ const Ventas = () => {
       const { facturaId } = await crearVenta(ventaData, token);
       await descargarFacturaPDF(facturaId, token);
 
-      showNotification("Venta realizada y factura generada ✅", "success");
+      showNotification("Venta realizada y factura generada", "success");
 
       // Reset
       setCarrito([]);

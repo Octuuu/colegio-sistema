@@ -4,28 +4,25 @@ import {
     listarMensualidades,
     listarMensualidadesPendientes,
     pagarVariasMensualidades,
-    listarTodosPagos, // 👈 nuevo controlador
-    eliminarPago       // 👈 eliminar un pago
+    listarTodosPagos,
+    eliminarPago
 } from "../controllers/pagosMensualidad.controller.js";
+import { authenticate, authorize } from '../middlewares/auth.middleware.js';
+import { auditar } from '../middlewares/auditoria.middleware.js';
 
 const router = Router();
+const rolesPermitidos = ['admin', 'profesor'];
 
-// Obtener todos los pagos (admin)
-router.get("/", listarTodosPagos);  // 👈 esta ruta estaba faltando
+router.get("/", authenticate, authorize(rolesPermitidos), listarTodosPagos);
 
-// Registrar pago individual
-router.post("/pagar", nuevoPagoMensualidad);
+router.post("/pagar", authenticate, authorize(rolesPermitidos), auditar('REGISTRAR PAGO', 'Se registró un pago de mensualidad'), nuevoPagoMensualidad);
 
-// Listar mensualidades de un alumno
-router.get("/:alumnoId", listarMensualidades);
+router.get("/:alumnoId", authenticate, authorize(rolesPermitidos), listarMensualidades);
 
-// Listar mensualidades pendientes
-router.get("/pendientes/:alumnoId", listarMensualidadesPendientes);
+router.get("/pendientes/:alumnoId", authenticate, authorize(rolesPermitidos), listarMensualidadesPendientes);
 
-// Pagar varias mensualidades
-router.post("/pagar-multiples", pagarVariasMensualidades);
+router.post("/pagar-multiples", authenticate, authorize(rolesPermitidos), auditar('PAGAR VARIAS MENSUALIDADES', 'Se registraron pagos múltiples de mensualidades'), pagarVariasMensualidades);
 
-// Eliminar un pago
-router.delete("/:id", eliminarPago);
+router.delete("/:id", authenticate, authorize(rolesPermitidos), auditar('ELIMINAR PAGO', 'Se eliminó un pago de mensualidad'), eliminarPago);
 
 export default router;

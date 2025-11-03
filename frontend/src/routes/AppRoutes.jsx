@@ -48,6 +48,8 @@ import MensualidadesPage from '../pages/admin/mensualidades/MensualidadesPage';
 import Caja from '../pages/admin/caja/Caja';
 import CajaLista from '../pages/admin/caja/CajaLista';
 import CajaDetalle from '../pages/admin/caja/CajaDetalle';
+import Auditoria from '../pages/admin/auditoria/Auditoria';
+import Configuracion from '../pages/admin/configuracion/Configuracion';
 
 export default function AppRoutes() {
   return (
@@ -101,6 +103,10 @@ export default function AppRoutes() {
           <Route path="caja" element={<Caja />} />
           <Route path="/admin/caja/lista" element={<CajaLista />} />
           <Route path="/admin/caja/detalle/:id" element={<CajaDetalle />} />
+
+          <Route path="/admin/auditoria" element={<Auditoria />} />
+
+          <Route path="/admin/configuracion" element={<Configuracion />} />
 
         </Route>
       </Route>

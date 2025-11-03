@@ -9,18 +9,30 @@ import {
 export const nuevoPago = async (req, res) => {
   try {
     const { alumnoId, fechaPago, monto, metodoPago, recibidoPor } = req.body;
+    
+    if (!alumnoId || isNaN(Number(alumnoId)) || Number(alumnoId) <= 0) {
+      return res.status(400).json({ message: "ID de alumno inválido" });
+    }
+    if (!monto || isNaN(Number(monto)) || Number(monto) <= 0) {
+      return res.status(400).json({ message: "Monto inválido" });
+    }
 
     // Validaciones básicas
-    if (!alumnoId || !fechaPago || !monto || !metodoPago || !recibidoPor) {
+    if (!alumnoId || !fechaPago || !monto || !metodoPago) {
       return res.status(400).json({ message: "Todos los campos son requeridos" });
     }
 
+    const alumnoIdNumber = Number(alumnoId);
+    if (isNaN(alumnoIdNumber) || alumnoIdNumber <= 0) {
+      return res.status(400).json({ message: "ID de alumno inválido" });
+    }
+
     const insertId = await crearPago({
-      alumnoId: Number(alumnoId),
+      alumnoId: alumnoIdNumber,
       fechaPago,
       monto,
       metodoPago,
-      recibidoPor
+      recibidoPor: recibidoPor || null
     });
 
     res.status(201).json({ id: insertId });
@@ -29,6 +41,7 @@ export const nuevoPago = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
 // Listar todos los pagos
 export const listarPagos = async (req, res) => {
   try {

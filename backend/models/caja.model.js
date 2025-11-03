@@ -111,9 +111,9 @@ export const getCajaAbierta = async () => {
 // ============================================================
 // 💰 MOVIMIENTOS
 // ============================================================
+// 📦 Registrar movimiento con tipo automático
 export const registrarMovimiento = async ({
   fecha = new Date(),
-  tipo_movimiento,
   descripcion = null,
   pago_matricula_id = null,
   pago_mensualidad_id = null,
@@ -125,6 +125,27 @@ export const registrarMovimiento = async ({
 }) => {
   const fechaFormateada = formatFechaMySQL(fecha);
   const montoValido = isNaN(Number(monto)) ? 0 : Number(monto);
+
+  // 🔹 Determinar tipo de movimiento automáticamente
+  let tipo_movimiento = null;
+
+  if (pago_matricula_id || pago_mensualidad_id || venta_id) {
+    tipo_movimiento = 'ingreso'; // Todo lo relacionado a cobros es ingreso
+  } else if (compra_id) {
+    tipo_movimiento = 'egreso'; // Todo lo relacionado a compras o gastos es egreso
+  } else {
+    // Por defecto, si el usuario especifica descripción y monto
+    tipo_movimiento = 'ingreso';
+  }
+
+  // 🔹 Si no hay descripción, poner una por defecto
+  if (!descripcion) {
+    if (pago_matricula_id) descripcion = 'Pago de matrícula';
+    else if (pago_mensualidad_id) descripcion = 'Pago de mensualidad';
+    else if (venta_id) descripcion = 'Venta';
+    else if (compra_id) descripcion = 'Compra';
+    else descripcion = 'Movimiento de caja';
+  }
 
   const [res] = await pool.query(
     `INSERT INTO caja 
@@ -144,8 +165,9 @@ export const registrarMovimiento = async ({
     ]
   );
 
-  return { movimiento_id: res.insertId };
+  return { movimiento_id: res.insertId, tipo_movimiento };
 };
+
 
 export const obtenerMovimientos = async ({
   desde = null,

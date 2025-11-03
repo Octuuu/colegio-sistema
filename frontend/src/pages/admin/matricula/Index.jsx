@@ -6,7 +6,7 @@ const MatriculasPage = () => {
   const [activeTab, setActiveTab] = useState("listado");
 
   return (
-    <div className="max-w-6xl mx-auto mt-8 bg-white dark:bg-gray-900 p-6 rounded shadow">
+    <div className="max-w-6xl mx-auto mt-8 bg-white dark:bg-gray-900">
       <h1 className="text-3xl font-extrabold mb-6 text-gray-800 dark:text-white">
         Gestión de Matrículas
       </h1>

@@ -6,6 +6,7 @@ import axios from 'axios';
 const MatriculaForm = () => {
   const { token } = useContext(AuthContext);
   const [inscripciones, setInscripciones] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const [formData, setFormData] = useState({
     inscripcionId: '',
     fechaPago: '',
@@ -13,23 +14,29 @@ const MatriculaForm = () => {
     metodoPago: '',
     recibidoPor: ''
   });
-
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchInscripciones = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/inscripciones/todasInscripciones', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setInscripciones(res.data);
+        const inscripcionesRes = await axios.get(
+          'http://localhost:3000/api/inscripciones/todasInscripciones',
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setInscripciones(inscripcionesRes.data);
+
+        const usuariosRes = await axios.get(
+          'http://localhost:3000/api/usuarios',
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setUsuarios(usuariosRes.data);
       } catch (err) {
         console.error(err);
-        setError('Error al obtener inscripciones');
+        setError('Error al obtener inscripciones o usuarios');
       }
     };
 
-    fetchInscripciones();
+    fetchData();
   }, [token]);
 
   const handleChange = (e) => {
@@ -38,7 +45,6 @@ const MatriculaForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!formData.inscripcionId || !formData.fechaPago || !formData.monto || !formData.metodoPago || !formData.recibidoPor) {
       alert('Todos los campos son requeridos');
       return;
@@ -49,10 +55,10 @@ const MatriculaForm = () => {
       alert('Pago registrado con éxito');
       setFormData({
         inscripcionId: '',
-        fecha_pago: '',
+        fechaPago: '',
         monto: '',
-        metodo_pago: '',
-        recibido_por: ''
+        metodoPago: '',
+        recibidoPor: ''
       });
     } catch (err) {
       console.error(err);
@@ -63,13 +69,9 @@ const MatriculaForm = () => {
   return (
     <div className="max-w-xl mx-auto mt-8 bg-white dark:bg-gray-800 p-6 rounded shadow">
       <h2 className="text-4xl font-extrabold mb-6 text-center text-gray-800 dark:text-white">
-        Registrar Pago de Matrícula
+        Registrar Pago de Matrículass
       </h2>
-
-      {error && (
-        <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">{error}</div>
-      )}
-
+      {error && <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">{error}</div>}
       <form onSubmit={handleSubmit} className="grid gap-4">
         <select
           name="inscripcionId"
@@ -92,8 +94,9 @@ const MatriculaForm = () => {
           value={formData.fechaPago}
           onChange={handleChange}
           required
-          className="..."
+          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
+
         <input
           type="number"
           name="monto"
@@ -103,22 +106,30 @@ const MatriculaForm = () => {
           required
           className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
+
         <input
-        type="text"
-        name="metodoPago"
-        value={formData.metodoPago}
-        onChange={handleChange}
-        required
-        className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
+          type="text"
+          name="metodoPago"
+          value={formData.metodoPago}
+          onChange={handleChange}
+          required
+          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
         />
-        <input
-        type="text"
-        name="recibidoPor"
-        value={formData.recibidoPor}
-        onChange={handleChange}
-        required
-        className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
-        />
+
+        <select
+          name="recibidoPor"
+          value={formData.recibidoPor}
+          onChange={handleChange}
+          required
+          className="border border-slate-500 h-[36px] font-semibold pl-5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500"
+        >
+          <option value="">Seleccione usuario que recibe</option>
+          {usuarios.map((u) => (
+            <option key={u.id} value={u.id}>
+              {u.nombre} {u.apellido}
+            </option>
+          ))}
+        </select>
 
         <button
           type="submit"

@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import Modal from '../../components/Modal.jsx';
+import ListaGenerica from '../../components/ListaGenerica.jsx';
 import {
   obtenerAlumnosInscritos,
   darDeBajaInscripcion,
@@ -29,7 +30,6 @@ const VerAlumnoModal = ({ alumno, onClose }) => (
   </div>
 );
 
-// Modal para editar inscripción
 const EditarInscripcionModal = ({ alumno, onClose, onSuccess }) => {
   const { token } = useContext(AuthContext);
   const [inscripcionData, setInscripcionData] = useState({
@@ -87,8 +87,9 @@ const EditarInscripcionModal = ({ alumno, onClose, onSuccess }) => {
 
 const InscripcionesList = () => {
   const { token } = useContext(AuthContext);
-  const { cursoId } = useParams(); 
+  const { cursoId } = useParams();
   const [alumnos, setAlumnos] = useState([]);
+  const [error, setError] = useState(null);
   const [verAlumnoModal, setVerAlumnoModal] = useState(false);
   const [editarInscripcionModal, setEditarInscripcionModal] = useState(false);
   const [alumnoSeleccionado, setAlumnoSeleccionado] = useState(null);
@@ -99,12 +100,12 @@ const InscripcionesList = () => {
       setAlumnos(data);
     } catch (err) {
       console.error(err);
+      setError('Error al cargar los alumnos inscritos.');
     }
   };
 
   useEffect(() => {
-    if (!cursoId) return;
-    fetchAlumnos();
+    if (cursoId) fetchAlumnos();
   }, [cursoId, token]);
 
   const handleDarDeBaja = async (id) => {
@@ -142,68 +143,53 @@ const InscripcionesList = () => {
     fetchAlumnos();
   };
 
+  const columns = [
+    { key: 'alumno_nombre', label: 'Nombre' },
+    { key: 'alumno_apellido', label: 'Apellido' },
+    { key: 'email', label: 'Email' },
+    { key: 'estado', label: 'Estado' },
+  ];
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl mb-4">Alumnos inscritos en el curso</h2>
-      <table className="w-full border">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="p-2">Nombre</th>
-            <th className="p-2">Apellido</th>
-            <th className="p-2">Email</th>
-            <th className="p-2">Estado</th>
-            <th className="p-2">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {alumnos.length === 0 ? (
-            <tr>
-              <td colSpan="5" className="text-center p-4">No hay alumnos inscritos</td>
-            </tr>
-          ) : (
-            alumnos.map((alumno) => (
-              <tr
-                key={alumno.id}
-                className={alumno.estado === 'inactivo' ? 'text-gray-400 opacity-50' : ''}
+    <div>
+      <ListaGenerica
+        title="Alumnos inscriptos en el curso"
+        columns={columns}
+        data={alumnos}
+        error={error}
+        onCloseError={() => setError(null)}
+        renderActions={(alumno) => (
+          <div className="flex justify-center space-x-2">
+            <button
+              onClick={() => handleVerAlumno(alumno)}
+              className="text-black bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded-xl border border-gray-700 transition"
+            >
+              Ver Alumno
+            </button>
+            <button
+              onClick={() => handleEditarInscripcion(alumno)}
+              className="text-blue-700 bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded-xl border border-blue-700 transition"
+            >
+              Editar
+            </button>
+            {alumno.estado === 'activo' ? (
+              <button
+                onClick={() => handleDarDeBaja(alumno.id)}
+                className="text-red-700 bg-red-100 hover:bg-red-200 px-2 py-1 rounded-xl border border-red-500 transition"
               >
-                <td className="p-2">{alumno.alumno_nombre}</td>
-                <td className="p-2">{alumno.alumno_apellido}</td>
-                <td className="p-2">{alumno.email}</td>
-                <td className="p-2">{alumno.estado}</td>
-                <td className="p-2 space-x-2">
-                  <button
-                    onClick={() => handleVerAlumno(alumno)}
-                    className="bg-gray-600 text-white px-2 py-1 rounded hover:bg-gray-700"
-                  >
-                    Ver Alumno
-                  </button>
-                  <button
-                    onClick={() => handleEditarInscripcion(alumno)}
-                    className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
-                  >
-                    Editar Inscripción
-                  </button>
-                  {alumno.estado === 'activo' ? (
-                    <button
-                      onClick={() => handleDarDeBaja(alumno.id)}
-                      className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
-                    >
-                      Dar de baja
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleReactivar(alumno.id)}
-                      className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
-                    >
-                      Reactivar
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                Dar de baja
+              </button>
+            ) : (
+              <button
+                onClick={() => handleReactivar(alumno.id)}
+                className="text-white bg-green-600 hover:bg-green-700 px-2 py-1 rounded-xl border border-green-500 transition"
+              >
+                Reactivar
+              </button>
+            )}
+          </div>
+        )}
+      />
 
       {verAlumnoModal && alumnoSeleccionado && (
         <Modal isOpen={verAlumnoModal} onClose={() => setVerAlumnoModal(false)}>

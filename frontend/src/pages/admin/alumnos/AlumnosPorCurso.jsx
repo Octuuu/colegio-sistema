@@ -30,7 +30,7 @@ const AlumnosPorCurso = ({ cursoId, onClose }) => {
       {loading ? (
         <p>Cargando...</p>
       ) : alumnos.length === 0 ? (
-        <p>No hay alumnos inscritos</p>
+        <p>No hay alumnos inscriptos</p>
       ) : (
         <table className="w-full border">
           <thead className="bg-gray-200">
