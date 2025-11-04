@@ -7,7 +7,7 @@ const ProveedorForm = ({ proveedor, onSubmit, onCancel }) => {
     telefono: '',
     correo: '',
     direccion: '',
-    estado: 1, // por defecto Activo
+    estado: 1, 
   });
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const ProveedorForm = ({ proveedor, onSubmit, onCancel }) => {
         telefono: proveedor.telefono || '',
         correo: proveedor.correo || '',
         direccion: proveedor.direccion || '',
-        estado: proveedor.estado ?? 1, // si no existe, toma 1
+        estado: proveedor.estado ?? 1, 
       });
     } else {
       setFormData({ nombre: '', tipo: '', telefono: '', correo: '', direccion: '', estado: 1 });

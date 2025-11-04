@@ -55,7 +55,7 @@ const MateriasList = () => {
   }, [cargarMaterias]);
 
   return (
-    <div className="p-6">
+    <div className="">
     
       {notification.message && (
         <Notification
@@ -66,8 +66,8 @@ const MateriasList = () => {
       )}
 
       {/* 🔸 Encabezado */}
-      <div className="flex justify-between mb-4">
-        <h2 className="text-2xl font-bold">Materias registradas</h2>
+      <div className="flex justify-between ">
+        <h2 className="text-2xl font-bold"></h2>
         <div className="flex gap-4">
           <button
             onClick={handleCreate}
@@ -96,13 +96,13 @@ const MateriasList = () => {
           <div className="flex justify-center gap-2">
             <button
               onClick={() => handleEdit(materia)}
-              className="font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded hover:bg-blue-200"
+              className="border-blue-400 text-blue-700 border bg-blue-100 px-2 py-1 rounded-xl hover:bg-blue-200"
             >
               Editar
             </button>
             <button
               onClick={() => handleDelete(materia.id)}
-              className="font-medium text-red-700 bg-red-100 px-2 py-1 rounded hover:bg-red-200"
+              className="border-red-400 text-red-700 border bg-red-100 px-2 py-1 rounded-xl hover:bg-red-200"
             >
               Eliminar
             </button>

@@ -19,7 +19,6 @@ const Proveedores = () => {
   const [editing, setEditing] = useState(null);
   const [notification, setNotification] = useState({ message: '', type: '' });
 
-  // 🔹 Cargar proveedores
   const fetchProveedores = useCallback(async () => {
     setLoading(true);
     try {
@@ -37,7 +36,6 @@ const Proveedores = () => {
     fetchProveedores();
   }, [fetchProveedores]);
 
-  // 🔹 Crear o editar proveedor
   const handleSubmit = async (formData) => {
     try {
       if (editing) {
@@ -56,7 +54,6 @@ const Proveedores = () => {
     }
   };
 
-  // 🔹 Eliminar proveedor
   const handleDelete = async (id) => {
     if (!window.confirm('¿Desea eliminar este proveedor?')) return;
     try {
@@ -80,7 +77,7 @@ const Proveedores = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="">
       {/* 🔸 Notificación */}
       {notification.message && (
         <Notification
@@ -93,19 +90,19 @@ const Proveedores = () => {
       {/* 🔸 Encabezado */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
-          Gestión de Proveedores
+          
         </h1>
         <button
           onClick={handleCreate}
           className="bg-gray-50 px-3 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
         >
-          + Crear Proveedor
+          Crear Proveedor
         </button>
       </div>
 
       {/* 🔹 Lista genérica */}
       <ListaGenerica
-        title=""
+        title="Lista de Proveedores"
         loading={loading}
         columns={[
           { key: 'nombre', label: 'Nombre' },
