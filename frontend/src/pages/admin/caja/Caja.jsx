@@ -105,23 +105,23 @@ export default function Caja() {
         <div className="space-x-2">
           <button
             onClick={() => setShowAbrirModal(true)}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            className="border-blue-400 text-blue-700 border bg-blue-100 px-2 py-1 rounded-xl hover:bg-blue-200"
           >
             Abrir Caja
           </button>
           <button
             onClick={handleCerrarCaja}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            className="bg-red-100 text-red-500 px-2 py-1 rounded-xl border border-red-300 hover:bg-red-200"
           >
             Cerrar Caja
           </button>
           <button
             onClick={() => setShowMovimientoModal(true)}
-            className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+            className="bg-yellow-50 text-yellow-600 border-yellow-300 border px-2 py-1 rounded-xl hover:bg-yellow-100"
           >
             Registrar Movimiento
           </button>
-          <Link to="/admin/caja/lista" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          <Link to="/admin/caja/lista" className="bg-green-100 text-green-600 px-2 py-1 rounded-xl border border-green-400 hover:bg-green-200">
             Ver historial
           </Link>
         </div>

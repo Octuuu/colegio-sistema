@@ -1,6 +1,6 @@
 export default function MovimientosTable({ movimientos }) {
   return (
-    <table className="w-full border-collapse border">
+    <table className="w-full border-collapse border text-center">
       <thead>
         <tr>
           <th>Fecha</th>
@@ -16,7 +16,7 @@ export default function MovimientosTable({ movimientos }) {
             <td>{mov.fecha ? new Date(mov.fecha).toLocaleDateString() : '-'}</td>
             <td>{mov.tipo}</td>
             <td>{mov.descripcion}</td>
-            <td>₲{Number(mov.monto).toLocaleString()}</td>
+            <td>{Number(mov.monto).toLocaleString()} Gs</td>
             <td>{mov.registrado_por}</td>
           </tr>
         ))}
