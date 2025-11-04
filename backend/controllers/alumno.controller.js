@@ -6,6 +6,7 @@ import {
   deleteAlumno,
   getCursoYMateriasDeAlumno,
 } from '../models/alumno.model.js';
+import pool from '../config/db.js';
 
 export const getAlumnos = async (req, res) => {
   try {
@@ -100,5 +101,27 @@ export const getCursoConMateriasAlumno = async (req, res) => {
   } catch (error) {
     console.error('error al obtener curso y materias del alumno logueado:', error);
     res.status(500).json({ error: 'Error al obtener curso y materias' });
+  }
+};
+
+export const buscarAlumnosPorCedula = async (req, res) => {
+  const { q } = req.query; // q = cédula a buscar
+
+  if (!q) {
+    return res.status(400).json({ message: "Debe enviar un query 'q' con la cédula" });
+  }
+
+  try {
+    const [rows] = await pool.query(
+      `SELECT id, nombre, apellido, cedula, fecha_nacimiento, telefono, direccion, email
+       FROM alumnos
+       WHERE cedula LIKE ?`,
+      [`%${q}%`] // búsqueda parcial
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error buscando alumnos", error: err.message });
   }
 };

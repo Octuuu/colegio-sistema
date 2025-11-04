@@ -29,57 +29,64 @@ const MensualidadesList = () => {
     try {
       await eliminarPago(id, token);
       fetch();
-    } catch (err) {
-      console.error(err);
-      alert("Error eliminando");
+    } catch {
+      alert("Error eliminando pago");
     }
   };
 
-  const totalPaginas = Math.ceil(pagos.length / porPagina);
-  const pagosMostrados = pagos.slice((pagina - 1) * porPagina, pagina * porPagina);
+  const totalPaginas = Math.ceil(pagos.length / (porPagina - 1));
+  const pagosMostrados = pagos.slice((pagina - 1) * (porPagina - 1), pagina * (porPagina - 1));
 
-  const cambiarPagina = (nueva) => {
-    if (nueva >= 1 && nueva <= totalPaginas) setPagina(nueva);
-  };
-
-  if (loading) return <p>Cargando pagos...</p>;
+  if (loading) return <p className="text-center text-gray-600 mt-4">Cargando pagos...</p>;
 
   return (
-    <div className="max-w-full bg-white rounded-lg shadow-sm p-4">
-      <h2 className="text-xl font-semibold mb-4">Pagos registrados</h2>
-      <div className="overflow-x-auto overflow-y-auto max-h-[70vh] border border-gray-200 rounded-lg">
-        <table className="min-w-full border-collapse text-sm sm:text-base">
-          <thead className="bg-gray-100 sticky top-0">
-            <tr>
-              <th className="p-2 border text-left">Alumno</th>
-              <th className="p-2 border text-left">Mes</th>
-              <th className="p-2 border text-left">Fecha Pago</th>
-              <th className="p-2 border text-left">Monto</th>
-              <th className="p-2 border text-left">Método</th>
-              <th className="p-2 border text-left">Estado</th>
-              <th className="p-2 border text-center">Acciones</th>
+    <div className="relative h-auto flex flex-col bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+      <div className="overflow-x-auto overflow-y-auto border rounded-lg shadow-sm">
+        <table className="w-full min-w-[800px] border-collapse">
+          <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-gray-900 shadow-sm">
+            <tr className="border-b border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-center">
+              <th className="p-2 font-semibold">Alumno</th>
+              <th className="p-2 font-semibold">Mes</th>
+              <th className="p-2 font-semibold">Fecha Pago</th>
+              <th className="p-2 font-semibold">Monto</th>
+              <th className="p-2 font-semibold">Método</th>
+              <th className="p-2 font-semibold">Estado</th>
+              <th className="p-2 font-semibold">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {pagosMostrados.length === 0 ? (
-              <tr><td className="p-4 text-center" colSpan="7">No hay pagos</td></tr>
+              <tr>
+                <td colSpan="7" className="text-center p-4 text-gray-500 dark:text-gray-400">
+                  No hay pagos registrados
+                </td>
+              </tr>
             ) : (
-              pagosMostrados.map((p, i) => (
-                <tr key={p.id} className={`${i % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-100`}>
-                  <td className="p-2 border">{p.alumno_nombre} {p.alumno_apellido}</td>
-                  <td className="p-2 border">{p.mes || p.month || "-"}</td>
-                  <td className="p-2 border">{p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString() : "-"}</td>
-                  <td className="p-2 border">{p.monto}</td>
-                  <td className="p-2 border">{p.metodo_pago}</td>
-                  <td className="p-2 border">
-                    <span className={`px-3 py-1 rounded-full ${p.estado === "pagado" ? "bg-green-100 text-green-700 border border-green-300" : "bg-red-100 text-red-700 border border-red-300"}`}>
+              pagosMostrados.map((p, index) => (
+                <tr
+                  key={p.id}
+                  className={`text-center transition-colors duration-200 ${
+                    index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'
+                  } hover:bg-gray-100 dark:hover:bg-gray-700`}
+                >
+                  <td className="p-2 text-gray-800 dark:text-gray-200">{p.alumno_nombre} {p.alumno_apellido}</td>
+                  <td className="p-2 text-gray-800 dark:text-gray-200">{p.mes || "-"}</td>
+                  <td className="p-2 text-gray-800 dark:text-gray-200">{p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString() : "-"}</td>
+                  <td className="p-2 font-semibold text-gray-700 dark:text-gray-200">${p.monto}</td>
+                  <td className="p-2 text-gray-800 dark:text-gray-200">{p.metodo_pago}</td>
+                  <td className="p-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      p.estado === "pagado"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}>
                       {p.estado}
                     </span>
                   </td>
-                  <td className="p-2 border text-center">
+                  <td className="p-2 space-x-2">
                     <button
                       onClick={() => handleDelete(p.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm"
+                      className="border-red-400 text-red-700 border bg-red-100 px-2 py-1 rounded-xl hover:bg-red-200 transition"
                     >
                       Eliminar
                     </button>
@@ -93,17 +100,15 @@ const MensualidadesList = () => {
 
       <div className="flex justify-center items-center gap-2 mt-4">
         <button
-          onClick={() => cambiarPagina(pagina - 1)}
+          onClick={() => setPagina(p => Math.max(p - 1, 1))}
           disabled={pagina === 1}
           className="px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
         >
           Anterior
         </button>
-        <span className="text-sm text-gray-700">
-          Página {pagina} de {totalPaginas}
-        </span>
+        <span className="text-sm text-gray-700">Página {pagina} de {totalPaginas}</span>
         <button
-          onClick={() => cambiarPagina(pagina + 1)}
+          onClick={() => setPagina(p => Math.min(p + 1, totalPaginas))}
           disabled={pagina === totalPaginas}
           className="px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
         >

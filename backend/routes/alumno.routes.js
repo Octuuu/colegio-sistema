@@ -7,6 +7,7 @@ import {
   deleteAlumnoHandler,
   getCursoConMaterias,
   getCursoConMateriasAlumno,
+  buscarAlumnosPorCedula,
 } from '../controllers/alumno.controller.js';
 import { authenticate, authorize } from '../middlewares/auth.middleware.js';
 import { auditar } from '../middlewares/auditoria.middleware.js'; 
@@ -16,6 +17,8 @@ const router = Router();
 const rolesPermitidos = ['admin', 'profesor'];
 const alumno = ['alumno'];
 
+// ----------------- RUTAS -----------------
+router.get("/search", authenticate, authorize(rolesPermitidos), buscarAlumnosPorCedula); // <--- MOVER AQUÍ
 router.get('/', authenticate, authorize(rolesPermitidos), getAlumnos);
 router.get('/:id', authenticate, authorize(rolesPermitidos), getAlumno);
 router.get('/yo/materias', authenticate, authorize(alumno), getCursoConMateriasAlumno);

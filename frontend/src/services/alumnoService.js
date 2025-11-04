@@ -49,3 +49,12 @@ export const obtenerAlumnos = async (token) => {
   });
   return res.data;
 };
+
+export const buscarAlumnosPorCedulaService = async (query, token) => {
+  const res = await axios.get(`${API_URL}/alumnos/search?q=${query}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
