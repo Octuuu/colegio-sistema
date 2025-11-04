@@ -15,7 +15,6 @@ const MateriasList = () => {
   const [modo, setModo] = useState(null);
   const [notification, setNotification] = useState({ message: '', type: '' });
 
-  // 🔹 Cargar materias
   const cargarMaterias = useCallback(async () => {
     try {
       const data = await obtenerMaterias(token);
@@ -26,7 +25,6 @@ const MateriasList = () => {
     }
   }, [token]);
 
-  // 🔹 Eliminar materia
   const handleDelete = async (id) => {
     if (confirm('¿Estás seguro de eliminar esta materia?')) {
       try {
@@ -40,14 +38,12 @@ const MateriasList = () => {
     }
   };
 
-  // 🔹 Editar materia
   const handleEdit = (materia) => {
     setMateriaSeleccionada(materia);
     setModo('editar');
     setIsModalOpen(true);
   };
 
-  // 🔹 Crear materia
   const handleCreate = () => {
     setMateriaSeleccionada(null);
     setModo('crear');
@@ -60,7 +56,7 @@ const MateriasList = () => {
 
   return (
     <div className="p-6">
-      {/* 🔸 Notificación */}
+    
       {notification.message && (
         <Notification
           message={notification.message}

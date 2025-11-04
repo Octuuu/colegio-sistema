@@ -17,7 +17,6 @@ const CursosList = () => {
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [error, setError] = useState(null);
 
-  // 🔹 Cargar cursos
   const cargarCursos = useCallback(async () => {
     try {
       const data = await obtenerCurso(token);
@@ -28,7 +27,6 @@ const CursosList = () => {
     }
   }, [token]);
 
-  // 🔹 Eliminar curso
   const handleDelete = async (id) => {
     if (confirm('¿Estás seguro de eliminar este curso?')) {
       try {
@@ -41,30 +39,26 @@ const CursosList = () => {
     }
   };
 
-  // 🔹 Editar curso
   const handleEdit = (curso) => {
     setCursoSeleccionado(curso);
     setModo('editar');
     setIsModalOpen(true);
   };
 
-  // 🔹 Crear curso
   const handleCreate = () => {
     setCursoSeleccionado(null);
     setModo('crear');
     setIsModalOpen(true);
   };
 
-  // 🔹 Cerrar error
   const cerrarError = () => setError(null);
 
-  // 🔹 useEffect para cargar cursos
   useEffect(() => {
     cargarCursos();
   }, [cargarCursos]);
 
   return (
-    <div className="relative p-6">
+    <div className="relative">
       {/* Notificación */}
       {notification.message && (
         <Notification
@@ -86,11 +80,11 @@ const CursosList = () => {
 
       <div className={`${error ? 'blur-sm pointer-events-none select-none' : ''}`}>
         {/* Encabezado */}
-        <div className="flex justify-between mb-5">
-          <h1 className="font-medium text-2xl">Cursos Registrados</h1>
+        <div className="flex justify-between">
+          <h1 className="font-medium text-2xl"></h1>
           <button
             onClick={handleCreate}
-            className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100"
+            className="bg-gray-50 px-2 py-1 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 mr-10"
           >
             Crear curso
           </button>
@@ -113,6 +107,7 @@ const CursosList = () => {
                 text="Editar"
                 color="blue"
                 size="sm"
+                
               />
               <ActionButton
                 onClick={() => handleDelete(curso.id)}
@@ -122,7 +117,7 @@ const CursosList = () => {
               />
               <a
                 href={`/admin/${curso.id}/alumnos`}
-                className="text-green-700 bg-green-100 px-2 py-1 rounded hover:bg-green-200 transition"
+                className="border-green-400 text-green-700 border bg-green-100 px-2 py-1 rounded-xl hover:bg-green-200"
               >
                 Ver alumnos
               </a>

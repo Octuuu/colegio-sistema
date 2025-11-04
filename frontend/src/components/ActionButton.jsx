@@ -4,7 +4,7 @@ const ActionButton = ({
   onClick,
   text,
   color = 'blue',
-  size = 'sm',    
+  size = 'sm',
   rounded = true,
 }) => {
 
@@ -13,28 +13,34 @@ const ActionButton = ({
       text: 'text-blue-700',
       bg: 'bg-blue-100',
       hover: 'hover:bg-blue-200',
-      border: 'border border-blue-300',
+      border: 'border border-blue-400',
     },
     red: {
       text: 'text-red-700',
       bg: 'bg-red-100',
       hover: 'hover:bg-red-200',
-      border: 'border border-red-300',
+      border: 'border border-red-400',
     },
     green: {
       text: 'text-green-700',
       bg: 'bg-green-100',
       hover: 'hover:bg-green-200',
-      border: 'border border-green-300',
+      border: 'border border-green-400',
+    },
+    yellow: {
+      text: 'text-yellow-700',
+      bg: 'bg-yellow-100',
+      hover: 'hover:bg-yellow-200',
+      border: 'border border-yellow-400',
     },
     gray: {
       text: 'text-gray-700',
-      bg: 'bg-gray-50',
-      hover: 'hover:bg-gray-100',
-      border: 'border border-gray-300',
+      bg: 'bg-gray-100',
+      hover: 'hover:bg-gray-200',
+      border: 'border border-gray-400',
     },
   };
-  
+
   const sizes = {
     sm: 'px-2 py-1 text-sm',
     md: 'px-3 py-2 text-base',
@@ -47,8 +53,8 @@ const ActionButton = ({
       className={`
         ${colors[color].text} ${colors[color].bg} ${colors[color].hover} ${colors[color].border}
         ${sizes[size]}
-        ${rounded ? 'rounded' : ''}
-        shadow-sm transition
+        ${rounded ? 'rounded-xl' : ''}
+        shadow-sm transition-colors duration-200
       `}
     >
       {text}
