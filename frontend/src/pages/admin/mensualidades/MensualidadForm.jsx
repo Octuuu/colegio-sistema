@@ -1,6 +1,11 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
-import { obtenerMensualesPendientes, pagarMensualidad, pagarMultiples } from "../../../services/mensualidadService";
+import { 
+  obtenerMensualesPendientes, 
+  pagarMensualidad, 
+  pagarMultiples,
+  descargarFacturaMensualidad
+} from "../../../services/mensualidadService";
 import { buscarAlumnosPorCedulaService } from "../../../services/alumnoService";
 
 const MensualidadForm = () => {
@@ -14,7 +19,6 @@ const MensualidadForm = () => {
   const [fechaPago, setFechaPago] = useState(new Date().toISOString().split("T")[0]);
   const [monto, setMonto] = useState("");
   const [metodoPago, setMetodoPago] = useState("");
-  const [recibidoPor, setRecibidoPor] = useState("");
   const [loadingPendientes, setLoadingPendientes] = useState(false);
   const [loadingBusqueda, setLoadingBusqueda] = useState(false);
 
@@ -23,20 +27,17 @@ const MensualidadForm = () => {
       setResultados([]);
       return;
     }
-
     const delayDebounce = setTimeout(async () => {
       setLoadingBusqueda(true);
       try {
         const data = await buscarAlumnosPorCedulaService(query, token);
         setResultados(data || []);
-      } catch (err) {
-        console.error(err);
+      } catch {
         setResultados([]);
       } finally {
         setLoadingBusqueda(false);
       }
     }, 300);
-
     return () => clearTimeout(delayDebounce);
   }, [query, token]);
 
@@ -45,21 +46,18 @@ const MensualidadForm = () => {
       setPendientes([]);
       return;
     }
-
     const fetchPendientes = async () => {
       setLoadingPendientes(true);
       try {
         const data = await obtenerMensualesPendientes(selectedAlumno.id, token);
         setPendientes(data || []);
         setSelectedMonths(new Set());
-      } catch (err) {
-        console.error(err);
+      } catch {
         setPendientes([]);
       } finally {
         setLoadingPendientes(false);
       }
     };
-
     fetchPendientes();
   }, [selectedAlumno, token]);
 
@@ -73,33 +71,62 @@ const MensualidadForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedAlumno || selectedMonths.size === 0 || !monto || !metodoPago || !recibidoPor) return alert("Completa todos los campos");
+    if (!selectedAlumno || selectedMonths.size === 0 || !monto || !metodoPago) 
+      return alert("Completa todos los campos");
 
     const monthsArray = Array.from(selectedMonths);
-
     try {
+      let pagoResult;
       if (monthsArray.length === 1) {
         const [anio, mes] = monthsArray[0].split("-").map(Number);
-        await pagarMensualidad({ alumnoId: selectedAlumno.id, mes, anio, monto: Number(monto), metodoPago, recibidoPor }, token);
+        pagoResult = await pagarMensualidad({ 
+          alumnoId: selectedAlumno.id, 
+          mes, 
+          anio, 
+          monto: Number(monto), 
+          metodoPago, 
+          recibidoPor: 2 
+        }, token);
+        if (pagoResult?.id) {
+          await descargarFacturaMensualidad([pagoResult.id], token);
+        }
       } else {
-        await pagarMultiples({ alumnoId: selectedAlumno.id, months: monthsArray, monto: Number(monto), metodoPago, recibidoPor }, token);
+        pagoResult = await pagarMultiples({ 
+          alumnoId: selectedAlumno.id, 
+          months: monthsArray, 
+          monto: Number(monto), 
+          metodoPago, 
+          recibidoPor: 2 
+        }, token);
+        if (Array.isArray(pagoResult) && pagoResult.length > 0) {
+          const ids = pagoResult.map(p => p.id);
+          await descargarFacturaMensualidad(ids, token);
+        }
       }
 
-      alert("Pago/s registrado/s correctamente ✅");
+      alert("Pago/s registrado/s correctamente");
+
       const data = await obtenerMensualesPendientes(selectedAlumno.id, token);
       setPendientes(data || []);
       setSelectedMonths(new Set());
       setMonto("");
       setMetodoPago("");
-      setRecibidoPor("");
+      setQuery("");
+      setSelectedAlumno(null);
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || "Error registrando pago");
     }
   };
 
+  const handleSelectAlumno = (alumno) => {
+    setSelectedAlumno(alumno);
+    setQuery(`${alumno.nombre} ${alumno.apellido} - ${alumno.cedula}`);
+    setResultados([]);
+  };
+
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-2xl mx-auto">
       <h2 className="text-xl font-semibold mb-4">Pagar Mensualidad</h2>
 
       <div className="relative mb-4">
@@ -116,7 +143,7 @@ const MensualidadForm = () => {
             {resultados.map((a) => (
               <li
                 key={a.id}
-                onClick={() => { setSelectedAlumno(a); setQuery(`${a.nombre} ${a.apellido} - ${a.cedula}`); setResultados([]); }}
+                onClick={() => handleSelectAlumno(a)}
                 className="p-2 hover:bg-blue-50 cursor-pointer"
               >
                 {a.nombre} {a.apellido} - Cédula: {a.cedula}
@@ -148,13 +175,12 @@ const MensualidadForm = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="grid gap-3 max-w-2xl">
+      <form onSubmit={handleSubmit} className="grid gap-3">
         <div className="grid grid-cols-2 gap-2">
           <input type="date" value={fechaPago} onChange={(e) => setFechaPago(e.target.value)} className="border p-2 w-full rounded" />
           <input type="number" value={monto} onChange={(e) => setMonto(e.target.value)} className="border p-2 w-full rounded" placeholder="Monto" />
         </div>
         <input placeholder="Método de pago" value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} className="border p-2 rounded" />
-        <input placeholder="Recibido por" value={recibidoPor} onChange={(e) => setRecibidoPor(e.target.value)} className="border p-2 rounded" />
         <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
           Pagar {selectedMonths.size > 1 ? `(${selectedMonths.size}) mensualidades` : "mensualidad"}
         </button>

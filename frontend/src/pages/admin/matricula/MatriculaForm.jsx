@@ -1,6 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
-import axios from "axios";
+import {
+  crearMatricula,
+  buscarAlumnosPorCedula,
+  descargarFacturaMatriculaPDF,
+} from "../../../services/matriculaService";
 
 const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
   const { token } = useContext(AuthContext);
@@ -16,7 +20,7 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 🔍 Buscar alumnos al escribir en tiempo real
+  // Buscar alumnos en tiempo real
   useEffect(() => {
     const fetchAlumnos = async () => {
       if (busqueda.trim() === "") {
@@ -25,24 +29,20 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
       }
       try {
         setLoading(true);
-        const url = `http://localhost:3000/api/alumnos/search?q=${encodeURIComponent(busqueda)}`;
-        const res = await axios.get(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setAlumnos(res.data);
+        const res = await buscarAlumnosPorCedula(busqueda, token);
+        setAlumnos(res);
       } catch (err) {
-        console.error("Error buscando alumnos:", err);
-        setError("No se pudieron cargar los alumnos");
+        console.error(err);
+        setError("Error al buscar alumnos");
       } finally {
         setLoading(false);
       }
     };
-
-    const delay = setTimeout(fetchAlumnos, 400); // ⏳ delay para evitar muchas peticiones
+    const delay = setTimeout(fetchAlumnos, 400);
     return () => clearTimeout(delay);
   }, [busqueda, token]);
 
-  // ✅ Cuando se selecciona un alumno de la lista
+  // Seleccionar alumno
   const handleSelectAlumno = (alumno) => {
     setFormData((prev) => ({
       ...prev,
@@ -50,16 +50,14 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
       alumno_nombre: `${alumno.nombre} ${alumno.apellido}`,
     }));
     setBusqueda(`${alumno.nombre} ${alumno.apellido}`);
-    setAlumnos([]); // Ocultar sugerencias
+    setAlumnos([]);
   };
 
-  // 🧠 Manejador de cambios del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 💾 Enviar formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -73,19 +71,22 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
       return;
     }
 
-    const payload = {
-      alumnoId: Number(formData.alumno_id),
-      fechaPago: new Date(formData.fecha_pago).toISOString().split("T")[0],
-      monto: Number(formData.monto),
-      metodoPago: formData.metodo_pago,
-      recibidoPor: 2, // ID del usuario que registra el pago
-    };
-
     try {
-      await axios.post("http://localhost:3000/api/matriculas", payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert("Matrícula registrada correctamente ✅");
+      const payload = {
+        alumnoId: Number(formData.alumno_id),
+        fechaPago: formData.fecha_pago,
+        monto: Number(formData.monto),
+        metodoPago: formData.metodo_pago,
+        recibidoPor: 2, // usuario que registra el pago
+      };
+
+      const { id: pagoId } = await crearMatricula(payload, token);
+
+      // 🔹 Descargar factura automáticamente
+      await descargarFacturaMatriculaPDF(pagoId, token);
+
+      alert("Matrícula registrada y factura descargada ✅");
+
       setFormData({
         alumno_id: "",
         alumno_nombre: "",
@@ -97,6 +98,7 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
       if (onPagoRegistrado) onPagoRegistrado();
       closeModal();
     } catch (err) {
+      console.error(err);
       setError(err.response?.data?.message || "Error al registrar matrícula");
       alert(err.response?.data?.message || "Error al registrar matrícula");
     }
@@ -105,26 +107,21 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
       <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-lg w-96 relative">
-        {/* Botón de cierre */}
         <button
           onClick={closeModal}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 dark:hover:text-white text-xl"
         >
           ×
         </button>
-
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
           Registrar Matrícula
         </h2>
 
         {error && (
-          <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">
-            {error}
-          </div>
+          <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">{error}</div>
         )}
 
         <form onSubmit={handleSubmit} className="grid gap-4 relative">
-          {/* 🔍 Buscador con lista dinámica */}
           <div className="relative">
             <input
               type="text"
@@ -152,7 +149,6 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
             )}
           </div>
 
-          {/* Fecha de pago */}
           <input
             type="date"
             name="fecha_pago"
@@ -161,8 +157,6 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
             required
             className="border border-slate-500 h-[36px] pl-3 rounded"
           />
-
-          {/* Monto */}
           <input
             type="number"
             name="monto"
@@ -172,8 +166,6 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
             required
             className="border border-slate-500 h-[36px] pl-3 rounded"
           />
-
-          {/* Método de pago */}
           <input
             type="text"
             name="metodo_pago"
@@ -184,7 +176,6 @@ const MatriculaForm = ({ closeModal, onPagoRegistrado }) => {
             className="border border-slate-500 h-[36px] pl-3 rounded"
           />
 
-          {/* Botón */}
           <button
             type="submit"
             className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 font-bold"
