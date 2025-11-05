@@ -4,6 +4,7 @@ import {
   obtenerPagosPorAlumno,
   eliminarPago
 } from "../models/pagos_matricula.model.js";
+import pool from "../config/db.js";
 
 // Registrar un nuevo pago
 export const nuevoPago = async (req, res) => {
@@ -70,5 +71,26 @@ export const borrarPago = async (req, res) => {
     res.json({ eliminado: result });
   } catch (err) {
     res.status(500).json({ message: "Error al eliminar pago" });
+  }
+};
+
+export const listarPagosPorCedula = async (req, res) => {
+  try {
+    const { cedula } = req.params;
+
+    const [rows] = await pool.query(`
+      SELECT 
+        p.id, p.alumno_id, p.fecha_pago, p.monto, p.metodo_pago, p.recibido_por, p.estado,
+        a.nombre AS alumno_nombre, a.apellido AS alumno_apellido, a.cedula
+      FROM pagos_matricula p
+      LEFT JOIN alumnos a ON p.alumno_id = a.id
+      WHERE a.cedula = ?
+      ORDER BY p.fecha_pago DESC
+    `, [cedula]);
+
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error al obtener pagos por cédula" });
   }
 };

@@ -1,16 +1,15 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:3000/api/matriculas";
+const API_URL_ALUMNOS = "http://localhost:3000/api/alumnos";
 
-// Obtener todos los pagos
 export const obtenerTodosLosPagos = async (token) => {
-  const res = await axios.get(`${API_URL}/pagos`, {
+  const res = await axios.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };
 
-// Obtener pagos por matrícula específica
 export const obtenerPagosPorMatricula = async (matriculaId, token) => {
   const res = await axios.get(`${API_URL}/${matriculaId}/pagos`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -18,7 +17,6 @@ export const obtenerPagosPorMatricula = async (matriculaId, token) => {
   return res.data;
 };
 
-// Crear un nuevo pago/matrícula
 export const crearMatricula = async (data, token) => {
   const res = await axios.post(API_URL, data, {
     headers: { Authorization: `Bearer ${token}` },
@@ -26,7 +24,6 @@ export const crearMatricula = async (data, token) => {
   return res.data;
 };
 
-// Eliminar un pago
 export const eliminarMatricula = async (id, token) => {
   const res = await axios.delete(`${API_URL}/pagos/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -34,11 +31,10 @@ export const eliminarMatricula = async (id, token) => {
   return res.data;
 };
 
-// Obtener todas las matrículas pendientes (si las necesitas)
-export const obtenerMatriculasPendientes = async (token) => {
-  const res = await axios.get(`${API_URL}/pendientes`, {
+// BUSCADOR: usa el endpoint de alumnos que ya existe (/api/alumnos/search?q=...)
+export const buscarAlumnosPorCedula = async (cedula, token) => {
+  const res = await axios.get(`${API_URL_ALUMNOS}/search?q=${encodeURIComponent(cedula)}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };
-
