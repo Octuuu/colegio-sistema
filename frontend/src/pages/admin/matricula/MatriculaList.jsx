@@ -2,13 +2,15 @@ import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import axios from "axios";
 
-const MatriculaList = ({ openModal }) => {
+const MatriculaList = () => {
   const { token } = useContext(AuthContext);
   const [pagos, setPagos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagina, setPagina] = useState(1);
-  const porPagina = 10;
 
+  const porPagina = 10; // Total por página original
+
+  // 🔹 Obtener pagos desde API
   const fetchPagos = async () => {
     setLoading(true);
     try {
@@ -28,6 +30,7 @@ const MatriculaList = ({ openModal }) => {
     fetchPagos();
   }, []);
 
+  // 🔹 Eliminar pago
   const handleDelete = async (id) => {
     if (!confirm("¿Eliminar registro?")) return;
     try {
@@ -40,22 +43,17 @@ const MatriculaList = ({ openModal }) => {
     }
   };
 
+  // 🔹 Paginación
   const totalPaginas = Math.ceil(pagos.length / porPagina);
-  const pagosMostrados = pagos.slice((pagina - 1) * porPagina, pagina * porPagina);
+  const pagosMostrados = pagos.slice(
+    (pagina - 1) * porPagina,
+    (pagina - 1) * porPagina + (porPagina - 1) // Mostrar una fila menos
+  );
 
   if (loading) return <p className="text-center mt-4">Cargando pagos...</p>;
 
   return (
-    <div className="relative flex flex-col bg-white dark:bg-gray-900 p-2">
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={openModal}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Registrar Pago
-        </button>
-      </div>
-
+    <div className="relative flex flex-col bg-white dark:bg-gray-900 mt-6 p-2">
       <div className="overflow-x-auto overflow-y-auto border rounded-lg shadow-sm">
         <table className="w-full min-w-[800px] border-collapse">
           <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-gray-800">
@@ -78,7 +76,9 @@ const MatriculaList = ({ openModal }) => {
               pagosMostrados.map((p, i) => (
                 <tr
                   key={p.id}
-                  className={`text-center ${i % 2 === 0 ? "bg-white dark:bg-gray-800" : "bg-gray-50 dark:bg-gray-900"} hover:bg-gray-100 dark:hover:bg-gray-700`}
+                  className={`text-center ${
+                    i % 2 === 0 ? "bg-white dark:bg-gray-800" : "bg-gray-50 dark:bg-gray-900"
+                  } hover:bg-gray-100 dark:hover:bg-gray-700`}
                 >
                   <td className="p-2">{p.alumno_nombre} {p.alumno_apellido}</td>
                   <td className="p-2">{new Date(p.fecha_pago).toLocaleDateString()}</td>
