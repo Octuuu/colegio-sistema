@@ -1,60 +1,105 @@
-import React from "react";
+import { FiMinus, FiPlus, FiTrash2, FiPackage } from "react-icons/fi";
 
 const Carrito = ({ carrito, cambiarCantidad, eliminarUno, total, formatCurrency }) => {
   if (carrito.length === 0) return null;
 
   return (
-    <div className="mb-4">
-      <h3 className="font-bold mb-2">Carrito:</h3>
-      <table className="w-full border">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="p-2">Producto</th>
-            <th className="p-2">Cantidad</th>
-            <th className="p-2">Precio Unitario</th>
-            <th className="p-2">Subtotal</th>
-            <th className="p-2">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {carrito.map((p) => (
-            <tr key={p.id}>
-              <td className="p-2">{p.nombre}</td>
-              <td className="p-2">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => cambiarCantidad(p.id, p.cantidad - 1)}
-                    disabled={p.cantidad <= 1}
-                    className="px-2 bg-gray-300 rounded"
-                  >
-                    -
-                  </button>
-                  <span>{p.cantidad}</span>
-                  <button
-                    onClick={() => cambiarCantidad(p.id, p.cantidad + 1)}
-                    disabled={p.cantidad >= p.cantidad + p.stock}
-                    className="px-2 bg-gray-300 rounded"
-                  >
-                    +
-                  </button>
-                </div>
+    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-700 dark:to-blue-900/20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+              <FiPackage className="text-green-600 dark:text-green-400 text-xl" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                Carrito de Venta
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {carrito.length} productos en el carrito
+              </p>
+            </div>
+          </div>
+          <span className="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 rounded-full text-sm font-medium">
+            {formatCurrency(total)}
+          </span>
+        </div>
+      </div>
 
-              </td>
-              <td className="p-2">{formatCurrency(p.precio_unitario)}</td>
-              <td className="p-2">{formatCurrency(p.subtotal)}</td>
-              <td className="p-2 flex gap-1">
-                <button
-                  onClick={() => eliminarUno(p.id)}
-                  className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
-                >
-                  ➖
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead className="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Producto
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Cantidad
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Precio Unit.
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Subtotal
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Acciones
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="mt-2 font-bold">Total: {formatCurrency(total)}</p>
+          </thead>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
+            {carrito.map((item, index) => (
+              <tr 
+                key={item.id} 
+                className={`hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                  index % 2 === 0 
+                    ? 'bg-white dark:bg-gray-800' 
+                    : 'bg-gray-50 dark:bg-gray-800'
+                }`}
+              >
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                  <div className="font-medium">{item.nombre}</div>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => cambiarCantidad(item.id, item.cantidad - 1)}
+                      disabled={item.cantidad <= 1}
+                      className="p-1 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <FiMinus size={14} />
+                    </button>
+                    <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg min-w-12 text-center font-medium">
+                      {item.cantidad}
+                    </span>
+                    <button
+                      onClick={() => cambiarCantidad(item.id, item.cantidad + 1)}
+                      className="p-1 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                    >
+                      <FiPlus size={14} />
+                    </button>
+                  </div>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                  {formatCurrency(item.precio_unitario)}
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-600 dark:text-green-400">
+                  {formatCurrency(item.subtotal)}
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <button
+                    onClick={() => eliminarUno(item.id)}
+                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                    title="Eliminar del carrito"
+                  >
+                    <FiTrash2 size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

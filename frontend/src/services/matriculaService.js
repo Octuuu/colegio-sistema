@@ -1,48 +1,59 @@
-import axios from "axios";
+import axios from 'axios';
+import { buscarAlumnosPorCedulaService } from './alumnoService.js';
 
-const API_URL = "http://localhost:3000/api/matriculas";
-const API_URL_ALUMNOS = "http://localhost:3000/api/alumnos";
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
+// Buscar alumnos por cédula o nombre (usa la función existente)
+export const buscarAlumnosPorCedula = async (busqueda, token) => {
+  return await buscarAlumnosPorCedulaService(busqueda, token);
+};
+
+// Crear pago de matrícula
+export const crearMatricula = async (pagoData, token) => {
+  const response = await axios.post(`${API_URL}/matriculas`, pagoData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
 
 // Obtener todos los pagos
-export const obtenerTodosLosPagos = async (token) => {
-  const res = await axios.get(API_URL, {
-    headers: { Authorization: `Bearer ${token}` },
+export const obtenerPagosMatricula = async (token) => {
+  const response = await axios.get(`${API_URL}/matriculas`, {
+    headers: { Authorization: `Bearer ${token}` }
   });
-  return res.data;
+  return response.data;
 };
 
-// Crear nueva matrícula/pago
-export const crearMatricula = async (data, token) => {
-  const res = await axios.post(API_URL, data, {
-    headers: { Authorization: `Bearer ${token}` },
+// Verificar si alumno ya tiene matrícula pagada
+export const verificarMatriculaPagada = async (alumnoId, token) => {
+  const response = await axios.get(`${API_URL}/matriculas/verificar-matricula/${alumnoId}`, {
+    headers: { Authorization: `Bearer ${token}` }
   });
-  return res.data;
+  return response.data;
 };
 
-// Descargar factura PDF automáticamente
-export const descargarFacturaMatriculaPDF = async (id, token) => {
-  const res = await axios.get(`${API_URL}/${id}/pdf`, {
-    headers: { Authorization: `Bearer ${token}` },
-    responseType: "blob", // importante para archivos
+// Eliminar pago (usa DELETE en lugar de PATCH)
+export const eliminarPago = async (pagoId, token) => {
+  const response = await axios.delete(`${API_URL}/matriculas/${pagoId}`, {
+    headers: { Authorization: `Bearer ${token}` }
   });
+  return response.data;
+};
 
-  // Descargar archivo
-  const url = window.URL.createObjectURL(new Blob([res.data]));
-  const link = document.createElement("a");
+// Descargar factura PDF
+export const descargarFacturaMatriculaPDF = async (pagoId, token) => {
+  const response = await axios.get(`${API_URL}/matriculas/${pagoId}/pdf`, {
+    headers: { Authorization: `Bearer ${token}` },
+    responseType: 'blob'
+  });
+  
+  // Crear URL del blob y descargar
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement('a');
   link.href = url;
-  link.setAttribute("download", `factura_matricula_${id}.pdf`);
+  link.setAttribute('download', `factura-matricula-${pagoId}.pdf`);
   document.body.appendChild(link);
   link.click();
   link.remove();
-};
-
-// Buscar alumnos en tiempo real
-export const buscarAlumnosPorCedula = async (cedula, token) => {
-  const res = await axios.get(
-    `${API_URL_ALUMNOS}/search?q=${encodeURIComponent(cedula)}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-  return res.data;
+  window.URL.revokeObjectURL(url);
 };

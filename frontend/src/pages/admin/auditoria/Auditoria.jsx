@@ -2,6 +2,10 @@ import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { obtenerAuditorias, descargarAuditoriaPDF } from "../../../services/auditoriaService";
 import Notification from "../../../components/Notification";
+import AuditoriaFilters from "./AuditoriaFilters";
+import AuditoriaTable from "./AuditoriaTable";
+import AuditoriaPagination from "./AuditoriaPagination";
+import { FiFileText, FiDownload } from "react-icons/fi";
 
 const Auditoria = () => {
   const { token } = useContext(AuthContext);
@@ -10,7 +14,12 @@ const Auditoria = () => {
   const [notification, setNotification] = useState({ message: "", type: "" });
   const [filters, setFilters] = useState({ usuario: "", evento: "" });
   const [sort, setSort] = useState({ column: "fecha", direction: "desc" });
-  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
+  const [pagination, setPagination] = useState({ 
+    page: 1, 
+    limit: 10, 
+    total: 0,
+    totalPages: 0 
+  });
 
   const fetchAuditorias = async () => {
     setLoading(true);
@@ -25,7 +34,12 @@ const Auditoria = () => {
       });
 
       setAuditorias(data.items || data);
-      setPagination((prev) => ({ ...prev, total: data.total || data.length }));
+      const total = data.total || data.length;
+      setPagination(prev => ({ 
+        ...prev, 
+        total,
+        totalPages: Math.ceil(total / prev.limit)
+      }));
     } catch (err) {
       console.error(err);
       setNotification({ message: "Error al obtener auditorías", type: "error" });
@@ -59,115 +73,100 @@ const Auditoria = () => {
     setPagination((prev) => ({ ...prev, page: newPage }));
   };
 
-  const totalPages = Math.ceil(pagination.total / pagination.limit);
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
 
   return (
-    <div className="p-6">
-      {notification.message && (
-        <Notification
-          message={notification.message}
-          type={notification.type}
-          onClose={() => setNotification({ message: "", type: "" })}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900/20 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {notification.message && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={() => setNotification({ message: "", type: "" })}
+          />
+        )}
+
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-blue-500 rounded-xl shadow-lg">
+              <FiFileText className="text-2xl text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Auditoría del Sistema
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                Registro de todas las actividades del sistema
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleDownloadPDF}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-lg hover:from-red-600 hover:to-pink-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+            >
+              <FiDownload className="text-lg" />
+              Descargar PDF
+            </button>
+          </div>
+        </div>
+
+        {/* Filtros */}
+        <AuditoriaFilters 
+          filters={filters}
+          onFilterChange={handleFilterChange}
         />
-      )}
 
-      <h1 className="text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-        Auditoría
-      </h1>
+        {/* Tabla */}
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-700 dark:to-blue-900/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                  <FiFileText className="text-blue-600 dark:text-blue-400 text-xl" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Registros de Auditoría
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {pagination.total} registros encontrados
+                  </p>
+                </div>
+              </div>
+              {auditorias.length > 0 && (
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 rounded-full text-sm font-medium">
+                  Página {pagination.page} de {pagination.totalPages}
+                </span>
+              )}
+            </div>
+          </div>
+          
+          <AuditoriaTable 
+            auditorias={auditorias}
+            loading={loading}
+            sort={sort}
+            onSort={handleSort}
+            currentPage={pagination.page}
+            itemsPerPage={pagination.limit}
+            totalItems={pagination.total}
+          />
+        </div>
 
-      <div className="flex gap-2 mb-4 flex-wrap">
-        <input
-          type="text"
-          placeholder="Filtrar por usuario"
-          className="border px-2 py-1 rounded"
-          value={filters.usuario}
-          onChange={(e) => setFilters({ ...filters, usuario: e.target.value, page: 1 })}
-        />
-        <input
-          type="text"
-          placeholder="Filtrar por evento"
-          className="border px-2 py-1 rounded"
-          value={filters.evento}
-          onChange={(e) => setFilters({ ...filters, evento: e.target.value, page: 1 })}
-        />
-        <button
-          onClick={handleDownloadPDF}
-          className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
-        >
-          Descargar PDF
-        </button>
-      </div>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white dark:bg-gray-800">
-          <thead>
-            <tr className="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm uppercase">
-              {["usuario_nombre", "accion", "descripcion", "fecha"].map((col) => (
-                <th
-                  key={col}
-                  className="p-3 border cursor-pointer select-none"
-                  onClick={() => handleSort(col)}
-                >
-                  {col === "usuario_nombre"
-                    ? "Usuario"
-                    : col === "fecha"
-                    ? "Fecha"
-                    : col.charAt(0).toUpperCase() + col.slice(1)}
-                  {sort.column === col && (
-                    <span>{sort.direction === "asc" ? " 🔼" : " 🔽"}</span>
-                  )}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="4" className="text-center p-6">
-                  Cargando auditorías...
-                </td>
-              </tr>
-            ) : auditorias.length > 0 ? (
-              auditorias.map((a) => (
-                <tr
-                  key={a.id}
-                  className="border-b hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-                >
-                  <td className="p-3">{a.usuario_nombre}</td>
-                  <td className="p-3">{a.accion}</td>
-                  <td className="p-3">{a.descripcion}</td>
-                  <td className="p-3">{new Date(a.fecha).toLocaleString()}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="text-center p-6 text-gray-500">
-                  No hay auditorías registradas
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex justify-end gap-2 mt-4">
-        <button
-          onClick={() => handlePageChange(Math.max(1, pagination.page - 1))}
-          disabled={pagination.page === 1}
-          className="px-3 py-1 border rounded disabled:opacity-50"
-        >
-          Anterior
-        </button>
-        <span className="px-3 py-1">
-          Página {pagination.page} de {totalPages}
-        </span>
-        <button
-          onClick={() => handlePageChange(Math.min(totalPages, pagination.page + 1))}
-          disabled={pagination.page === totalPages || totalPages === 0}
-          className="px-3 py-1 border rounded disabled:opacity-50"
-        >
-          Siguiente
-        </button>
+        {/* Paginación */}
+        {pagination.totalPages > 1 && (
+          <AuditoriaPagination 
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            totalItems={pagination.total}
+          />
+        )}
       </div>
     </div>
   );

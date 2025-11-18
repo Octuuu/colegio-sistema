@@ -2,13 +2,27 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api/caja';
 
-export const obtenerMovimientos = async ({ desde, hasta }, token) => {
+export const obtenerMovimientos = async (filtros = {}, token) => {
   try {
-    const res = await axios.get(`${API_URL}/movimientos`, {
-      headers: { Authorization: `Bearer ${token}` },
-      params: { desde, hasta }
+    // Construir query parameters correctamente
+    const params = new URLSearchParams();
+    
+    if (filtros.desde) params.append('desde', filtros.desde);
+    if (filtros.hasta) params.append('hasta', filtros.hasta);
+    if (filtros.caja_apertura_id) params.append('caja_apertura_id', filtros.caja_apertura_id);
+    if (filtros.tipo) params.append('tipo', filtros.tipo);
+
+    console.log('🔍 Enviando parámetros a backend:');
+    console.log('   - desde:', filtros.desde);
+    console.log('   - hasta:', filtros.hasta);
+    console.log('   - caja_apertura_id:', filtros.caja_apertura_id);
+    console.log('   - tipo:', filtros.tipo);
+
+    const response = await axios.get(`${API_URL}/movimientos?${params.toString()}`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
-    return Array.isArray(res.data) ? res.data : [];
+    
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error('Error obtenerMovimientos:', error.response?.data || error.message);
     return [];
@@ -20,7 +34,7 @@ export const getCajaAbierta = async (token) => {
     const res = await axios.get(`${API_URL}/abierta`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return res.data; // null si no hay caja abierta
+    return res.data;
   } catch (error) {
     console.error('Error getCajaAbierta:', error.response?.data || error.message);
     return null;

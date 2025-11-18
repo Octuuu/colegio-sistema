@@ -114,6 +114,7 @@ export const getCajaAbierta = async () => {
 // 📦 Registrar movimiento con tipo automático
 export const registrarMovimiento = async ({
   fecha = new Date(),
+  tipo_movimiento = 'ingreso', // ✅ RECIBIR el tipo del controller
   descripcion = null,
   pago_matricula_id = null,
   pago_mensualidad_id = null,
@@ -123,49 +124,81 @@ export const registrarMovimiento = async ({
   registrado_por = null,
   caja_apertura_id = null
 }) => {
-  const fechaFormateada = formatFechaMySQL(fecha);
-  const montoValido = isNaN(Number(monto)) ? 0 : Number(monto);
+  const connection = await pool.getConnection();
+  
+  try {
+    await connection.beginTransaction();
 
-  // 🔹 Determinar tipo de movimiento automáticamente
-  let tipo_movimiento = null;
+    const fechaFormateada = formatFechaMySQL(fecha);
+    const montoValido = isNaN(Number(monto)) ? 0 : Number(monto);
 
-  if (pago_matricula_id || pago_mensualidad_id || venta_id) {
-    tipo_movimiento = 'ingreso'; // Todo lo relacionado a cobros es ingreso
-  } else if (compra_id) {
-    tipo_movimiento = 'egreso'; // Todo lo relacionado a compras o gastos es egreso
-  } else {
-    // Por defecto, si el usuario especifica descripción y monto
-    tipo_movimiento = 'ingreso';
+    // 🔥 CORRECCIÓN: USAR el tipo_movimiento que viene del controller
+    // NO determinar automáticamente basado en IDs
+    let tipoFinal = tipo_movimiento?.toLowerCase() || 'ingreso';
+
+    // ✅ Validar que el tipo sea válido
+    if (!['ingreso', 'egreso'].includes(tipoFinal)) {
+      tipoFinal = 'ingreso'; // Default seguro
+    }
+
+    console.log('🎯 TIPO DE MOVIMIENTO EN MODELO:');
+    console.log('   - Tipo recibido:', tipo_movimiento);
+    console.log('   - Tipo final:', tipoFinal);
+    console.log('   - Descripción:', descripcion);
+
+    // 🔹 Si no hay descripción, poner una por defecto
+    if (!descripcion) {
+      if (pago_matricula_id) descripcion = 'Pago de matrícula';
+      else if (pago_mensualidad_id) descripcion = 'Pago de mensualidad';
+      else if (venta_id) descripcion = 'Venta';
+      else if (compra_id) descripcion = 'Compra';
+      else descripcion = 'Movimiento de caja';
+    }
+
+    // 🔹 Si no hay caja_apertura_id, obtener la caja abierta actual
+    let cajaId = caja_apertura_id;
+    if (!cajaId) {
+      const cajaAbierta = await getCajaAbierta();
+      if (!cajaAbierta) {
+        throw new Error('No hay caja abierta para registrar el movimiento');
+      }
+      cajaId = cajaAbierta.id;
+    }
+
+    const [res] = await connection.query(
+      `INSERT INTO caja 
+        (fecha, tipo_movimiento, descripcion, pago_matricula_id, pago_mensualidad_id, venta_id, compra_id, monto, registrado_por, caja_apertura_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        fechaFormateada,
+        tipoFinal, // ✅ USAR el tipo corregido
+        descripcion,
+        pago_matricula_id,
+        pago_mensualidad_id,
+        venta_id,
+        compra_id,
+        montoValido,
+        registrado_por,
+        cajaId
+      ]
+    );
+
+    await connection.commit();
+    
+    console.log('✅ MOVIMIENTO REGISTRADO CORRECTAMENTE:');
+    console.log('   - ID:', res.insertId);
+    console.log('   - Tipo:', tipoFinal);
+    console.log('   - Descripción:', descripcion);
+    console.log('   - Monto:', montoValido);
+    
+    return { movimiento_id: res.insertId, tipo_movimiento: tipoFinal };
+
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
   }
-
-  // 🔹 Si no hay descripción, poner una por defecto
-  if (!descripcion) {
-    if (pago_matricula_id) descripcion = 'Pago de matrícula';
-    else if (pago_mensualidad_id) descripcion = 'Pago de mensualidad';
-    else if (venta_id) descripcion = 'Venta';
-    else if (compra_id) descripcion = 'Compra';
-    else descripcion = 'Movimiento de caja';
-  }
-
-  const [res] = await pool.query(
-    `INSERT INTO caja 
-      (fecha, tipo_movimiento, descripcion, pago_matricula_id, pago_mensualidad_id, venta_id, compra_id, monto, registrado_por, caja_apertura_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      fechaFormateada,
-      tipo_movimiento,
-      descripcion,
-      pago_matricula_id,
-      pago_mensualidad_id,
-      venta_id,
-      compra_id,
-      montoValido,
-      registrado_por,
-      caja_apertura_id
-    ]
-  );
-
-  return { movimiento_id: res.insertId, tipo_movimiento };
 };
 
 
@@ -257,4 +290,52 @@ export const listarCajas = async () => {
   `);
 
   return rows;
+};
+
+export const corregirMovimientosIncorrectos = async (caja_apertura_id) => {
+  const connection = await pool.getConnection();
+  
+  try {
+    await connection.beginTransaction();
+
+    console.log('🔄 CORRIGIENDO MOVIMIENTOS INCORRECTOS para caja:', caja_apertura_id);
+
+    // Corregir saldo inicial
+    const [result1] = await connection.execute(
+      `UPDATE caja 
+       SET tipo_movimiento = 'ingreso' 
+       WHERE caja_apertura_id = ? 
+       AND (descripcion LIKE '%saldo inicial%' OR descripcion LIKE '%Saldo inicial%')
+       AND tipo_movimiento = 'egreso'`,
+      [caja_apertura_id]
+    );
+
+    // Corregir pagos de mensualidades/matrículas
+    const [result2] = await connection.execute(
+      `UPDATE caja 
+       SET tipo_movimiento = 'ingreso' 
+       WHERE caja_apertura_id = ? 
+       AND (descripcion LIKE '%pago de%' OR descripcion LIKE '%mensualidad%' OR descripcion LIKE '%matrícula%' OR descripcion LIKE '%matricula%')
+       AND tipo_movimiento = 'egreso'`,
+      [caja_apertura_id]
+    );
+
+    await connection.commit();
+
+    console.log('✅ CORRECCIONES APLICADAS:');
+    console.log('   - Saldos iniciales corregidos:', result1.affectedRows);
+    console.log('   - Pagos corregidos:', result2.affectedRows);
+
+    return {
+      caja_apertura_id,
+      saldos_iniciales_corregidos: result1.affectedRows,
+      pagos_corregidos: result2.affectedRows,
+      total_corregido: result1.affectedRows + result2.affectedRows
+    };
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
 };

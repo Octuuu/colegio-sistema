@@ -48,7 +48,7 @@ const Configuracion = () => {
       <div className="bg-white dark:bg-gray-800 shadow rounded p-6">
         <h2 className="text-xl font-medium mb-4">Backup de Base de Datos</h2>
         <p className="mb-4 text-gray-600 dark:text-gray-300">
-          Puedes generar un backup completo de la base de datos. Se descargará un archivo SQL que podrás usar para restaurar tu sistema.
+          Puedes generar un backup completo de la base de datos.
         </p>
         <button
           onClick={handleBackup}

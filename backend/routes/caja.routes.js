@@ -9,6 +9,7 @@ import {
   obtenerResumenPorFechaController,
   obtenerDetalleCajaController,
   listarCajasController,
+  corregirMovimientosIncorrectosController
 } from '../controllers/caja.controller.js';
 import { authenticate, authorize } from '../middlewares/auth.middleware.js';
 import { auditar } from '../middlewares/auditoria.middleware.js';
@@ -26,5 +27,7 @@ router.get('/resumen/:fecha', authenticate, authorize(rolesPermitidos), obtenerR
 router.get('/', authenticate, authorize(rolesPermitidos), getCajaAbiertaController);
 router.get('/detalle/:id', authenticate, authorize(rolesPermitidos), obtenerDetalleCajaController);
 router.get('/todas', authenticate, authorize(rolesPermitidos), listarCajasController);
+// Agrega esta ruta a tus routes
+router.patch('/corregir/:caja_id', corregirMovimientosIncorrectosController);
 
 export default router;
